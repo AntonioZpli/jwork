@@ -16,6 +16,7 @@ enum UserRole {
   CANDIDATE
   COMPANY
   ADMIN
+  SUPERADMIN
 }
 
 enum UserStatus {
@@ -142,6 +143,7 @@ enum CompanyMemberRole {
 enum TokenType {
   EMAIL_VERIFICATION
   PASSWORD_RESET
+  ADMIN_INVITATION
 }
 
 enum NotificationType {
@@ -154,6 +156,8 @@ enum NotificationType {
 }
 
 enum AuditActionType {
+  ADMIN_INVITATION_CREATED
+  ADMIN_INVITATION_ACCEPTED
   USER_ROLE_CHANGED
   USER_EMAIL_CHANGED
   USER_STATUS_CHANGED
@@ -164,6 +168,7 @@ enum AuditActionType {
   APPLICATION_STATUS_CHANGED
   REPORT_RESOLVED
   MODERATION_ACTION_APPLIED
+  JOB_STATUS_CHANGED
 }
 
 // ─── USERS AND AUTHENTICATION ───────────────────────
@@ -176,6 +181,7 @@ model User {
   status          UserStatus @default(ACTIVE)
   emailVerifiedAt DateTime?
   lastLoginAt     DateTime?
+  onboardingStep  Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -189,6 +195,7 @@ model User {
   companyProfile   CompanyProfile?
 
   companyMemberships CompanyMember[]
+  adminInvitationsCreated AdminInvitation[] @relation("AdminInvitationCreator")
 
   reportsCreated  Report[] @relation("ReportReporter")
   reportsAgainst  Report[] @relation("ReportReportedUser")
@@ -247,6 +254,22 @@ model VerificationToken {
 
   @@index([userId, type])
   @@index([expiresAt])
+}
+
+model AdminInvitation {
+  id              String    @id @default(uuid()) @db.Uuid
+  email           String
+  tokenHash       String    @unique
+  invitedByUserId String?   @db.Uuid
+  expiresAt       DateTime
+  usedAt          DateTime?
+  createdAt       DateTime  @default(now())
+
+  invitedBy User? @relation("AdminInvitationCreator", fields: [invitedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([email, createdAt])
+  @@index([expiresAt])
+  @@index([invitedByUserId, createdAt])
 }
 
 // ─── CANDIDATE PROFILES ─────────────────────────────

@@ -1,4 +1,23 @@
-﻿*, *::before, *::after { box-sizing: border-box; }
-html, body, #app { min-height: 100%; margin: 0; }
-body { line-height: 1.6; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-button, input, select, textarea { font: inherit; }
+﻿*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html,
+body,
+#app {
+  min-height: 100%;
+  margin: 0;
+}
+body {
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}

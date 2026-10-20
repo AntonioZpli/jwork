@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { X } from '@lucide/vue'
+
 interface Props {
   /** Visual emphasis level */
   variant?: 'info' | 'demo'
@@ -29,7 +31,7 @@ defineEmits<{
       aria-label="Cerrar aviso"
       @click="$emit('dismiss')"
     >
-      ×
+      <X :size="16" aria-hidden="true" />
     </button>
   </div>
 </template>

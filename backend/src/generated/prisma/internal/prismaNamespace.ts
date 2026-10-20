@@ -16,10 +16,10 @@
  */
 
 import * as runtime from "@prisma/client/runtime/client"
-import type * as Prisma from "../models.ts"
-import { type PrismaClient } from "./class.ts"
+import type * as Prisma from "../models"
+import { type PrismaClient } from "./class"
 
-export type * from '../models.ts'
+export type * from '../models'
 
 export type DMMF = typeof runtime.DMMF
 
@@ -401,6 +401,7 @@ export const ModelName = {
   OAuthAccount: 'OAuthAccount',
   Session: 'Session',
   VerificationToken: 'VerificationToken',
+  AdminInvitation: 'AdminInvitation',
   CandidateProfile: 'CandidateProfile',
   Experience: 'Experience',
   Education: 'Education',
@@ -440,7 +441,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "oAuthAccount" | "session" | "verificationToken" | "candidateProfile" | "experience" | "education" | "language" | "candidateLanguage" | "companyProfile" | "companyMember" | "professionalArea" | "specialization" | "economicSector" | "department" | "municipality" | "job" | "jobView" | "savedJob" | "application" | "applicationStatusHistory" | "notification" | "report" | "reportEvidence" | "moderationAction" | "auditLog" | "companyDailyStats" | "jobDailyStats"
+    modelProps: "user" | "oAuthAccount" | "session" | "verificationToken" | "adminInvitation" | "candidateProfile" | "experience" | "education" | "language" | "candidateLanguage" | "companyProfile" | "companyMember" | "professionalArea" | "specialization" | "economicSector" | "department" | "municipality" | "job" | "jobView" | "savedJob" | "application" | "applicationStatusHistory" | "notification" | "report" | "reportEvidence" | "moderationAction" | "auditLog" | "companyDailyStats" | "jobDailyStats"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -737,6 +738,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.VerificationTokenCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.VerificationTokenCountAggregateOutputType> | number
+        }
+      }
+    }
+    AdminInvitation: {
+      payload: Prisma.$AdminInvitationPayload<ExtArgs>
+      fields: Prisma.AdminInvitationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AdminInvitationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdminInvitationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AdminInvitationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdminInvitationPayload>
+        }
+        findFirst: {
+          args: Prisma.AdminInvitationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdminInvitationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AdminInvitationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdminInvitationPayload>
+        }
+        findMany: {
+          args: Prisma.AdminInvitationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdminInvitationPayload>[]
+        }
+        create: {
+          args: Prisma.AdminInvitationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdminInvitationPayload>
+        }
+        createMany: {
+          args: Prisma.AdminInvitationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AdminInvitationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdminInvitationPayload>[]
+        }
+        delete: {
+          args: Prisma.AdminInvitationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdminInvitationPayload>
+        }
+        update: {
+          args: Prisma.AdminInvitationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdminInvitationPayload>
+        }
+        deleteMany: {
+          args: Prisma.AdminInvitationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AdminInvitationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AdminInvitationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdminInvitationPayload>[]
+        }
+        upsert: {
+          args: Prisma.AdminInvitationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdminInvitationPayload>
+        }
+        aggregate: {
+          args: Prisma.AdminInvitationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAdminInvitation>
+        }
+        groupBy: {
+          args: Prisma.AdminInvitationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AdminInvitationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AdminInvitationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AdminInvitationCountAggregateOutputType> | number
         }
       }
     }
@@ -2563,6 +2638,7 @@ export const UserScalarFieldEnum = {
   status: 'status',
   emailVerifiedAt: 'emailVerifiedAt',
   lastLoginAt: 'lastLoginAt',
+  onboardingStep: 'onboardingStep',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -2607,6 +2683,19 @@ export const VerificationTokenScalarFieldEnum = {
 } as const
 
 export type VerificationTokenScalarFieldEnum = (typeof VerificationTokenScalarFieldEnum)[keyof typeof VerificationTokenScalarFieldEnum]
+
+
+export const AdminInvitationScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  tokenHash: 'tokenHash',
+  invitedByUserId: 'invitedByUserId',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type AdminInvitationScalarFieldEnum = (typeof AdminInvitationScalarFieldEnum)[keyof typeof AdminInvitationScalarFieldEnum]
 
 
 export const CandidateProfileScalarFieldEnum = {
@@ -3061,6 +3150,20 @@ export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
 
 
 /**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+/**
+ * Reference to a field of type 'Int[]'
+ */
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
  * Reference to a field of type 'OAuthProvider'
  */
 export type EnumOAuthProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OAuthProvider'>
@@ -3246,20 +3349,6 @@ export type EnumSalaryPeriodFieldRefInput<$PrismaModel> = FieldRefInputType<$Pri
  * Reference to a field of type 'SalaryPeriod[]'
  */
 export type ListEnumSalaryPeriodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SalaryPeriod[]'>
-    
-
-
-/**
- * Reference to a field of type 'Int'
- */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-/**
- * Reference to a field of type 'Int[]'
- */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 
@@ -3571,6 +3660,7 @@ export type GlobalOmitConfig = {
   oAuthAccount?: Prisma.OAuthAccountOmit
   session?: Prisma.SessionOmit
   verificationToken?: Prisma.VerificationTokenOmit
+  adminInvitation?: Prisma.AdminInvitationOmit
   candidateProfile?: Prisma.CandidateProfileOmit
   experience?: Prisma.ExperienceOmit
   education?: Prisma.EducationOmit

@@ -17,8 +17,8 @@
 
 import * as runtime from "@prisma/client/runtime/index-browser"
 
-export type * from '../models.ts'
-export type * from './prismaNamespace.ts'
+export type * from '../models'
+export type * from './prismaNamespace'
 
 export const Decimal = runtime.Decimal
 
@@ -55,6 +55,7 @@ export const ModelName = {
   OAuthAccount: 'OAuthAccount',
   Session: 'Session',
   VerificationToken: 'VerificationToken',
+  AdminInvitation: 'AdminInvitation',
   CandidateProfile: 'CandidateProfile',
   Experience: 'Experience',
   Education: 'Education',
@@ -105,6 +106,7 @@ export const UserScalarFieldEnum = {
   status: 'status',
   emailVerifiedAt: 'emailVerifiedAt',
   lastLoginAt: 'lastLoginAt',
+  onboardingStep: 'onboardingStep',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -149,6 +151,19 @@ export const VerificationTokenScalarFieldEnum = {
 } as const
 
 export type VerificationTokenScalarFieldEnum = (typeof VerificationTokenScalarFieldEnum)[keyof typeof VerificationTokenScalarFieldEnum]
+
+
+export const AdminInvitationScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  tokenHash: 'tokenHash',
+  invitedByUserId: 'invitedByUserId',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type AdminInvitationScalarFieldEnum = (typeof AdminInvitationScalarFieldEnum)[keyof typeof AdminInvitationScalarFieldEnum]
 
 
 export const CandidateProfileScalarFieldEnum = {

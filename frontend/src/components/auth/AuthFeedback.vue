@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { Info } from '@lucide/vue'
+import { CircleAlert, Info, X } from '@lucide/vue'
 
-defineProps<{
+withDefaults(defineProps<{
   message: string
-}>()
+  variant?: 'info' | 'error'
+}>(), { variant: 'info' })
 
 defineEmits<{
   dismiss: []
@@ -13,10 +14,11 @@ defineEmits<{
 <template>
   <div
     class="auth-feedback"
-    role="status"
-    aria-live="polite"
+    :class="`auth-feedback--${variant}`"
+    :role="variant === 'error' ? 'alert' : 'status'"
+    :aria-live="variant === 'error' ? 'assertive' : 'polite'"
   >
-    <Info :size="15" class="auth-feedback__icon" aria-hidden="true" />
+    <component :is="variant === 'error' ? CircleAlert : Info" :size="18" class="auth-feedback__icon" aria-hidden="true" />
     <p class="auth-feedback__text">{{ message }}</p>
     <button
       type="button"
@@ -24,7 +26,7 @@ defineEmits<{
       aria-label="Cerrar aviso"
       @click="$emit('dismiss')"
     >
-      ×
+      <X :size="16" aria-hidden="true" />
     </button>
   </div>
 </template>
@@ -44,6 +46,16 @@ defineEmits<{
   color: var(--primary);
   flex-shrink: 0;
   margin-top: 2px;
+}
+
+.auth-feedback--error {
+  background: color-mix(in srgb, #d9534f 8%, var(--background));
+  border-color: color-mix(in srgb, #d9534f 35%, transparent);
+}
+
+.auth-feedback--error .auth-feedback__icon,
+.auth-feedback--error .auth-feedback__text {
+  color: #b42318;
 }
 
 .auth-feedback__text {

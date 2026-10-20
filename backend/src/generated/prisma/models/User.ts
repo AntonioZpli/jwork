@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as $Enums from "../enums.ts"
-import type * as Prisma from "../internal/prismaNamespace.ts"
+import type * as $Enums from "../enums"
+import type * as Prisma from "../internal/prismaNamespace"
 
 /**
  * Model User
@@ -20,8 +20,18 @@ export type UserModel = runtime.Types.Result.DefaultSelection<Prisma.$UserPayloa
 
 export type AggregateUser = {
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
+}
+
+export type UserAvgAggregateOutputType = {
+  onboardingStep: number | null
+}
+
+export type UserSumAggregateOutputType = {
+  onboardingStep: number | null
 }
 
 export type UserMinAggregateOutputType = {
@@ -32,6 +42,7 @@ export type UserMinAggregateOutputType = {
   status: $Enums.UserStatus | null
   emailVerifiedAt: Date | null
   lastLoginAt: Date | null
+  onboardingStep: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -44,6 +55,7 @@ export type UserMaxAggregateOutputType = {
   status: $Enums.UserStatus | null
   emailVerifiedAt: Date | null
   lastLoginAt: Date | null
+  onboardingStep: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -56,11 +68,20 @@ export type UserCountAggregateOutputType = {
   status: number
   emailVerifiedAt: number
   lastLoginAt: number
+  onboardingStep: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
+
+export type UserAvgAggregateInputType = {
+  onboardingStep?: true
+}
+
+export type UserSumAggregateInputType = {
+  onboardingStep?: true
+}
 
 export type UserMinAggregateInputType = {
   id?: true
@@ -70,6 +91,7 @@ export type UserMinAggregateInputType = {
   status?: true
   emailVerifiedAt?: true
   lastLoginAt?: true
+  onboardingStep?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -82,6 +104,7 @@ export type UserMaxAggregateInputType = {
   status?: true
   emailVerifiedAt?: true
   lastLoginAt?: true
+  onboardingStep?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -94,6 +117,7 @@ export type UserCountAggregateInputType = {
   status?: true
   emailVerifiedAt?: true
   lastLoginAt?: true
+  onboardingStep?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -137,6 +161,18 @@ export type UserAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: UserAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: UserSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: UserMinAggregateInputType
@@ -167,6 +203,8 @@ export type UserGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number
   skip?: number
   _count?: UserCountAggregateInputType | true
+  _avg?: UserAvgAggregateInputType
+  _sum?: UserSumAggregateInputType
   _min?: UserMinAggregateInputType
   _max?: UserMaxAggregateInputType
 }
@@ -179,9 +217,12 @@ export type UserGroupByOutputType = {
   status: $Enums.UserStatus
   emailVerifiedAt: Date | null
   lastLoginAt: Date | null
+  onboardingStep: number | null
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
 }
@@ -212,6 +253,7 @@ export type UserWhereInput = {
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
   emailVerifiedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   lastLoginAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  onboardingStep?: Prisma.IntNullableFilter<"User"> | number | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   oauthAccounts?: Prisma.OAuthAccountListRelationFilter
@@ -221,6 +263,7 @@ export type UserWhereInput = {
   candidateProfile?: Prisma.XOR<Prisma.CandidateProfileNullableScalarRelationFilter, Prisma.CandidateProfileWhereInput> | null
   companyProfile?: Prisma.XOR<Prisma.CompanyProfileNullableScalarRelationFilter, Prisma.CompanyProfileWhereInput> | null
   companyMemberships?: Prisma.CompanyMemberListRelationFilter
+  adminInvitationsCreated?: Prisma.AdminInvitationListRelationFilter
   reportsCreated?: Prisma.ReportListRelationFilter
   reportsAgainst?: Prisma.ReportListRelationFilter
   reportsAssigned?: Prisma.ReportListRelationFilter
@@ -239,6 +282,7 @@ export type UserOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   emailVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastLoginAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  onboardingStep?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   oauthAccounts?: Prisma.OAuthAccountOrderByRelationAggregateInput
@@ -248,6 +292,7 @@ export type UserOrderByWithRelationInput = {
   candidateProfile?: Prisma.CandidateProfileOrderByWithRelationInput
   companyProfile?: Prisma.CompanyProfileOrderByWithRelationInput
   companyMemberships?: Prisma.CompanyMemberOrderByRelationAggregateInput
+  adminInvitationsCreated?: Prisma.AdminInvitationOrderByRelationAggregateInput
   reportsCreated?: Prisma.ReportOrderByRelationAggregateInput
   reportsAgainst?: Prisma.ReportOrderByRelationAggregateInput
   reportsAssigned?: Prisma.ReportOrderByRelationAggregateInput
@@ -269,6 +314,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
   emailVerifiedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   lastLoginAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  onboardingStep?: Prisma.IntNullableFilter<"User"> | number | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   oauthAccounts?: Prisma.OAuthAccountListRelationFilter
@@ -278,6 +324,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   candidateProfile?: Prisma.XOR<Prisma.CandidateProfileNullableScalarRelationFilter, Prisma.CandidateProfileWhereInput> | null
   companyProfile?: Prisma.XOR<Prisma.CompanyProfileNullableScalarRelationFilter, Prisma.CompanyProfileWhereInput> | null
   companyMemberships?: Prisma.CompanyMemberListRelationFilter
+  adminInvitationsCreated?: Prisma.AdminInvitationListRelationFilter
   reportsCreated?: Prisma.ReportListRelationFilter
   reportsAgainst?: Prisma.ReportListRelationFilter
   reportsAssigned?: Prisma.ReportListRelationFilter
@@ -296,11 +343,14 @@ export type UserOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   emailVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastLoginAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  onboardingStep?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
+  _avg?: Prisma.UserAvgOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
+  _sum?: Prisma.UserSumOrderByAggregateInput
 }
 
 export type UserScalarWhereWithAggregatesInput = {
@@ -314,6 +364,7 @@ export type UserScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumUserStatusWithAggregatesFilter<"User"> | $Enums.UserStatus
   emailVerifiedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   lastLoginAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  onboardingStep?: Prisma.IntNullableWithAggregatesFilter<"User"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -326,6 +377,7 @@ export type UserCreateInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
@@ -335,6 +387,7 @@ export type UserCreateInput = {
   candidateProfile?: Prisma.CandidateProfileCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportCreateNestedManyWithoutAssignedAdminInput
@@ -353,6 +406,7 @@ export type UserUncheckedCreateInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
@@ -362,6 +416,7 @@ export type UserUncheckedCreateInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileUncheckedCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportUncheckedCreateNestedManyWithoutAssignedAdminInput
@@ -380,6 +435,7 @@ export type UserUpdateInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
@@ -389,6 +445,7 @@ export type UserUpdateInput = {
   candidateProfile?: Prisma.CandidateProfileUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUpdateManyWithoutAssignedAdminNestedInput
@@ -407,6 +464,7 @@ export type UserUncheckedUpdateInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
@@ -416,6 +474,7 @@ export type UserUncheckedUpdateInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUncheckedUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUncheckedUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUncheckedUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUncheckedUpdateManyWithoutAssignedAdminNestedInput
@@ -434,6 +493,7 @@ export type UserCreateManyInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -446,6 +506,7 @@ export type UserUpdateManyMutationInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -458,6 +519,7 @@ export type UserUncheckedUpdateManyInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -470,8 +532,13 @@ export type UserCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   emailVerifiedAt?: Prisma.SortOrder
   lastLoginAt?: Prisma.SortOrder
+  onboardingStep?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type UserAvgOrderByAggregateInput = {
+  onboardingStep?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -482,6 +549,7 @@ export type UserMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   emailVerifiedAt?: Prisma.SortOrder
   lastLoginAt?: Prisma.SortOrder
+  onboardingStep?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -494,8 +562,13 @@ export type UserMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   emailVerifiedAt?: Prisma.SortOrder
   lastLoginAt?: Prisma.SortOrder
+  onboardingStep?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type UserSumOrderByAggregateInput = {
+  onboardingStep?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -526,6 +599,14 @@ export type EnumUserStatusFieldUpdateOperationsInput = {
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
+}
+
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -572,6 +653,22 @@ export type UserUpdateOneRequiredWithoutVerificationTokensNestedInput = {
   upsert?: Prisma.UserUpsertWithoutVerificationTokensInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutVerificationTokensInput, Prisma.UserUpdateWithoutVerificationTokensInput>, Prisma.UserUncheckedUpdateWithoutVerificationTokensInput>
+}
+
+export type UserCreateNestedOneWithoutAdminInvitationsCreatedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAdminInvitationsCreatedInput, Prisma.UserUncheckedCreateWithoutAdminInvitationsCreatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAdminInvitationsCreatedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutAdminInvitationsCreatedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAdminInvitationsCreatedInput, Prisma.UserUncheckedCreateWithoutAdminInvitationsCreatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAdminInvitationsCreatedInput
+  upsert?: Prisma.UserUpsertWithoutAdminInvitationsCreatedInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAdminInvitationsCreatedInput, Prisma.UserUpdateWithoutAdminInvitationsCreatedInput>, Prisma.UserUncheckedUpdateWithoutAdminInvitationsCreatedInput>
 }
 
 export type UserCreateNestedOneWithoutCandidateProfileInput = {
@@ -762,6 +859,7 @@ export type UserCreateWithoutOauthAccountsInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -770,6 +868,7 @@ export type UserCreateWithoutOauthAccountsInput = {
   candidateProfile?: Prisma.CandidateProfileCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportCreateNestedManyWithoutAssignedAdminInput
@@ -788,6 +887,7 @@ export type UserUncheckedCreateWithoutOauthAccountsInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -796,6 +896,7 @@ export type UserUncheckedCreateWithoutOauthAccountsInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileUncheckedCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportUncheckedCreateNestedManyWithoutAssignedAdminInput
@@ -830,6 +931,7 @@ export type UserUpdateWithoutOauthAccountsInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -838,6 +940,7 @@ export type UserUpdateWithoutOauthAccountsInput = {
   candidateProfile?: Prisma.CandidateProfileUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUpdateManyWithoutAssignedAdminNestedInput
@@ -856,6 +959,7 @@ export type UserUncheckedUpdateWithoutOauthAccountsInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -864,6 +968,7 @@ export type UserUncheckedUpdateWithoutOauthAccountsInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUncheckedUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUncheckedUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUncheckedUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUncheckedUpdateManyWithoutAssignedAdminNestedInput
@@ -882,6 +987,7 @@ export type UserCreateWithoutSessionsInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
@@ -890,6 +996,7 @@ export type UserCreateWithoutSessionsInput = {
   candidateProfile?: Prisma.CandidateProfileCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportCreateNestedManyWithoutAssignedAdminInput
@@ -908,6 +1015,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
@@ -916,6 +1024,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileUncheckedCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportUncheckedCreateNestedManyWithoutAssignedAdminInput
@@ -950,6 +1059,7 @@ export type UserUpdateWithoutSessionsInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
@@ -958,6 +1068,7 @@ export type UserUpdateWithoutSessionsInput = {
   candidateProfile?: Prisma.CandidateProfileUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUpdateManyWithoutAssignedAdminNestedInput
@@ -976,6 +1087,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
@@ -984,6 +1096,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUncheckedUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUncheckedUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUncheckedUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUncheckedUpdateManyWithoutAssignedAdminNestedInput
@@ -1002,6 +1115,7 @@ export type UserCreateWithoutVerificationTokensInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
@@ -1010,6 +1124,7 @@ export type UserCreateWithoutVerificationTokensInput = {
   candidateProfile?: Prisma.CandidateProfileCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportCreateNestedManyWithoutAssignedAdminInput
@@ -1028,6 +1143,7 @@ export type UserUncheckedCreateWithoutVerificationTokensInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
@@ -1036,6 +1152,7 @@ export type UserUncheckedCreateWithoutVerificationTokensInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileUncheckedCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportUncheckedCreateNestedManyWithoutAssignedAdminInput
@@ -1070,6 +1187,7 @@ export type UserUpdateWithoutVerificationTokensInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
@@ -1078,6 +1196,7 @@ export type UserUpdateWithoutVerificationTokensInput = {
   candidateProfile?: Prisma.CandidateProfileUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUpdateManyWithoutAssignedAdminNestedInput
@@ -1096,10 +1215,140 @@ export type UserUncheckedUpdateWithoutVerificationTokensInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  candidateProfile?: Prisma.CandidateProfileUncheckedUpdateOneWithoutUserNestedInput
+  companyProfile?: Prisma.CompanyProfileUncheckedUpdateOneWithoutOwnerNestedInput
+  companyMemberships?: Prisma.CompanyMemberUncheckedUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+  reportsCreated?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
+  reportsAgainst?: Prisma.ReportUncheckedUpdateManyWithoutTargetUserNestedInput
+  reportsAssigned?: Prisma.ReportUncheckedUpdateManyWithoutAssignedAdminNestedInput
+  moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutAdminNestedInput
+  moderationActionsReceived?: Prisma.ModerationActionUncheckedUpdateManyWithoutTargetUserNestedInput
+  statusChanges?: Prisma.ApplicationStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
+  companiesVerified?: Prisma.CompanyProfileUncheckedUpdateManyWithoutVerifiedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+}
+
+export type UserCreateWithoutAdminInvitationsCreatedInput = {
+  id?: string
+  email: string
+  passwordHash?: string | null
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  candidateProfile?: Prisma.CandidateProfileCreateNestedOneWithoutUserInput
+  companyProfile?: Prisma.CompanyProfileCreateNestedOneWithoutOwnerInput
+  companyMemberships?: Prisma.CompanyMemberCreateNestedManyWithoutUserInput
+  reportsCreated?: Prisma.ReportCreateNestedManyWithoutReporterInput
+  reportsAgainst?: Prisma.ReportCreateNestedManyWithoutTargetUserInput
+  reportsAssigned?: Prisma.ReportCreateNestedManyWithoutAssignedAdminInput
+  moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutAdminInput
+  moderationActionsReceived?: Prisma.ModerationActionCreateNestedManyWithoutTargetUserInput
+  statusChanges?: Prisma.ApplicationStatusHistoryCreateNestedManyWithoutChangedByInput
+  companiesVerified?: Prisma.CompanyProfileCreateNestedManyWithoutVerifiedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+}
+
+export type UserUncheckedCreateWithoutAdminInvitationsCreatedInput = {
+  id?: string
+  email: string
+  passwordHash?: string | null
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  candidateProfile?: Prisma.CandidateProfileUncheckedCreateNestedOneWithoutUserInput
+  companyProfile?: Prisma.CompanyProfileUncheckedCreateNestedOneWithoutOwnerInput
+  companyMemberships?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutUserInput
+  reportsCreated?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
+  reportsAgainst?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetUserInput
+  reportsAssigned?: Prisma.ReportUncheckedCreateNestedManyWithoutAssignedAdminInput
+  moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutAdminInput
+  moderationActionsReceived?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutTargetUserInput
+  statusChanges?: Prisma.ApplicationStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
+  companiesVerified?: Prisma.CompanyProfileUncheckedCreateNestedManyWithoutVerifiedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+}
+
+export type UserCreateOrConnectWithoutAdminInvitationsCreatedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAdminInvitationsCreatedInput, Prisma.UserUncheckedCreateWithoutAdminInvitationsCreatedInput>
+}
+
+export type UserUpsertWithoutAdminInvitationsCreatedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAdminInvitationsCreatedInput, Prisma.UserUncheckedUpdateWithoutAdminInvitationsCreatedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAdminInvitationsCreatedInput, Prisma.UserUncheckedCreateWithoutAdminInvitationsCreatedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutAdminInvitationsCreatedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAdminInvitationsCreatedInput, Prisma.UserUncheckedUpdateWithoutAdminInvitationsCreatedInput>
+}
+
+export type UserUpdateWithoutAdminInvitationsCreatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  candidateProfile?: Prisma.CandidateProfileUpdateOneWithoutUserNestedInput
+  companyProfile?: Prisma.CompanyProfileUpdateOneWithoutOwnerNestedInput
+  companyMemberships?: Prisma.CompanyMemberUpdateManyWithoutUserNestedInput
+  reportsCreated?: Prisma.ReportUpdateManyWithoutReporterNestedInput
+  reportsAgainst?: Prisma.ReportUpdateManyWithoutTargetUserNestedInput
+  reportsAssigned?: Prisma.ReportUpdateManyWithoutAssignedAdminNestedInput
+  moderationActions?: Prisma.ModerationActionUpdateManyWithoutAdminNestedInput
+  moderationActionsReceived?: Prisma.ModerationActionUpdateManyWithoutTargetUserNestedInput
+  statusChanges?: Prisma.ApplicationStatusHistoryUpdateManyWithoutChangedByNestedInput
+  companiesVerified?: Prisma.CompanyProfileUpdateManyWithoutVerifiedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutAdminInvitationsCreatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   candidateProfile?: Prisma.CandidateProfileUncheckedUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUncheckedUpdateOneWithoutOwnerNestedInput
@@ -1122,6 +1371,7 @@ export type UserCreateWithoutCandidateProfileInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
@@ -1130,6 +1380,7 @@ export type UserCreateWithoutCandidateProfileInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   companyProfile?: Prisma.CompanyProfileCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportCreateNestedManyWithoutAssignedAdminInput
@@ -1148,6 +1399,7 @@ export type UserUncheckedCreateWithoutCandidateProfileInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
@@ -1156,6 +1408,7 @@ export type UserUncheckedCreateWithoutCandidateProfileInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   companyProfile?: Prisma.CompanyProfileUncheckedCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportUncheckedCreateNestedManyWithoutAssignedAdminInput
@@ -1190,6 +1443,7 @@ export type UserUpdateWithoutCandidateProfileInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
@@ -1198,6 +1452,7 @@ export type UserUpdateWithoutCandidateProfileInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUpdateManyWithoutAssignedAdminNestedInput
@@ -1216,6 +1471,7 @@ export type UserUncheckedUpdateWithoutCandidateProfileInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
@@ -1224,6 +1480,7 @@ export type UserUncheckedUpdateWithoutCandidateProfileInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUncheckedUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUncheckedUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUncheckedUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUncheckedUpdateManyWithoutAssignedAdminNestedInput
@@ -1242,6 +1499,7 @@ export type UserCreateWithoutCompanyProfileInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
@@ -1250,6 +1508,7 @@ export type UserCreateWithoutCompanyProfileInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   candidateProfile?: Prisma.CandidateProfileCreateNestedOneWithoutUserInput
   companyMemberships?: Prisma.CompanyMemberCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportCreateNestedManyWithoutAssignedAdminInput
@@ -1268,6 +1527,7 @@ export type UserUncheckedCreateWithoutCompanyProfileInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
@@ -1276,6 +1536,7 @@ export type UserUncheckedCreateWithoutCompanyProfileInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   candidateProfile?: Prisma.CandidateProfileUncheckedCreateNestedOneWithoutUserInput
   companyMemberships?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportUncheckedCreateNestedManyWithoutAssignedAdminInput
@@ -1299,6 +1560,7 @@ export type UserCreateWithoutCompaniesVerifiedInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
@@ -1308,6 +1570,7 @@ export type UserCreateWithoutCompaniesVerifiedInput = {
   candidateProfile?: Prisma.CandidateProfileCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportCreateNestedManyWithoutAssignedAdminInput
@@ -1325,6 +1588,7 @@ export type UserUncheckedCreateWithoutCompaniesVerifiedInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
@@ -1334,6 +1598,7 @@ export type UserUncheckedCreateWithoutCompaniesVerifiedInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileUncheckedCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportUncheckedCreateNestedManyWithoutAssignedAdminInput
@@ -1367,6 +1632,7 @@ export type UserUpdateWithoutCompanyProfileInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
@@ -1375,6 +1641,7 @@ export type UserUpdateWithoutCompanyProfileInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   candidateProfile?: Prisma.CandidateProfileUpdateOneWithoutUserNestedInput
   companyMemberships?: Prisma.CompanyMemberUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUpdateManyWithoutAssignedAdminNestedInput
@@ -1393,6 +1660,7 @@ export type UserUncheckedUpdateWithoutCompanyProfileInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
@@ -1401,6 +1669,7 @@ export type UserUncheckedUpdateWithoutCompanyProfileInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   candidateProfile?: Prisma.CandidateProfileUncheckedUpdateOneWithoutUserNestedInput
   companyMemberships?: Prisma.CompanyMemberUncheckedUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUncheckedUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUncheckedUpdateManyWithoutAssignedAdminNestedInput
@@ -1430,6 +1699,7 @@ export type UserUpdateWithoutCompaniesVerifiedInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
@@ -1439,6 +1709,7 @@ export type UserUpdateWithoutCompaniesVerifiedInput = {
   candidateProfile?: Prisma.CandidateProfileUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUpdateManyWithoutAssignedAdminNestedInput
@@ -1456,6 +1727,7 @@ export type UserUncheckedUpdateWithoutCompaniesVerifiedInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
@@ -1465,6 +1737,7 @@ export type UserUncheckedUpdateWithoutCompaniesVerifiedInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUncheckedUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUncheckedUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUncheckedUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUncheckedUpdateManyWithoutAssignedAdminNestedInput
@@ -1482,6 +1755,7 @@ export type UserCreateWithoutCompanyMembershipsInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
@@ -1490,6 +1764,7 @@ export type UserCreateWithoutCompanyMembershipsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   candidateProfile?: Prisma.CandidateProfileCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileCreateNestedOneWithoutOwnerInput
+  adminInvitationsCreated?: Prisma.AdminInvitationCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportCreateNestedManyWithoutAssignedAdminInput
@@ -1508,6 +1783,7 @@ export type UserUncheckedCreateWithoutCompanyMembershipsInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
@@ -1516,6 +1792,7 @@ export type UserUncheckedCreateWithoutCompanyMembershipsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   candidateProfile?: Prisma.CandidateProfileUncheckedCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileUncheckedCreateNestedOneWithoutOwnerInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportUncheckedCreateNestedManyWithoutAssignedAdminInput
@@ -1550,6 +1827,7 @@ export type UserUpdateWithoutCompanyMembershipsInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
@@ -1558,6 +1836,7 @@ export type UserUpdateWithoutCompanyMembershipsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   candidateProfile?: Prisma.CandidateProfileUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUpdateOneWithoutOwnerNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUpdateManyWithoutAssignedAdminNestedInput
@@ -1576,6 +1855,7 @@ export type UserUncheckedUpdateWithoutCompanyMembershipsInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
@@ -1584,6 +1864,7 @@ export type UserUncheckedUpdateWithoutCompanyMembershipsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   candidateProfile?: Prisma.CandidateProfileUncheckedUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUncheckedUpdateOneWithoutOwnerNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUncheckedUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUncheckedUpdateManyWithoutAssignedAdminNestedInput
@@ -1602,6 +1883,7 @@ export type UserCreateWithoutStatusChangesInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
@@ -1611,6 +1893,7 @@ export type UserCreateWithoutStatusChangesInput = {
   candidateProfile?: Prisma.CandidateProfileCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportCreateNestedManyWithoutAssignedAdminInput
@@ -1628,6 +1911,7 @@ export type UserUncheckedCreateWithoutStatusChangesInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
@@ -1637,6 +1921,7 @@ export type UserUncheckedCreateWithoutStatusChangesInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileUncheckedCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportUncheckedCreateNestedManyWithoutAssignedAdminInput
@@ -1670,6 +1955,7 @@ export type UserUpdateWithoutStatusChangesInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
@@ -1679,6 +1965,7 @@ export type UserUpdateWithoutStatusChangesInput = {
   candidateProfile?: Prisma.CandidateProfileUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUpdateManyWithoutAssignedAdminNestedInput
@@ -1696,6 +1983,7 @@ export type UserUncheckedUpdateWithoutStatusChangesInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
@@ -1705,6 +1993,7 @@ export type UserUncheckedUpdateWithoutStatusChangesInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUncheckedUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUncheckedUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUncheckedUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUncheckedUpdateManyWithoutAssignedAdminNestedInput
@@ -1722,6 +2011,7 @@ export type UserCreateWithoutNotificationsInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
@@ -1730,6 +2020,7 @@ export type UserCreateWithoutNotificationsInput = {
   candidateProfile?: Prisma.CandidateProfileCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportCreateNestedManyWithoutAssignedAdminInput
@@ -1748,6 +2039,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
@@ -1756,6 +2048,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileUncheckedCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportUncheckedCreateNestedManyWithoutAssignedAdminInput
@@ -1790,6 +2083,7 @@ export type UserUpdateWithoutNotificationsInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
@@ -1798,6 +2092,7 @@ export type UserUpdateWithoutNotificationsInput = {
   candidateProfile?: Prisma.CandidateProfileUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUpdateManyWithoutAssignedAdminNestedInput
@@ -1816,6 +2111,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
@@ -1824,6 +2120,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUncheckedUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUncheckedUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUncheckedUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUncheckedUpdateManyWithoutAssignedAdminNestedInput
@@ -1842,6 +2139,7 @@ export type UserCreateWithoutReportsCreatedInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
@@ -1851,6 +2149,7 @@ export type UserCreateWithoutReportsCreatedInput = {
   candidateProfile?: Prisma.CandidateProfileCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationCreateNestedManyWithoutInvitedByInput
   reportsAgainst?: Prisma.ReportCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportCreateNestedManyWithoutAssignedAdminInput
   moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutAdminInput
@@ -1868,6 +2167,7 @@ export type UserUncheckedCreateWithoutReportsCreatedInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
@@ -1877,6 +2177,7 @@ export type UserUncheckedCreateWithoutReportsCreatedInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileUncheckedCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedCreateNestedManyWithoutInvitedByInput
   reportsAgainst?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportUncheckedCreateNestedManyWithoutAssignedAdminInput
   moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutAdminInput
@@ -1899,6 +2200,7 @@ export type UserCreateWithoutReportsAgainstInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
@@ -1908,6 +2210,7 @@ export type UserCreateWithoutReportsAgainstInput = {
   candidateProfile?: Prisma.CandidateProfileCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAssigned?: Prisma.ReportCreateNestedManyWithoutAssignedAdminInput
   moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutAdminInput
@@ -1925,6 +2228,7 @@ export type UserUncheckedCreateWithoutReportsAgainstInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
@@ -1934,6 +2238,7 @@ export type UserUncheckedCreateWithoutReportsAgainstInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileUncheckedCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAssigned?: Prisma.ReportUncheckedCreateNestedManyWithoutAssignedAdminInput
   moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutAdminInput
@@ -1956,6 +2261,7 @@ export type UserCreateWithoutReportsAssignedInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
@@ -1965,6 +2271,7 @@ export type UserCreateWithoutReportsAssignedInput = {
   candidateProfile?: Prisma.CandidateProfileCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportCreateNestedManyWithoutTargetUserInput
   moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutAdminInput
@@ -1982,6 +2289,7 @@ export type UserUncheckedCreateWithoutReportsAssignedInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
@@ -1991,6 +2299,7 @@ export type UserUncheckedCreateWithoutReportsAssignedInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileUncheckedCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetUserInput
   moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutAdminInput
@@ -2024,6 +2333,7 @@ export type UserUpdateWithoutReportsCreatedInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
@@ -2033,6 +2343,7 @@ export type UserUpdateWithoutReportsCreatedInput = {
   candidateProfile?: Prisma.CandidateProfileUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUpdateManyWithoutInvitedByNestedInput
   reportsAgainst?: Prisma.ReportUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUpdateManyWithoutAssignedAdminNestedInput
   moderationActions?: Prisma.ModerationActionUpdateManyWithoutAdminNestedInput
@@ -2050,6 +2361,7 @@ export type UserUncheckedUpdateWithoutReportsCreatedInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
@@ -2059,6 +2371,7 @@ export type UserUncheckedUpdateWithoutReportsCreatedInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUncheckedUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUncheckedUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   reportsAgainst?: Prisma.ReportUncheckedUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUncheckedUpdateManyWithoutAssignedAdminNestedInput
   moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutAdminNestedInput
@@ -2087,6 +2400,7 @@ export type UserUpdateWithoutReportsAgainstInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
@@ -2096,6 +2410,7 @@ export type UserUpdateWithoutReportsAgainstInput = {
   candidateProfile?: Prisma.CandidateProfileUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAssigned?: Prisma.ReportUpdateManyWithoutAssignedAdminNestedInput
   moderationActions?: Prisma.ModerationActionUpdateManyWithoutAdminNestedInput
@@ -2113,6 +2428,7 @@ export type UserUncheckedUpdateWithoutReportsAgainstInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
@@ -2122,6 +2438,7 @@ export type UserUncheckedUpdateWithoutReportsAgainstInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUncheckedUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUncheckedUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAssigned?: Prisma.ReportUncheckedUpdateManyWithoutAssignedAdminNestedInput
   moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutAdminNestedInput
@@ -2150,6 +2467,7 @@ export type UserUpdateWithoutReportsAssignedInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
@@ -2159,6 +2477,7 @@ export type UserUpdateWithoutReportsAssignedInput = {
   candidateProfile?: Prisma.CandidateProfileUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUpdateManyWithoutTargetUserNestedInput
   moderationActions?: Prisma.ModerationActionUpdateManyWithoutAdminNestedInput
@@ -2176,6 +2495,7 @@ export type UserUncheckedUpdateWithoutReportsAssignedInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
@@ -2185,6 +2505,7 @@ export type UserUncheckedUpdateWithoutReportsAssignedInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUncheckedUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUncheckedUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUncheckedUpdateManyWithoutTargetUserNestedInput
   moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutAdminNestedInput
@@ -2202,6 +2523,7 @@ export type UserCreateWithoutModerationActionsInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
@@ -2211,6 +2533,7 @@ export type UserCreateWithoutModerationActionsInput = {
   candidateProfile?: Prisma.CandidateProfileCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportCreateNestedManyWithoutAssignedAdminInput
@@ -2228,6 +2551,7 @@ export type UserUncheckedCreateWithoutModerationActionsInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
@@ -2237,6 +2561,7 @@ export type UserUncheckedCreateWithoutModerationActionsInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileUncheckedCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportUncheckedCreateNestedManyWithoutAssignedAdminInput
@@ -2259,6 +2584,7 @@ export type UserCreateWithoutModerationActionsReceivedInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
@@ -2268,6 +2594,7 @@ export type UserCreateWithoutModerationActionsReceivedInput = {
   candidateProfile?: Prisma.CandidateProfileCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportCreateNestedManyWithoutAssignedAdminInput
@@ -2285,6 +2612,7 @@ export type UserUncheckedCreateWithoutModerationActionsReceivedInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
@@ -2294,6 +2622,7 @@ export type UserUncheckedCreateWithoutModerationActionsReceivedInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileUncheckedCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportUncheckedCreateNestedManyWithoutAssignedAdminInput
@@ -2327,6 +2656,7 @@ export type UserUpdateWithoutModerationActionsInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
@@ -2336,6 +2666,7 @@ export type UserUpdateWithoutModerationActionsInput = {
   candidateProfile?: Prisma.CandidateProfileUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUpdateManyWithoutAssignedAdminNestedInput
@@ -2353,6 +2684,7 @@ export type UserUncheckedUpdateWithoutModerationActionsInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
@@ -2362,6 +2694,7 @@ export type UserUncheckedUpdateWithoutModerationActionsInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUncheckedUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUncheckedUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUncheckedUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUncheckedUpdateManyWithoutAssignedAdminNestedInput
@@ -2390,6 +2723,7 @@ export type UserUpdateWithoutModerationActionsReceivedInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
@@ -2399,6 +2733,7 @@ export type UserUpdateWithoutModerationActionsReceivedInput = {
   candidateProfile?: Prisma.CandidateProfileUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUpdateManyWithoutAssignedAdminNestedInput
@@ -2416,6 +2751,7 @@ export type UserUncheckedUpdateWithoutModerationActionsReceivedInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
@@ -2425,6 +2761,7 @@ export type UserUncheckedUpdateWithoutModerationActionsReceivedInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUncheckedUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUncheckedUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUncheckedUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUncheckedUpdateManyWithoutAssignedAdminNestedInput
@@ -2442,6 +2779,7 @@ export type UserCreateWithoutAuditLogsInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
@@ -2451,6 +2789,7 @@ export type UserCreateWithoutAuditLogsInput = {
   candidateProfile?: Prisma.CandidateProfileCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportCreateNestedManyWithoutAssignedAdminInput
@@ -2468,6 +2807,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   status?: $Enums.UserStatus
   emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
+  onboardingStep?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
@@ -2477,6 +2817,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedCreateNestedOneWithoutUserInput
   companyProfile?: Prisma.CompanyProfileUncheckedCreateNestedOneWithoutOwnerInput
   companyMemberships?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutUserInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedCreateNestedManyWithoutInvitedByInput
   reportsCreated?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAgainst?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetUserInput
   reportsAssigned?: Prisma.ReportUncheckedCreateNestedManyWithoutAssignedAdminInput
@@ -2510,6 +2851,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
@@ -2519,6 +2861,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   candidateProfile?: Prisma.CandidateProfileUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUpdateManyWithoutAssignedAdminNestedInput
@@ -2536,6 +2879,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStep?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
@@ -2545,6 +2889,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   candidateProfile?: Prisma.CandidateProfileUncheckedUpdateOneWithoutUserNestedInput
   companyProfile?: Prisma.CompanyProfileUncheckedUpdateOneWithoutOwnerNestedInput
   companyMemberships?: Prisma.CompanyMemberUncheckedUpdateManyWithoutUserNestedInput
+  adminInvitationsCreated?: Prisma.AdminInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   reportsCreated?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAgainst?: Prisma.ReportUncheckedUpdateManyWithoutTargetUserNestedInput
   reportsAssigned?: Prisma.ReportUncheckedUpdateManyWithoutAssignedAdminNestedInput
@@ -2565,6 +2910,7 @@ export type UserCountOutputType = {
   verificationTokens: number
   notifications: number
   companyMemberships: number
+  adminInvitationsCreated: number
   reportsCreated: number
   reportsAgainst: number
   reportsAssigned: number
@@ -2581,6 +2927,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   verificationTokens?: boolean | UserCountOutputTypeCountVerificationTokensArgs
   notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
   companyMemberships?: boolean | UserCountOutputTypeCountCompanyMembershipsArgs
+  adminInvitationsCreated?: boolean | UserCountOutputTypeCountAdminInvitationsCreatedArgs
   reportsCreated?: boolean | UserCountOutputTypeCountReportsCreatedArgs
   reportsAgainst?: boolean | UserCountOutputTypeCountReportsAgainstArgs
   reportsAssigned?: boolean | UserCountOutputTypeCountReportsAssignedArgs
@@ -2634,6 +2981,13 @@ export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Ty
  */
 export type UserCountOutputTypeCountCompanyMembershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.CompanyMemberWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountAdminInvitationsCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AdminInvitationWhereInput
 }
 
 /**
@@ -2701,6 +3055,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   status?: boolean
   emailVerifiedAt?: boolean
   lastLoginAt?: boolean
+  onboardingStep?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   oauthAccounts?: boolean | Prisma.User$oauthAccountsArgs<ExtArgs>
@@ -2710,6 +3065,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   candidateProfile?: boolean | Prisma.User$candidateProfileArgs<ExtArgs>
   companyProfile?: boolean | Prisma.User$companyProfileArgs<ExtArgs>
   companyMemberships?: boolean | Prisma.User$companyMembershipsArgs<ExtArgs>
+  adminInvitationsCreated?: boolean | Prisma.User$adminInvitationsCreatedArgs<ExtArgs>
   reportsCreated?: boolean | Prisma.User$reportsCreatedArgs<ExtArgs>
   reportsAgainst?: boolean | Prisma.User$reportsAgainstArgs<ExtArgs>
   reportsAssigned?: boolean | Prisma.User$reportsAssignedArgs<ExtArgs>
@@ -2729,6 +3085,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   status?: boolean
   emailVerifiedAt?: boolean
   lastLoginAt?: boolean
+  onboardingStep?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -2741,6 +3098,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   status?: boolean
   emailVerifiedAt?: boolean
   lastLoginAt?: boolean
+  onboardingStep?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -2753,11 +3111,12 @@ export type UserSelectScalar = {
   status?: boolean
   emailVerifiedAt?: boolean
   lastLoginAt?: boolean
+  onboardingStep?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "role" | "status" | "emailVerifiedAt" | "lastLoginAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "role" | "status" | "emailVerifiedAt" | "lastLoginAt" | "onboardingStep" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   oauthAccounts?: boolean | Prisma.User$oauthAccountsArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
@@ -2766,6 +3125,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   candidateProfile?: boolean | Prisma.User$candidateProfileArgs<ExtArgs>
   companyProfile?: boolean | Prisma.User$companyProfileArgs<ExtArgs>
   companyMemberships?: boolean | Prisma.User$companyMembershipsArgs<ExtArgs>
+  adminInvitationsCreated?: boolean | Prisma.User$adminInvitationsCreatedArgs<ExtArgs>
   reportsCreated?: boolean | Prisma.User$reportsCreatedArgs<ExtArgs>
   reportsAgainst?: boolean | Prisma.User$reportsAgainstArgs<ExtArgs>
   reportsAssigned?: boolean | Prisma.User$reportsAssignedArgs<ExtArgs>
@@ -2789,6 +3149,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     candidateProfile: Prisma.$CandidateProfilePayload<ExtArgs> | null
     companyProfile: Prisma.$CompanyProfilePayload<ExtArgs> | null
     companyMemberships: Prisma.$CompanyMemberPayload<ExtArgs>[]
+    adminInvitationsCreated: Prisma.$AdminInvitationPayload<ExtArgs>[]
     reportsCreated: Prisma.$ReportPayload<ExtArgs>[]
     reportsAgainst: Prisma.$ReportPayload<ExtArgs>[]
     reportsAssigned: Prisma.$ReportPayload<ExtArgs>[]
@@ -2806,6 +3167,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     status: $Enums.UserStatus
     emailVerifiedAt: Date | null
     lastLoginAt: Date | null
+    onboardingStep: number | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -3209,6 +3571,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   candidateProfile<T extends Prisma.User$candidateProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$candidateProfileArgs<ExtArgs>>): Prisma.Prisma__CandidateProfileClient<runtime.Types.Result.GetResult<Prisma.$CandidateProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   companyProfile<T extends Prisma.User$companyProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$companyProfileArgs<ExtArgs>>): Prisma.Prisma__CompanyProfileClient<runtime.Types.Result.GetResult<Prisma.$CompanyProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   companyMemberships<T extends Prisma.User$companyMembershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$companyMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CompanyMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  adminInvitationsCreated<T extends Prisma.User$adminInvitationsCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$adminInvitationsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AdminInvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reportsCreated<T extends Prisma.User$reportsCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reportsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reportsAgainst<T extends Prisma.User$reportsAgainstArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reportsAgainstArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reportsAssigned<T extends Prisma.User$reportsAssignedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reportsAssignedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3253,6 +3616,7 @@ export interface UserFieldRefs {
   readonly status: Prisma.FieldRef<"User", 'UserStatus'>
   readonly emailVerifiedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly lastLoginAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly onboardingStep: Prisma.FieldRef<"User", 'Int'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }
@@ -3803,6 +4167,30 @@ export type User$companyMembershipsArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.CompanyMemberScalarFieldEnum | Prisma.CompanyMemberScalarFieldEnum[]
+}
+
+/**
+ * User.adminInvitationsCreated
+ */
+export type User$adminInvitationsCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AdminInvitation
+   */
+  select?: Prisma.AdminInvitationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AdminInvitation
+   */
+  omit?: Prisma.AdminInvitationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdminInvitationInclude<ExtArgs> | null
+  where?: Prisma.AdminInvitationWhereInput
+  orderBy?: Prisma.AdminInvitationOrderByWithRelationInput | Prisma.AdminInvitationOrderByWithRelationInput[]
+  cursor?: Prisma.AdminInvitationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AdminInvitationScalarFieldEnum | Prisma.AdminInvitationScalarFieldEnum[]
 }
 
 /**

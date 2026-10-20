@@ -12,7 +12,8 @@
 export const UserRole = {
   CANDIDATE: 'CANDIDATE',
   COMPANY: 'COMPANY',
-  ADMIN: 'ADMIN'
+  ADMIN: 'ADMIN',
+  SUPERADMIN: 'SUPERADMIN'
 } as const
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
@@ -195,7 +196,8 @@ export type CompanyMemberRole = (typeof CompanyMemberRole)[keyof typeof CompanyM
 
 export const TokenType = {
   EMAIL_VERIFICATION: 'EMAIL_VERIFICATION',
-  PASSWORD_RESET: 'PASSWORD_RESET'
+  PASSWORD_RESET: 'PASSWORD_RESET',
+  ADMIN_INVITATION: 'ADMIN_INVITATION'
 } as const
 
 export type TokenType = (typeof TokenType)[keyof typeof TokenType]
@@ -214,6 +216,8 @@ export type NotificationType = (typeof NotificationType)[keyof typeof Notificati
 
 
 export const AuditActionType = {
+  ADMIN_INVITATION_CREATED: 'ADMIN_INVITATION_CREATED',
+  ADMIN_INVITATION_ACCEPTED: 'ADMIN_INVITATION_ACCEPTED',
   USER_ROLE_CHANGED: 'USER_ROLE_CHANGED',
   USER_EMAIL_CHANGED: 'USER_EMAIL_CHANGED',
   USER_STATUS_CHANGED: 'USER_STATUS_CHANGED',
@@ -223,7 +227,8 @@ export const AuditActionType = {
   JOB_REMOVED: 'JOB_REMOVED',
   APPLICATION_STATUS_CHANGED: 'APPLICATION_STATUS_CHANGED',
   REPORT_RESOLVED: 'REPORT_RESOLVED',
-  MODERATION_ACTION_APPLIED: 'MODERATION_ACTION_APPLIED'
+  MODERATION_ACTION_APPLIED: 'MODERATION_ACTION_APPLIED',
+  JOB_STATUS_CHANGED: 'JOB_STATUS_CHANGED'
 } as const
 
 export type AuditActionType = (typeof AuditActionType)[keyof typeof AuditActionType]

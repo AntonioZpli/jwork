@@ -19,25 +19,27 @@ function getInitialTheme(): Theme {
 
 const theme = ref<Theme>(getInitialTheme())
 
+// Keep one document synchronizer for the whole app so direct routes (including
+// /admin, verification and password reset) always restore the saved theme.
+watchEffect(() => {
+  if (typeof document !== 'undefined') {
+    document.documentElement.classList.toggle('dark', theme.value === 'dark')
+    try {
+      localStorage.setItem(STORAGE_KEY, theme.value)
+    } catch {
+      // localStorage may be unavailable in private browsing.
+    }
+  }
+})
+
+function toggleTheme() {
+  theme.value = theme.value === 'dark' ? 'light' : 'dark'
+}
+
 /**
  * Centralized theme composable.
- * Applies `.dark` class to `document.documentElement` and persists preference.
+ * Returns the shared theme state and its toggle action.
  */
 export function useTheme() {
-  watchEffect(() => {
-    if (typeof document !== 'undefined') {
-      document.documentElement.classList.toggle('dark', theme.value === 'dark')
-      try {
-        localStorage.setItem(STORAGE_KEY, theme.value)
-      } catch {
-        // localStorage may be unavailable (private mode, etc.)
-      }
-    }
-  })
-
-  function toggleTheme() {
-    theme.value = theme.value === 'dark' ? 'light' : 'dark'
-  }
-
   return { theme, toggleTheme }
 }

@@ -1,28 +1,29 @@
 {
-    "scripts":  {
-                    "dev":  "tsx watch src/server.ts",
-                    "build":  "tsc --project tsconfig.json",
-                    "start":  "node --import tsx src/server.ts",
-                    "type-check":  "tsc --noEmit --project tsconfig.json",
-                    "test":  "tsx --test src/server.auth.test.ts src/admin.auth.test.ts src/lib/email.test.ts",
-                    "bootstrap:superadmin": "tsx scripts/bootstrap-superadmin.ts",
-                    "postinstall":  "prisma skills sync || exit 0"
-                },
-    "dependencies":  {
-                         "@fastify/cookie":  "^11.1.1",
-                         "@fastify/cors":  "^11.3.1",
-                         "@prisma/adapter-pg":  "^7.10.0",
-                         "@prisma/client":  "7.10.0",
-                         "dotenv":  "^18.0.7",
-                         "fastify":  "^5.12.5",
-                         "pg":  "^8.23.1",
-                         "resend":  "^6.32.1"
-                     },
-    "devDependencies":  {
-                            "@types/node":  "^26.6.5",
-                            "@types/pg":  "^8.23.1",
-                            "prisma":  "7.10.0",
-                            "tsx":  "^4.23.15",
-                            "typescript":  "^7.0.2"
-                        }
+    "scripts": {
+        "dev": "tsx watch src/server.ts",
+        "build": "tsc --project tsconfig.json",
+        "start": "node --import tsx src/server.ts",
+        "type-check": "tsc --noEmit --project tsconfig.json",
+        "test": "tsx --test src/server.auth.test.ts src/server.login-security.test.ts src/admin.auth.test.ts src/lib/email.test.ts",
+        "bootstrap:superadmin": "tsx scripts/bootstrap-superadmin.ts",
+        "postinstall": "prisma skills sync || exit 0"
+    },
+    "dependencies": {
+        "@fastify/cookie": "^11.1.1",
+        "@fastify/cors": "^11.3.1",
+        "@prisma/adapter-pg": "^7.10.0",
+        "@prisma/client": "7.10.0",
+        "dotenv": "^18.0.7",
+        "fastify": "^5.12.5",
+        "nodemailer": "^10.2.0",
+        "pg": "^8.23.1"
+    },
+    "devDependencies": {
+        "@types/node": "^26.6.5",
+        "@types/nodemailer": "^8.0.2",
+        "@types/pg": "^8.23.1",
+        "prisma": "7.10.0",
+        "tsx": "^4.23.15",
+        "typescript": "^7.0.2"
+    }
 }

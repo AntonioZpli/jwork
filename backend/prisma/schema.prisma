@@ -144,6 +144,7 @@ enum TokenType {
   EMAIL_VERIFICATION
   PASSWORD_RESET
   ADMIN_INVITATION
+  LOGIN_SECURITY
 }
 
 enum NotificationType {

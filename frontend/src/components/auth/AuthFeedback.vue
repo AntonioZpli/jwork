@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { CircleAlert, Info, X } from '@lucide/vue'
+import { CircleAlert, CircleCheck, Info, X } from '@lucide/vue'
 
 withDefaults(defineProps<{
   message: string
-  variant?: 'info' | 'error'
+  variant?: 'info' | 'success' | 'error'
 }>(), { variant: 'info' })
 
 defineEmits<{
@@ -18,7 +18,7 @@ defineEmits<{
     :role="variant === 'error' ? 'alert' : 'status'"
     :aria-live="variant === 'error' ? 'assertive' : 'polite'"
   >
-    <component :is="variant === 'error' ? CircleAlert : Info" :size="18" class="auth-feedback__icon" aria-hidden="true" />
+    <component :is="variant === 'error' ? CircleAlert : variant === 'success' ? CircleCheck : Info" :size="18" class="auth-feedback__icon" aria-hidden="true" />
     <p class="auth-feedback__text">{{ message }}</p>
     <button
       type="button"
@@ -35,11 +35,12 @@ defineEmits<{
 .auth-feedback {
   display: flex;
   align-items: flex-start;
+  min-width: 0;
   gap: 0.65rem;
   padding: 0.85rem 1rem;
   background: var(--secondary);
   border: 1px solid oklch(from var(--primary) l c h / 0.25);
-  border-radius: 6px;
+  border-radius: 0.8rem;
 }
 
 .auth-feedback__icon {
@@ -58,8 +59,29 @@ defineEmits<{
   color: #b42318;
 }
 
+html.dark .auth-feedback--error .auth-feedback__icon,
+html.dark .auth-feedback--error .auth-feedback__text {
+  color: #ff9b95;
+}
+
+.auth-feedback--success {
+  background: color-mix(in srgb, #16803c 8%, var(--background));
+  border-color: color-mix(in srgb, #16803c 32%, transparent);
+}
+
+.auth-feedback--success .auth-feedback__icon,
+.auth-feedback--success .auth-feedback__text {
+  color: #147a37;
+}
+
+html.dark .auth-feedback--success .auth-feedback__icon,
+html.dark .auth-feedback--success .auth-feedback__text {
+  color: #9be3ad;
+}
+
 .auth-feedback__text {
   flex: 1;
+  min-width: 0;
   margin: 0;
   font-size: 0.83rem;
   color: var(--foreground);
@@ -67,15 +89,26 @@ defineEmits<{
 }
 
 .auth-feedback__dismiss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
   background: none;
   border: none;
+  border-radius: 0.4rem;
   cursor: pointer;
   font-size: 1.2rem;
   line-height: 1;
   color: var(--muted-foreground);
   padding: 0;
-  margin-top: -2px;
+  margin: -0.4rem -0.65rem 0 0;
+}
+
+@media (max-width: 420px) {
+  .auth-feedback { gap: 0.5rem; padding: 0.75rem; }
+  .auth-feedback__text { font-size: 0.8rem; overflow-wrap: anywhere; }
 }
 
 .auth-feedback__dismiss:hover {

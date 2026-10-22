@@ -2,7 +2,8 @@
 import crypto from 'node:crypto'
 import type { PrismaClient } from './generated/prisma/client'
 import { config } from './config'
-import { EmailDeliveryError, sendAdminInvitationEmail } from './lib/email'
+import { EmailDeliveryError, sendAdminCredentialsEmail } from './lib/email'
+import { hashPassword } from './lib/auth'
 
 type AdminUser = { id: string; email: string; role: string; status: string }
 type SessionResolver = (request: any) => Promise<AdminUser | null>
@@ -16,7 +17,7 @@ export async function registerAdminRoutes(
   app: FastifyInstance,
   db: PrismaClient,
   resolveUser: SessionResolver,
-  deliverAdminInvitationEmail: typeof sendAdminInvitationEmail = sendAdminInvitationEmail,
+  deliverAdminCredentialsEmail: typeof sendAdminCredentialsEmail = sendAdminCredentialsEmail,
 ) {
   async function requireAdmin(request: any, reply: any, superadmin = false) {
     const user = await resolveUser(request)
@@ -47,60 +48,59 @@ export async function registerAdminRoutes(
     }
 
     const existing = await db.user.findUnique({ where: { email }, select: { id: true } })
-    if (existing) {
-      return reply.code(409).send({ message: 'Ese correo ya pertenece a una cuenta. La invitación requiere una dirección nueva.' })
-    }
+    if (existing) return reply.code(409).send({ message: 'Ese correo ya pertenece a una cuenta.' })
 
-    const token = crypto.randomBytes(32).toString('hex')
-    const tokenHash = crypto.createHash('sha256').update(token).digest('hex')
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60_000)
-    let invited: { id: string; email: string }
+    const temporaryPassword = `${crypto.randomBytes(32).toString('base64url')}Aa1!`
+    const passwordHash = await hashPassword(temporaryPassword)
+    const createdAt = new Date()
+    let createdAdmin: { id: string; email: string }
     try {
-      invited = await db.$transaction(async tx => {
-        await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${email}))`
+      createdAdmin = await db.$transaction(async tx => {
         const current = await tx.user.findUnique({ where: { email }, select: { id: true } })
-        if (current) throw new Error('INVITATION_CONFLICT')
-        const recent = await tx.adminInvitation.findFirst({
-          where: { email, createdAt: { gt: new Date(Date.now() - 60_000) } },
-          select: { id: true },
-        })
-        if (recent) throw new Error('INVITATION_RECENT')
-        const invitation = await tx.adminInvitation.create({
-          data: { email, tokenHash, expiresAt, invitedByUserId: admin.id },
+        if (current) throw new Error('ADMIN_ACCOUNT_CONFLICT')
+        const user = await tx.user.create({
+          data: {
+            email,
+            passwordHash,
+            role: 'ADMIN',
+            status: 'ACTIVE',
+            emailVerifiedAt: createdAt,
+          },
           select: { id: true, email: true },
         })
         await tx.auditLog.create({ data: {
           actorUserId: admin.id,
           actionType: 'ADMIN_INVITATION_CREATED',
-          entityType: 'AdminInvitation',
-          entityId: invitation.id,
-          metadata: { email, expiresAt: expiresAt.toISOString() },
+          entityType: 'User',
+          entityId: user.id,
+          metadata: { email, role: 'ADMIN', method: 'temporary-password' },
           ipAddress: request.ip,
           userAgent: request.headers['user-agent'] ?? null,
         } })
-        return invitation
+        return user
       }, { isolationLevel: 'Serializable' })
     } catch (error: any) {
-      if (error instanceof Error && error.message === 'INVITATION_CONFLICT') return reply.code(409).send({ message: 'La cuenta ya no está disponible para invitación.' })
-      if (error instanceof Error && error.message === 'INVITATION_RECENT') return reply.code(429).send({ message: 'Ya se envió una invitación a este correo. Espera un minuto para solicitar otra.' })
-      if (error?.code === 'P2034') return reply.code(409).send({ message: 'No se pudo crear la invitación porque la cuenta cambió. Actualiza e inténtalo de nuevo.' })
+      if ((error instanceof Error && error.message === 'ADMIN_ACCOUNT_CONFLICT') || error?.code === 'P2002') return reply.code(409).send({ message: 'Ese correo ya pertenece a una cuenta.' })
+      if (error?.code === 'P2034') return reply.code(409).send({ message: 'No se pudo crear la cuenta porque los datos cambiaron. Actualiza e inténtalo de nuevo.' })
       throw error
     }
-    let invitationUrl: URL
     try {
-      invitationUrl = new URL('/auth/admin-invite', config.frontendUrl)
-      invitationUrl.searchParams.set('token', token)
-      await deliverAdminInvitationEmail(invited.email, invitationUrl.toString())
+      const loginUrl = new URL('/auth', config.frontendUrl).toString()
+      await deliverAdminCredentialsEmail(createdAdmin.email, temporaryPassword, loginUrl)
     } catch (error) {
-      await db.adminInvitation.deleteMany({ where: { id: invited.id, tokenHash, usedAt: null } })
+      try {
+        await db.user.deleteMany({ where: { id: createdAdmin.id, lastLoginAt: null } })
+      } catch {
+        request.log.error({ userId: createdAdmin.id }, 'Could not remove administrator account after credential email failure')
+      }
       if (error instanceof EmailDeliveryError) {
         request.log.error({ category: error.category, providerStatus: error.providerStatus, providerCode: error.providerCode }, 'Admin invitation email was not accepted by the provider')
       } else {
         request.log.error({ errorType: error instanceof Error ? error.name : 'UnknownError' }, 'Admin invitation email preparation failed')
       }
-      return reply.code(503).send({ code: 'ADMIN_INVITATION_EMAIL_FAILED', message: 'No se pudo enviar la invitación. Revisa la configuración de correo del servidor e inténtalo más tarde.' })
+      return reply.code(503).send({ code: 'ADMIN_CREDENTIAL_EMAIL_FAILED', message: 'No se pudo enviar el acceso. Si la cuenta no se creó, revisa la configuración de correo e inténtalo de nuevo.' })
     }
-    return reply.code(202).send({ ok: true, message: `Invitación enviada a ${invited.email}.` })
+    return reply.code(201).send({ ok: true, message: `Se creó la cuenta ADMIN y se envió una contraseña inicial a ${createdAdmin.email}.` })
   })
   function orderBy(query: any, allowed: string[], fallback: string) {
     const requested = cleanSearch(query?.sort)
@@ -120,12 +120,13 @@ export async function registerAdminRoutes(
   })
 
   app.get('/api/admin/search', async (request, reply) => {
-    if (!await requireAdmin(request, reply)) return
+    const admin = await requireAdmin(request, reply)
+    if (!admin) return
     const q = cleanSearch((request.query as any)?.q)
     if (q.length < 2) return { groups: [] }
     const contains = { contains: q, mode: 'insensitive' as const }
     const [users, companies, jobs, reports] = await Promise.all([
-      db.user.findMany({ where: { OR: [{ email: contains }, { id: contains }, { candidateProfile: { is: { OR: [{ firstName: contains }, { lastName: contains }] } } }] }, take: 5, select: { id: true, email: true, role: true, status: true } }),
+      db.user.findMany({ where: { AND: [{ OR: [{ email: contains }, { id: contains }, { candidateProfile: { is: { OR: [{ firstName: contains }, { lastName: contains }] } } }] }, ...(admin.role === 'ADMIN' ? [{ role: { not: 'SUPERADMIN' as const } }] : [])] }, take: 5, select: { id: true, email: true, role: true, status: true } }),
       db.companyProfile.findMany({ where: { OR: [{ name: contains }, { contactEmail: contains }] }, take: 5, select: { id: true, name: true, verificationStatus: true } }),
       db.job.findMany({ where: { OR: [{ title: contains }, { id: contains }] }, take: 5, select: { id: true, title: true, status: true } }),
       db.report.findMany({ where: { OR: [{ id: contains }, { description: contains }] }, take: 5, select: { id: true, reason: true, status: true } }),
@@ -139,7 +140,8 @@ export async function registerAdminRoutes(
   })
 
   app.get('/api/admin/users', async (request, reply) => {
-    if (!await requireAdmin(request, reply)) return
+    const admin = await requireAdmin(request, reply)
+    if (!admin) return
     const q = cleanSearch((request.query as any)?.q)
     const role = cleanSearch((request.query as any)?.role)
     const status = cleanSearch((request.query as any)?.status)
@@ -148,7 +150,12 @@ export async function registerAdminRoutes(
     const sortOrder = orderBy(request.query, ['email', 'role', 'status', 'createdAt', 'lastLoginAt'], 'createdAt')
     const where: any = {
       ...(q ? { OR: [{ email: { contains: q, mode: 'insensitive' } }, { id: { contains: q, mode: 'insensitive' } }, { candidateProfile: { is: { OR: [{ firstName: { contains: q, mode: 'insensitive' } }, { lastName: { contains: q, mode: 'insensitive' } }] } } }, { companyProfile: { is: { name: { contains: q, mode: 'insensitive' } } } }] } : {}),
-      ...(role && ['CANDIDATE', 'COMPANY', 'ADMIN', 'SUPERADMIN'].includes(role) ? { role } : {}),
+      ...((role && ['CANDIDATE', 'COMPANY', 'ADMIN', ...(admin.role === 'SUPERADMIN' ? ['SUPERADMIN'] : [])].includes(role)) || admin.role === 'ADMIN' ? {
+        AND: [
+          ...(role && ['CANDIDATE', 'COMPANY', 'ADMIN', ...(admin.role === 'SUPERADMIN' ? ['SUPERADMIN'] : [])].includes(role) ? [{ role }] : []),
+          ...(admin.role === 'ADMIN' ? [{ role: { not: 'SUPERADMIN' } }] : []),
+        ],
+      } : {}),
       ...(status && ['ACTIVE', 'SUSPENDED', 'BANNED'].includes(status) ? { status } : {}),
       ...(verified === 'yes' ? { emailVerifiedAt: { not: null } } : verified === 'no' ? { emailVerifiedAt: null } : {}),
     }
@@ -226,11 +233,12 @@ export async function registerAdminRoutes(
   })
 
   app.get('/api/admin/explorer', async (request, reply) => {
-    if (!await requireAdmin(request, reply)) return
+    const admin = await requireAdmin(request, reply)
+    if (!admin) return
     const query = request.query as any; const model = cleanSearch(query?.model); const q = cleanSearch(query?.q); const p = paging(query)
     // Fixed model/field allowlist; sensitive credentials and token tables are intentionally excluded.
     if (model === 'users') {
-      const where = q ? { OR: [{ email: { contains: q, mode: 'insensitive' as const } }, { id: { contains: q, mode: 'insensitive' as const } }] } : {}
+      const where = { AND: [...(q ? [{ OR: [{ email: { contains: q, mode: 'insensitive' as const } }, { id: { contains: q, mode: 'insensitive' as const } }] }] : []), ...(admin.role === 'ADMIN' ? [{ role: { not: 'SUPERADMIN' as const } }] : [])] }
       const [total, data] = await Promise.all([db.user.count({ where }), db.user.findMany({ where, skip: p.skip, take: p.take, orderBy: { createdAt: 'desc' }, select: { id: true, email: true, role: true, status: true, emailVerifiedAt: true, createdAt: true } })])
       return { model, data, page: p.page, pageSize: p.pageSize, total, fields: ['id', 'email', 'role', 'status', 'emailVerifiedAt', 'createdAt'] }
     }

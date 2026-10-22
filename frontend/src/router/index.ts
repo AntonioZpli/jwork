@@ -6,6 +6,8 @@ import AuthSuccessView from '../views/AuthSuccessView.vue'
 import PasswordResetView from '../views/PasswordResetView.vue'
 import OnboardingView from '../views/OnboardingView.vue'
 import AdminView from '../views/AdminView.vue'
+import NotFoundView from '../views/NotFoundView.vue'
+import SecurityAlertView from '../views/SecurityAlertView.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
@@ -33,6 +35,7 @@ const router = createRouter({
     },
     { path: '/auth/reset-password', name: 'password-reset', component: PasswordResetView },
     { path: '/auth/admin-invite', name: 'admin-invitation', component: PasswordResetView },
+    { path: '/auth/security-alert', name: 'security-alert', component: SecurityAlertView },
     {
       path: '/onboarding',
       name: 'onboarding',
@@ -50,6 +53,7 @@ const router = createRouter({
       name: 'about',
       component: () => import('../views/AboutView.vue'),
     },
+    { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFoundView },
   ],
 })
 

@@ -81,7 +81,7 @@ describe('registration email verification recovery', () => {
   })
 
   it('keeps the account pending and reports a provider failure without claiming success', async () => {
-    const { app, users, tokens } = await makeApp(undefined, async () => { throw new Error('resend unavailable') })
+    const { app, users, tokens } = await makeApp(undefined, async () => { throw new Error('SMTP unavailable') })
     const response = await app.inject({ method: 'POST', url: '/api/auth/register', payload })
     assert.equal(response.statusCode, 503)
     assert.equal(response.json().code, 'VERIFICATION_EMAIL_FAILED')
@@ -106,7 +106,7 @@ describe('registration email verification recovery', () => {
     assert.equal(tokens[1].usedAt, null)
   })
 
-  it('reuses the resend endpoint and reports repeated delivery failures clearly', async () => {
+  it('reuses the verification retry endpoint and reports repeated delivery failures clearly', async () => {
     const { app, tokens } = await makeApp(undefined, async () => { throw new Error('provider unavailable') })
     await app.inject({ method: 'POST', url: '/api/auth/register', payload })
     const response = await app.inject({ method: 'POST', url: '/api/auth/email/resend', payload: { email: payload.email } })

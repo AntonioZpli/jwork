@@ -197,7 +197,8 @@ export type CompanyMemberRole = (typeof CompanyMemberRole)[keyof typeof CompanyM
 export const TokenType = {
   EMAIL_VERIFICATION: 'EMAIL_VERIFICATION',
   PASSWORD_RESET: 'PASSWORD_RESET',
-  ADMIN_INVITATION: 'ADMIN_INVITATION'
+  ADMIN_INVITATION: 'ADMIN_INVITATION',
+  LOGIN_SECURITY: 'LOGIN_SECURITY'
 } as const
 
 export type TokenType = (typeof TokenType)[keyof typeof TokenType]

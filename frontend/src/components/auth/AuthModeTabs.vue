@@ -20,18 +20,16 @@ const tabs: { value: Extract<AuthMode, 'login' | 'register'>; label: string }[] 
   <div
     v-if="modelValue !== 'recover'"
     class="auth-tabs"
-    role="tablist"
+    role="group"
     aria-label="Modo de acceso"
   >
     <button
       v-for="tab in tabs"
       :key="tab.value"
       type="button"
-      role="tab"
       class="auth-tab"
       :class="{ 'auth-tab--active': modelValue === tab.value }"
-      :aria-selected="modelValue === tab.value"
-      :tabindex="modelValue === tab.value ? 0 : -1"
+      :aria-pressed="modelValue === tab.value"
       @click="emit('update:modelValue', tab.value)"
     >
       {{ tab.label }}
@@ -42,26 +40,26 @@ const tabs: { value: Extract<AuthMode, 'login' | 'register'>; label: string }[] 
 <style scoped>
 .auth-tabs {
   display: flex;
-  gap: 0;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 0.2rem;
+  gap: 0.3rem;
+  padding: 0.3rem;
+  border: 1px solid var(--border);
+  border-radius: 0.85rem;
+  background: var(--panel);
 }
 
 .auth-tab {
   flex: 1;
-  padding: 0.75rem 0;
+  min-height: 2.7rem;
+  padding: 0.55rem 0.7rem;
   background: none;
   border: none;
-  border-bottom: 2px solid transparent;
+  border-radius: 0.65rem;
   font-family: inherit;
   font-size: 0.92rem;
   font-weight: 600;
   color: var(--muted-foreground);
   cursor: pointer;
-  transition:
-    color 0.18s ease,
-    border-color 0.18s ease;
-  margin-bottom: -1px;
+  transition: color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .auth-tab:hover {
@@ -69,14 +67,19 @@ const tabs: { value: Extract<AuthMode, 'login' | 'register'>; label: string }[] 
 }
 
 .auth-tab--active {
-  color: var(--primary);
-  border-bottom-color: var(--primary);
+  color: var(--foreground);
+  background: var(--surface);
+  box-shadow: 0 1px 3px var(--shadow);
 }
 
 .auth-tab:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 4px;
   border-radius: 2px;
+}
+
+@media (max-width: 360px) {
+  .auth-tab { padding-inline: 0.35rem; font-size: 0.84rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

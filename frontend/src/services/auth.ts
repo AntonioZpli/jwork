@@ -79,9 +79,13 @@ async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T
 export const authApi = {
   getCurrentUser: () => apiRequest<{ user: AuthUser }>('/api/auth/me'),
   logout: () => apiRequest<{ ok: true }>('/api/auth/logout', { method: 'POST' }),
-  login: (email: string, password: string, rememberMe: boolean) =>
+  login: (email: string, password: string) =>
     apiRequest<{ ok: true; user: AuthUser }>('/api/auth/login', {
-      method: 'POST', body: JSON.stringify({ email, password, rememberMe }),
+      method: 'POST', body: JSON.stringify({ email, password }),
+    }),
+  reportUnrecognizedLogin: (token: string) =>
+    apiRequest<{ ok: true; message: string }>('/api/auth/security/report-unrecognized', {
+      method: 'POST', body: JSON.stringify({ token }),
     }),
   register: (data: { email: string; password: string; role: AuthRole; firstName?: string; lastName?: string; companyName?: string; phone?: string }) =>
     apiRequest<{ ok: true; pendingVerification?: boolean; message: string }>('/api/auth/register', {

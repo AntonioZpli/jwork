@@ -5,6 +5,8 @@ import { config } from './config'
 import { prisma } from './lib/prisma'
 import { sendAdminCredentialsEmail, sendLoginAlertEmail, sendVerificationEmail } from './lib/email'
 import { resolveSessionUser } from './lib/auth'
+import { ensureCatalogDefaults } from './lib/catalogDefaults'
+import { ensureNicaraguaLocationCatalog } from './lib/locationCatalog'
 import { registerAdminRoutes } from './admin'
 import { registerAuthRoutes } from './routes/auth'
 import { registerOnboardingRoutes } from './routes/onboarding'
@@ -29,6 +31,8 @@ export async function buildServer(dependencies: {
   await app.register(cookie)
 
   app.get('/api/health', async () => ({ ok: true }))
+  await ensureNicaraguaLocationCatalog(db)
+  await ensureCatalogDefaults(db)
   await registerAdminRoutes(app, db, resolveUser, deliverAdminCredentials)
   await registerAuthRoutes(app, {
     prisma: db,

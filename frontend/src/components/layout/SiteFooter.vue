@@ -51,7 +51,7 @@ import AppBrand from '@/components/ui/AppBrand.vue'
 
 <style scoped>
 .site-footer {
-  margin-top: 7rem;
+  margin-top: 0;
   background: var(--surface);
   border-top: 1px solid var(--border);
 }
@@ -60,7 +60,7 @@ import AppBrand from '@/components/ui/AppBrand.vue'
   display: grid;
   grid-template-columns: 1.6fr 1fr 1fr;
   gap: 2.5rem;
-  padding-block: 3.5rem 2rem;
+  padding-block: 3rem 2rem;
 }
 
 .site-footer__brand {

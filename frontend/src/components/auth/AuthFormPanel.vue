@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthForm } from '@/composables/useAuthForm'
 import { authApi, type ApiError } from '@/services/auth'
@@ -12,6 +12,8 @@ const router = useRouter()
 const authStore = useAuthStore()
 const { state, isRegister, setMode, setRole } = useAuthForm()
 const password = ref('')
+const rememberedEmailKey = 'jinowork.rememberedEmail'
+const rememberDevice = ref(false)
 const confirmPassword = ref('')
 const firstName = ref('')
 const lastName = ref('')
@@ -23,6 +25,18 @@ const canResend = ref(false)
 const retryBusy = ref(false)
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
+const contentRef = ref<HTMLElement | null>(null)
+let contentResizeTimer: number | undefined
+
+try {
+  const rememberedEmail = localStorage.getItem(rememberedEmailKey)
+  if (rememberedEmail) {
+    state.email = rememberedEmail
+    rememberDevice.value = true
+  }
+} catch {
+  // The login form remains usable when browser storage is unavailable.
+}
 
 const heading = computed(() => state.mode === 'register'
   ? 'Crea tu cuenta en Jinowork'
@@ -46,22 +60,58 @@ function clearFeedback() {
   feedbackVariant.value = 'info'
 }
 
+async function animateContentResize(update: () => void) {
+  const content = contentRef.value
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (!content || reduceMotion) {
+    update()
+    return
+  }
+
+  window.clearTimeout(contentResizeTimer)
+  const startHeight = content.getBoundingClientRect().height
+  content.style.height = `${startHeight}px`
+  content.style.overflow = 'hidden'
+  update()
+  await nextTick()
+
+  content.style.removeProperty('height')
+  const endHeight = content.getBoundingClientRect().height
+  content.style.height = `${startHeight}px`
+  void content.offsetHeight
+  requestAnimationFrame(() => {
+    content.style.height = `${endHeight}px`
+  })
+
+  contentResizeTimer = window.setTimeout(() => {
+    if (contentRef.value !== content) return
+    content.style.removeProperty('height')
+    content.style.removeProperty('overflow')
+  }, 380)
+}
+
 function changeMode(mode: typeof state.mode) {
-  setMode(mode)
-  password.value = ''
-  confirmPassword.value = ''
-  showPassword.value = false
-  showConfirmPassword.value = false
-  clearProfileFields()
-  clearFeedback()
-  if (mode === 'register') canResend.value = false
+  void animateContentResize(() => {
+    setMode(mode)
+    password.value = ''
+    confirmPassword.value = ''
+    showPassword.value = false
+    showConfirmPassword.value = false
+    clearProfileFields()
+    clearFeedback()
+    if (mode === 'register') canResend.value = false
+  })
 }
 
 function changeRole(role: typeof state.role) {
-  setRole(role)
-  clearProfileFields()
-  delete state.errors.profile
+  void animateContentResize(() => {
+    setRole(role)
+    clearProfileFields()
+    delete state.errors.profile
+  })
 }
+
+onBeforeUnmount(() => window.clearTimeout(contentResizeTimer))
 
 function onEmailInput() {
   delete state.errors.email
@@ -125,7 +175,7 @@ async function submit() {
       feedback.value = result.message
       feedbackVariant.value = 'success'
       canResend.value = true
-      setMode('login')
+      void animateContentResize(() => setMode('login'))
       password.value = ''
       confirmPassword.value = ''
       showPassword.value = false
@@ -136,7 +186,14 @@ async function submit() {
       feedback.value = result.message
       feedbackVariant.value = 'success'
     } else {
-      const result = await authApi.login(state.email.trim(), password.value)
+      const email = state.email.trim()
+      const result = await authApi.login(email, password.value, rememberDevice.value)
+      try {
+        if (rememberDevice.value) localStorage.setItem(rememberedEmailKey, email)
+        else localStorage.removeItem(rememberedEmailKey)
+      } catch {
+        // Remembering the email is optional; authentication already succeeded.
+      }
       authStore.user = result.user
       password.value = ''
       await router.push(['ADMIN', 'SUPERADMIN'].includes(result.user.role) ? '/admin' : '/onboarding')
@@ -148,7 +205,7 @@ async function submit() {
     canResend.value = apiError.code === 'VERIFICATION_EMAIL_FAILED'
       || (apiError.status === 403 && feedback.value.toLowerCase().includes('verifica'))
     if (state.mode === 'register' && apiError.code === 'VERIFICATION_EMAIL_FAILED') {
-      setMode('login')
+      void animateContentResize(() => setMode('login'))
       password.value = ''
       confirmPassword.value = ''
       showPassword.value = false
@@ -181,15 +238,19 @@ async function resend() {
 
 <template>
   <section class="auth-form-panel" aria-label="Formulario de acceso">
-    <div class="auth-form-panel__content">
+    <div ref="contentRef" class="auth-form-panel__content">
       <div class="auth-kicker">
         <span class="auth-kicker__line" aria-hidden="true" />
         <span>{{ state.mode === 'login' ? 'Bienvenido/a de nuevo' : 'Acceso seguro' }}</span>
       </div>
 
       <div class="auth-heading-group">
-        <h2 class="auth-heading">{{ heading }}</h2>
-        <p class="auth-sub">{{ description }}</p>
+        <Transition name="auth-copy">
+          <div :key="state.mode">
+            <h2 class="auth-heading">{{ heading }}</h2>
+            <p class="auth-sub">{{ description }}</p>
+          </div>
+        </Transition>
       </div>
 
       <AuthModeTabs :model-value="state.mode" @update:model-value="changeMode" />
@@ -197,17 +258,19 @@ async function resend() {
 
       <form class="auth-form" novalidate @submit.prevent="submit">
         <template v-if="isRegister && state.role === 'candidate'">
-          <label class="auth-field" for="auth-first-name">
-            <span>Nombre</span>
-            <input id="auth-first-name" v-model="firstName" autocomplete="given-name" maxlength="100" required :aria-invalid="Boolean(state.errors.profile)" :aria-describedby="state.errors.profile ? 'profile-error' : undefined" @input="onProfileInput" />
-          </label>
-          <label class="auth-field" for="auth-last-name">
-            <span>Apellidos</span>
-            <input id="auth-last-name" v-model="lastName" autocomplete="family-name" maxlength="100" required :aria-invalid="Boolean(state.errors.profile)" :aria-describedby="state.errors.profile ? 'profile-error' : undefined" @input="onProfileInput" />
-          </label>
+          <div class="auth-profile-fields">
+            <label class="auth-field" for="auth-first-name">
+              <span>Nombre</span>
+              <input id="auth-first-name" v-model="firstName" autocomplete="given-name" maxlength="100" required :aria-invalid="Boolean(state.errors.profile)" :aria-describedby="state.errors.profile ? 'profile-error' : undefined" @input="onProfileInput" />
+            </label>
+            <label class="auth-field" for="auth-last-name">
+              <span>Apellidos</span>
+              <input id="auth-last-name" v-model="lastName" autocomplete="family-name" maxlength="100" required :aria-invalid="Boolean(state.errors.profile)" :aria-describedby="state.errors.profile ? 'profile-error' : undefined" @input="onProfileInput" />
+            </label>
+          </div>
         </template>
 
-        <label v-else-if="isRegister" class="auth-field" for="auth-company-name">
+        <label v-else-if="isRegister" class="auth-field auth-field--reveal" for="auth-company-name">
           <span>Nombre de la empresa</span>
           <input id="auth-company-name" v-model="companyName" autocomplete="organization" maxlength="160" required :aria-invalid="Boolean(state.errors.profile)" :aria-describedby="state.errors.profile ? 'profile-error' : undefined" @input="onProfileInput" />
         </label>
@@ -258,7 +321,12 @@ async function resend() {
           <small v-if="state.errors.password" id="password-error" class="auth-field__error" role="alert">{{ state.errors.password }}</small>
         </label>
 
-        <label v-if="isRegister" class="auth-field" for="auth-password-confirmation">
+        <label v-if="state.mode === 'login'" class="auth-remember" for="auth-remember-device">
+          <input id="auth-remember-device" v-model="rememberDevice" type="checkbox" />
+          <span><strong>Recordarme en este dispositivo</strong><small></small></span>
+        </label>
+
+        <label v-if="isRegister" class="auth-field auth-field--reveal" for="auth-password-confirmation">
           <span>Confirmar contraseña</span>
           <span class="auth-password-wrap" :class="{ 'auth-password-wrap--error': state.errors.passwordConfirmation }">
             <input
@@ -326,11 +394,11 @@ async function resend() {
   z-index: 2;
   display: flex;
   flex: 1;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   max-height: 100dvh;
   overflow-y: auto;
-  padding: 2rem clamp(1.5rem, 5vw, 5rem);
+  padding: clamp(4rem, 9vh, 6rem) clamp(1.5rem, 5vw, 5rem) 2rem;
 }
 
 .auth-form-panel__content {
@@ -338,7 +406,10 @@ async function resend() {
   width: min(100%, 30rem);
   flex-direction: column;
   gap: 1.2rem;
+  margin-inline: auto;
+  will-change: height;
   animation: auth-entry 0.35s ease both;
+  transition: height 0.36s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .auth-kicker {
@@ -359,10 +430,26 @@ async function resend() {
   background: currentColor;
 }
 
+.auth-heading-group { position: relative; display: grid; }
+.auth-heading-group > * { grid-area: 1 / 1; }
+.auth-copy-enter-active,
+.auth-copy-leave-active { transition: opacity 0.26s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
+.auth-copy-enter-from { opacity: 0; transform: translateY(8px); }
+.auth-copy-leave-to { opacity: 0; transform: translateY(-5px); }
+.auth-copy-leave-active { position: absolute; inset-inline: 0; }
+
 .auth-heading { margin: 0 0 0.45rem; color: var(--foreground); font-family: Manrope, sans-serif; font-size: clamp(1.9rem, 3vw, 2.65rem); font-weight: 800; letter-spacing: -0.045em; line-height: 1.12; }
 .auth-sub { margin: 0; color: var(--muted-foreground); font-size: 0.98rem; line-height: 1.55; }
 .auth-form { display: flex; flex-direction: column; gap: 0.9rem; }
+.auth-remember { display: flex; align-items: flex-start; gap: 0.65rem; color: var(--foreground); cursor: pointer; font-size: 0.82rem; }
+.auth-remember input { width: 1rem; height: 1rem; margin: 0.1rem 0 0; accent-color: var(--primary); }
+.auth-remember span { display: grid; gap: 0.2rem; }
+.auth-remember strong { font-weight: 650; }
+.auth-remember small { color: var(--muted-foreground); font-size: 0.75rem; font-weight: 400; line-height: 1.4; }
+.auth-profile-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.9rem; }
 .auth-field { display: grid; gap: 0.42rem; color: var(--foreground); font-size: 0.88rem; font-weight: 650; }
+.auth-profile-fields,
+.auth-field--reveal { animation: auth-field-reveal 0.28s ease both; }
 
 .auth-field > input,
 .auth-password-wrap {
@@ -400,6 +487,7 @@ async function resend() {
 .auth-footer { padding-top: 0.8rem; border-top: 1px solid var(--border); color: var(--muted-foreground); font-size: 0.76rem; text-align: center; }
 
 @keyframes auth-entry { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes auth-field-reveal { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes auth-spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 760px) {
@@ -411,9 +499,15 @@ async function resend() {
   .auth-form-panel { padding-inline: 0.9rem; }
   .auth-heading { font-size: 1.8rem; }
   .auth-form { gap: 0.75rem; }
+  .auth-profile-fields { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .auth-form-panel__content, .auth-spinner, .auth-submit-btn, .auth-field > input, .auth-password-wrap { animation: none; transition: none; }
+  .auth-copy-enter-active,
+  .auth-copy-leave-active { transition: none; }
+  .auth-copy-enter-from,
+  .auth-copy-leave-to { transform: none; }
+  .auth-form-panel__content { transition: none; }
+  .auth-form-panel__content, .auth-profile-fields, .auth-field--reveal, .auth-spinner, .auth-submit-btn, .auth-field > input, .auth-password-wrap { animation: none; transition: none; }
 }
 </style>

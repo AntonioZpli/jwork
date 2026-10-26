@@ -66,4 +66,18 @@ import JobCard from './JobCard.vue'
   .featured-jobs { padding-inline: 20px; }
   .featured-jobs__grid { grid-template-columns: 1fr; }
 }
+
+.featured-jobs { padding-block: 5rem; }
+.featured-jobs { background: var(--panel); }
+.featured-jobs__header { margin-bottom: 1.35rem; }
+.featured-jobs__disclaimer { margin-top: 1.75rem; }
+.featured-jobs__grid { gap: 1.15rem; }
+.featured-jobs__header > div { min-width: 0; }
+
+@media (max-width: 1100px) {
+  .featured-jobs { padding-block: 4rem; }
+}
+@media (max-width: 560px) {
+  .featured-jobs { padding-block: 3rem; }
+}
 </style>

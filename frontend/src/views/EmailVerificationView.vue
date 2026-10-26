@@ -21,8 +21,7 @@ onMounted(async () => {
   try {
     await authStore.verifyEmailLink(token)
     status.value = 'success'
-    message.value = 'Tu correo fue verificado. Ya iniciaste sesión en Jinowork.'
-    await router.replace({ path: '/onboarding' })
+    message.value = 'Tu correo fue verificado y tu sesión ya está iniciada. Continúa para completar tu perfil.'
   } catch (error) {
     status.value = 'error'
     message.value = error instanceof Error ? error.message : 'No se pudo verificar el correo. Solicita un enlace nuevo.'
@@ -38,8 +37,8 @@ onMounted(async () => {
       </div>
       <h1>{{ status === 'success' ? 'Correo verificado' : status === 'error' ? 'No se pudo verificar' : 'Verificando correo' }}</h1>
       <p :role="status === 'error' ? 'alert' : 'status'">{{ message }}</p>
-      <button v-if="status === 'success'" type="button" @click="router.replace('/')">
-        Continuar a Jinowork
+      <button v-if="status === 'success'" type="button" @click="router.replace('/onboarding')">
+        Completar mi perfil
       </button>
       <button v-else-if="status === 'error'" type="button" @click="router.replace('/auth')">
         Volver al acceso

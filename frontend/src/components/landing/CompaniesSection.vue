@@ -186,12 +186,17 @@ const benefits = [
 .companies__title { font-size: clamp(2.2rem, 3.5vw, 3.2rem); }
 .companies__desc { font-size: 1.12rem; }
 .companies__benefit { font-size: 1rem; }
+.companies { padding-block: 4.5rem; background: var(--panel); }
+.companies__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(2rem, 4vw, 3.5rem); }
+.companies__img { height: 300px; box-shadow: 0 16px 40px rgb(23 66 117 / 10%); }
+.companies__cta { border-radius: 5px; }
 
 @media (max-width: 1100px) {
-  .companies { padding-block: 3.5rem; }
+  .companies { padding-block: 4.5rem; }
 }
 
 @media (max-width: 560px) {
   .companies { padding-inline: 20px; }
+  .companies { padding-block: 3.5rem; }
 }
 </style>

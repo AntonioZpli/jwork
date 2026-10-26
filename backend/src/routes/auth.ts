@@ -18,6 +18,7 @@ import {
 type PasswordPayload = {
   email?: string
   password?: string
+  rememberDevice?: boolean
   role?: string
   firstName?: string
   lastName?: string
@@ -234,10 +235,27 @@ export async function registerAuthRoutes(app: FastifyInstance, dependencies: {
     if (!user || !(await verifyPassword(password, user.passwordHash))) return reply.code(401).send({ message: 'Correo o contraseÃ±a incorrectos.' })
     if (user.status !== 'ACTIVE') return reply.code(403).send({ message: 'Esta cuenta no estÃ¡ habilitada para iniciar sesiÃ³n.' })
     if (!user.emailVerifiedAt) return reply.code(403).send({ code: 'EMAIL_NOT_VERIFIED', message: 'Verifica tu correo antes de iniciar sesiÃ³n.' })
+    const rememberDevice = body.rememberDevice === true
+    const deviceCookieName = 'jwork_remembered_device'
+    const rememberedToken = request.cookies?.[deviceCookieName]
+    const now = new Date()
+    const rememberedDevice = rememberedToken
+      ? await db.verificationToken.findFirst({ where: { userId: user.id, tokenHash: hashToken(rememberedToken), type: 'TRUSTED_DEVICE', usedAt: null, expiresAt: { gt: now } }, select: { id: true } })
+      : null
     const occurredAt = new Date()
     await db.user.update({ where: { id: user.id }, data: { lastLoginAt: occurredAt } })
-    await createSessionCookie(db, reply, user.id, request)
-    await notifySuccessfulLogin(user, occurredAt, request)
+    await createSessionCookie(db, reply, user.id, request, rememberDevice ? 30 * 24 * 60 * 60_000 : undefined)
+    if (rememberDevice) {
+      if (!rememberedDevice) {
+        const token = crypto.randomBytes(32).toString('hex')
+        await db.verificationToken.create({ data: { userId: user.id, tokenHash: hashToken(token), type: 'TRUSTED_DEVICE', expiresAt: new Date(Date.now() + 180 * 24 * 60 * 60_000) } })
+        reply.setCookie(deviceCookieName, token, { path: '/', httpOnly: true, sameSite: config.isProduction ? 'none' : 'lax', secure: config.isProduction, maxAge: 180 * 24 * 60 * 60 })
+      }
+    } else {
+      if (rememberedDevice) await db.verificationToken.updateMany({ where: { id: rememberedDevice.id, usedAt: null }, data: { usedAt: now } })
+      reply.clearCookie(deviceCookieName, { path: '/' })
+    }
+    if (!rememberedDevice) await notifySuccessfulLogin(user, occurredAt, request)
     return { ok: true, user: serializeUser(user) }
   })
 
@@ -269,6 +287,7 @@ export async function registerAuthRoutes(app: FastifyInstance, dependencies: {
         where: { userId: tokenRecord.userId, revokedAt: null },
         data: { revokedAt: now },
       })
+      await tx.verificationToken.updateMany({ where: { userId: tokenRecord.userId, type: 'TRUSTED_DEVICE', usedAt: null }, data: { usedAt: now } })
       return true
     })
 
@@ -318,6 +337,7 @@ export async function registerAuthRoutes(app: FastifyInstance, dependencies: {
       if (claim.count !== 1) return false
       await tx.user.update({ where: { id: token.userId }, data: { passwordHash: await hashPassword(body.password!) } })
       await tx.session.updateMany({ where: { userId: token.userId, revokedAt: null }, data: { revokedAt: new Date() } })
+      await tx.verificationToken.updateMany({ where: { userId: token.userId, type: 'TRUSTED_DEVICE', usedAt: null }, data: { usedAt: new Date() } })
       return true
     })
     if (!updated) return reply.code(400).send({ message: 'El enlace no es vÃ¡lido o ya venciÃ³.' })

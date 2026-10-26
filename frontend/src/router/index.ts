@@ -12,6 +12,12 @@ import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  scrollBehavior(to, from, savedPosition) {
+    if (!from.matched.length && to.path === '/') return { top: 0, behavior: 'instant' }
+    if (savedPosition) return savedPosition
+    if (to.hash) return { el: to.hash, top: 96, behavior: 'smooth' }
+    return { top: 0 }
+  },
   routes: [
     {
       path: '/',

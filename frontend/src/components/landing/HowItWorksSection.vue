@@ -1,5 +1,5 @@
 ﻿<script setup lang="ts">
-import { ArrowRight } from '@lucide/vue'
+import { ArrowRight, UserRound, Building2 } from '@lucide/vue'
 
 const candidateSteps = [
   { number: '01', title: 'Crea tu perfil profesional', description: 'Destaca tu experiencia, tus fortalezas y tus intereses.' },
@@ -30,7 +30,10 @@ const companySteps = [
       <div class="how-it-works__journeys">
         <!-- Candidates -->
         <div class="hiw-journey" aria-labelledby="hiw-candidates">
-          <h3 id="hiw-candidates" class="hiw-journey__title">Para quienes buscan empleo</h3>
+          <h3 id="hiw-candidates" class="hiw-journey__title">
+            <span class="hiw-journey__icon"><UserRound :size="19" aria-hidden="true" /></span>
+            Para quienes buscan empleo
+          </h3>
           <ol class="hiw-steps" role="list">
             <li v-for="step in candidateSteps" :key="step.number" class="hiw-step">
               <span class="hiw-step__number" aria-hidden="true">{{ step.number }}</span>
@@ -50,7 +53,10 @@ const companySteps = [
 
         <!-- Companies -->
         <div class="hiw-journey" aria-labelledby="hiw-companies">
-          <h3 id="hiw-companies" class="hiw-journey__title">Para las empresas</h3>
+          <h3 id="hiw-companies" class="hiw-journey__title">
+            <span class="hiw-journey__icon"><Building2 :size="19" aria-hidden="true" /></span>
+            Para las empresas
+          </h3>
           <ol class="hiw-steps" role="list">
             <li v-for="step in companySteps" :key="step.number" class="hiw-step">
               <span class="hiw-step__number" aria-hidden="true">{{ step.number }}</span>
@@ -268,5 +274,54 @@ const companySteps = [
 @media (max-width: 560px) {
   .how-it-works { padding-inline: 20px; }
   .how-it-works__journeys { grid-template-columns: 1fr; }
+}
+
+.how-it-works { padding-block: 4.5rem; }
+.how-it-works__journeys { align-items: stretch; }
+.hiw-journey {
+  min-height: 340px;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+}
+.hiw-journey__title { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; }
+.hiw-journey__icon {
+  display: inline-grid;
+  width: 2.35rem;
+  height: 2.35rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+}
+.hiw-step { grid-template-columns: 2rem minmax(0, 1fr); gap: 0.55rem; }
+.hiw-step__number { font-size: 0.9rem; }
+.hiw-step__name { font-size: 0.98rem; }
+.hiw-step__desc { font-size: 0.88rem; }
+.hiw-action { font-size: 0.9rem; }
+
+@media (max-width: 1100px) {
+  .how-it-works { padding-block: 3.75rem; }
+  .hiw-journey { min-height: 360px; padding: 1.25rem; }
+}
+@media (max-width: 800px) {
+  .hiw-journey { min-height: 0; }
+}
+@media (max-width: 760px) {
+  .how-it-works__grid { gap: 1.75rem; }
+  .how-it-works__intro { max-width: 42rem; }
+  .how-it-works__journeys { grid-template-columns: 1fr; gap: 1rem; }
+  .hiw-journey { padding: 1.25rem; }
+  .hiw-journey__title { margin-bottom: 1.1rem; }
+  .hiw-steps { gap: 1rem; }
+  .hiw-action { margin-top: 1rem; }
+}
+@media (max-width: 560px) {
+  .how-it-works { padding-block: 3rem; }
+  .hiw-title { max-width: 17ch; font-size: clamp(1.85rem, 8vw, 2.4rem); }
+  .hiw-desc { max-width: 38ch; font-size: 1rem; }
+  .hiw-journey__title { font-size: 1.05rem; }
 }
 </style>

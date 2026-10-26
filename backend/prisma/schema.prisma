@@ -145,6 +145,7 @@ enum TokenType {
   PASSWORD_RESET
   ADMIN_INVITATION
   LOGIN_SECURITY
+  TRUSTED_DEVICE
 }
 
 enum NotificationType {

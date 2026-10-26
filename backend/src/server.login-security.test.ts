@@ -86,6 +86,10 @@ async function createContext(options: {
         return { id: token.id }
       },
       findUnique: async ({ where }: any) => tokens.find(token => token.tokenHash === where.tokenHash) ?? null,
+      findFirst: async ({ where }: any) => tokens.find(token =>
+        token.userId === where.userId && token.tokenHash === where.tokenHash && token.type === where.type
+        && token.usedAt === where.usedAt && token.expiresAt > where.expiresAt.gt,
+      ) ?? null,
       updateMany: async ({ where, data }: any) => {
         let count = 0
         for (const token of tokens) {

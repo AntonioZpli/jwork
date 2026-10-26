@@ -24,6 +24,16 @@ export type OnboardingProfile = {
   contactEmail?: string | null
 }
 
+export type OnboardingState = {
+  role: 'CANDIDATE' | 'COMPANY'
+  email: string
+  emailVerified: boolean
+  step: number
+  complete: boolean
+  profile: OnboardingProfile | null
+  catalogs: OnboardingCatalogs
+}
+
 export type OnboardingOption = { id: string; name: string; departmentId?: string; professionalAreaId?: string }
 export type OnboardingCatalogs = {
   departments: OnboardingOption[]
@@ -79,9 +89,9 @@ async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T
 export const authApi = {
   getCurrentUser: () => apiRequest<{ user: AuthUser }>('/api/auth/me'),
   logout: () => apiRequest<{ ok: true }>('/api/auth/logout', { method: 'POST' }),
-  login: (email: string, password: string) =>
+  login: (email: string, password: string, rememberDevice = false) =>
     apiRequest<{ ok: true; user: AuthUser }>('/api/auth/login', {
-      method: 'POST', body: JSON.stringify({ email, password }),
+      method: 'POST', body: JSON.stringify({ email, password, rememberDevice }),
     }),
   reportUnrecognizedLogin: (token: string) =>
     apiRequest<{ ok: true; message: string }>('/api/auth/security/report-unrecognized', {
@@ -102,13 +112,7 @@ export const authApi = {
       body: JSON.stringify({ token }),
     }),
   getOnboarding: () =>
-    apiRequest<{
-      role: 'CANDIDATE' | 'COMPANY'
-      step: number
-      complete: boolean
-      profile: OnboardingProfile | null
-      catalogs: OnboardingCatalogs
-    }>('/api/onboarding'),
+    apiRequest<OnboardingState>('/api/onboarding'),
   saveOnboardingStep: (step: number, data: Record<string, unknown>) =>
     apiRequest<{ ok: true; step: number; profileId: string }>(`/api/onboarding/step`, {
       method: 'POST',

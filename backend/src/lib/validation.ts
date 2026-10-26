@@ -12,3 +12,14 @@ export function optionalPhone(value: unknown): string | undefined {
   if (phone && !/^\+?[0-9()\s.-]{7,40}$/.test(phone)) throw new Error('El teléfono no es válido.')
   return phone
 }
+
+export function normalizeNicaraguaPhone(value: unknown): string {
+  const phone = optionalText(value, 40, 'El teléfono') ?? ''
+  if (!/^[+\d\s().-]+$/.test(phone)) throw new Error('Ingresa un número nicaragüense válido: 8 dígitos, con o sin el prefijo +505.')
+  const digits = phone.replace(/\D/g, '')
+  const national = digits.startsWith('505') && digits.length === 11 ? digits.slice(3) : digits
+  if (!/^[2-9]\d{7}$/.test(national)) {
+    throw new Error('Ingresa un número nicaragüense válido: 8 dígitos, con o sin el prefijo +505.')
+  }
+  return `+505${national}`
+}

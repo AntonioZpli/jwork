@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import { prisma } from '../lib/prisma'
 import { resolveSessionUser } from '../lib/auth'
-import { optionalPhone, optionalText } from '../lib/validation'
+import { normalizeNicaraguaPhone, optionalPhone, optionalText } from '../lib/validation'
 
 type OnboardingPayload = {
   step?: number
@@ -31,12 +31,26 @@ function optionalCatalogId(value: unknown, label: string): string | null | undef
 
 function hasLegacyCompleteProfile(
   role: string,
-  candidateProfile: { firstName: string; lastName: string } | null,
+  candidateProfile: { firstName: string; lastName: string; phone?: string | null; departmentId?: string | null; municipalityId?: string | null; professionalAreaId?: string | null } | null,
   companyProfile: { name: string } | null,
 ): boolean {
-  if (role === 'CANDIDATE') return Boolean(candidateProfile?.firstName.trim() && candidateProfile.lastName.trim())
+  if (role === 'CANDIDATE') return isCompleteCandidateProfile(candidateProfile)
   if (role === 'COMPANY') return Boolean(companyProfile?.name.trim())
   return false
+}
+
+function isCompleteCandidateProfile(profile: { firstName: string; lastName: string; phone?: string | null; departmentId?: string | null; municipalityId?: string | null; professionalAreaId?: string | null } | null): boolean {
+  if (!profile || !profile.firstName.trim() || !profile.lastName.trim() || !profile.departmentId || !profile.municipalityId || !profile.professionalAreaId) return false
+  try { normalizeNicaraguaPhone(profile.phone) } catch { return false }
+  return true
+}
+
+function requiredPersonName(value: unknown, fallback: string | undefined, label: string): string {
+  const name = (typeof value === 'string' ? value : fallback ?? '').trim().replace(/\s+/g, ' ')
+  if (!name || name.length > 100 || !/^[\p{L}\p{M}][\p{L}\p{M}\s.'’\-]*$/u.test(name)) {
+    throw new Error(`${label} es obligatorio y solo puede contener letras, espacios, apóstrofes, puntos y guiones.`)
+  }
+  return name
 }
 
 export async function registerOnboardingRoutes(app: FastifyInstance, db: typeof prisma) {
@@ -47,7 +61,7 @@ export async function registerOnboardingRoutes(app: FastifyInstance, db: typeof 
     const user = await db.user.findUnique({
       where: { id: sessionUser.id },
       select: {
-        role: true,
+        role: true, email: true, emailVerifiedAt: true,
         onboardingStep: true,
         candidateProfile: {
           select: {
@@ -68,10 +82,13 @@ export async function registerOnboardingRoutes(app: FastifyInstance, db: typeof 
     }
 
     const profile = user.role === 'CANDIDATE' ? user.candidateProfile : user.companyProfile
+    const candidateReady = user.role === 'CANDIDATE' && isCompleteCandidateProfile(user.candidateProfile)
     const legacyComplete = user.onboardingStep == null && hasLegacyCompleteProfile(
       user.role, user.candidateProfile, user.companyProfile,
     )
-    const complete = Boolean(profile) && (user.onboardingStep === 4 || legacyComplete)
+    const complete = Boolean(profile) && (user.role === 'CANDIDATE'
+      ? candidateReady && (user.onboardingStep === 4 || legacyComplete)
+      : user.onboardingStep === 4 || legacyComplete)
     const currentStep = complete ? 4 : user.onboardingStep === 4 ? 1 : user.onboardingStep ?? 1
     const catalogs = user.role === 'CANDIDATE'
       ? await Promise.all([
@@ -90,6 +107,8 @@ export async function registerOnboardingRoutes(app: FastifyInstance, db: typeof 
 
     return {
       role: user.role,
+      email: user.email,
+      emailVerified: Boolean(user.emailVerifiedAt),
       step: Math.min(currentStep, 3),
       complete,
       profile,
@@ -111,7 +130,7 @@ export async function registerOnboardingRoutes(app: FastifyInstance, db: typeof 
       where: { id: sessionUser.id },
       select: {
         role: true, onboardingStep: true,
-        candidateProfile: { select: { id: true, firstName: true, lastName: true, departmentId: true, municipalityId: true, professionalAreaId: true } },
+        candidateProfile: { select: { id: true, firstName: true, lastName: true, phone: true, departmentId: true, municipalityId: true, professionalAreaId: true } },
         companyProfile: { select: { id: true, name: true, departmentId: true, municipalityId: true } },
       },
     })
@@ -120,12 +139,16 @@ export async function registerOnboardingRoutes(app: FastifyInstance, db: typeof 
     }
 
     const existingProfile = user.role === 'CANDIDATE' ? user.candidateProfile : user.companyProfile
+    const candidateReady = user.role === 'CANDIDATE' && isCompleteCandidateProfile(user.candidateProfile)
     const legacyComplete = user.onboardingStep == null && hasLegacyCompleteProfile(
       user.role,
-      user.candidateProfile ? { firstName: user.candidateProfile.firstName, lastName: user.candidateProfile.lastName } : null,
+      user.candidateProfile,
       user.companyProfile ? { name: user.companyProfile.name } : null,
     )
-    const currentStep = legacyComplete ? 4 : user.onboardingStep === 4 && !existingProfile ? 1 : user.onboardingStep ?? 1
+    const profileComplete = user.role === 'CANDIDATE'
+      ? candidateReady && (user.onboardingStep === 4 || legacyComplete)
+      : Boolean(existingProfile) && (legacyComplete || user.onboardingStep === 4)
+    const currentStep = profileComplete ? 4 : user.onboardingStep === 4 ? 1 : user.onboardingStep ?? 1
     if (currentStep === 4) return reply.code(409).send({ message: 'Este perfil ya estÃ¡ completo.' })
     if (step > currentStep) return reply.code(409).send({ message: 'Completa el paso actual antes de continuar.' })
 
@@ -135,13 +158,13 @@ export async function registerOnboardingRoutes(app: FastifyInstance, db: typeof 
         let profileId = old?.id
 
         if (step === 1) {
-          const firstName = optionalText(body.firstName, 100, 'El nombre') ?? old?.firstName
-          const lastName = optionalText(body.lastName, 100, 'Los apellidos') ?? old?.lastName
-          if (!firstName || !lastName) return reply.code(400).send({ message: 'Ingresa tu nombre y apellidos para continuar.' })
+          const firstName = requiredPersonName(body.firstName, old?.firstName, 'El nombre')
+          const lastName = requiredPersonName(body.lastName, old?.lastName, 'Los apellidos')
           const departmentId = optionalCatalogId(body.departmentId, 'El departamento')
           const municipalityId = optionalCatalogId(body.municipalityId, 'El municipio')
           const mergedDepartmentId = departmentId === undefined ? old?.departmentId : departmentId
           const mergedMunicipalityId = municipalityId === undefined ? old?.municipalityId : municipalityId
+          if (!mergedDepartmentId || !mergedMunicipalityId) return reply.code(400).send({ message: 'Selecciona tu departamento y municipio para continuar.' })
           if (mergedDepartmentId && !await db.department.findUnique({ where: { id: mergedDepartmentId }, select: { id: true } })) {
             return reply.code(400).send({ message: 'Selecciona un departamento vÃ¡lido.' })
           }
@@ -151,19 +174,19 @@ export async function registerOnboardingRoutes(app: FastifyInstance, db: typeof 
               return reply.code(400).send({ message: 'El municipio debe pertenecer al departamento seleccionado.' })
             }
           }
-          const phone = optionalPhone(body.phone)
+          const phone = normalizeNicaraguaPhone(body.phone ?? old?.phone)
           const profile = await db.$transaction(async (tx) => {
             const saved = await tx.candidateProfile.upsert({
               where: { userId: sessionUser.id },
               create: {
                 userId: sessionUser.id, firstName, lastName,
-                ...(phone ? { phone } : {}),
+                phone,
                 ...(mergedDepartmentId ? { departmentId: mergedDepartmentId } : {}),
                 ...(mergedMunicipalityId ? { municipalityId: mergedMunicipalityId } : {}),
               },
               update: {
                 firstName, lastName,
-                ...(phone ? { phone } : {}),
+                phone,
                 ...(departmentId !== undefined ? { departmentId: departmentId ?? null } : {}),
                 ...(municipalityId !== undefined ? { municipalityId: municipalityId ?? null } : {}),
               },
@@ -178,6 +201,7 @@ export async function registerOnboardingRoutes(app: FastifyInstance, db: typeof 
           const professionalAreaId = optionalCatalogId(body.professionalAreaId, 'El Ã¡rea profesional')
           const specializationId = optionalCatalogId(body.specializationId, 'La especializaciÃ³n')
           const mergedAreaId = professionalAreaId === undefined ? old.professionalAreaId : professionalAreaId
+          if (!mergedAreaId) return reply.code(400).send({ message: 'Selecciona tu área profesional para continuar.' })
           if (mergedAreaId && !await db.professionalArea.findFirst({ where: { id: mergedAreaId, isActive: true }, select: { id: true } })) {
             return reply.code(400).send({ message: 'Selecciona un Ã¡rea profesional vÃ¡lida.' })
           }
@@ -200,10 +224,11 @@ export async function registerOnboardingRoutes(app: FastifyInstance, db: typeof 
           profileId = old.id
         } else {
           if (!old) return reply.code(409).send({ message: 'Guarda primero tu informaciÃ³n personal.' })
+          if (!isCompleteCandidateProfile(old)) return reply.code(409).send({ message: 'Completa los datos obligatorios del perfil antes de finalizar.' })
           await db.user.update({ where: { id: sessionUser.id }, data: { onboardingStep: 4 } })
           profileId = old.id
         }
-        return { ok: true, step: step === 3 ? 4 : Math.max(currentStep, step + 1), profileId }
+        return { ok: true, step: step === 3 ? 4 : step + 1, profileId }
       }
 
       const old = user.companyProfile
@@ -285,8 +310,11 @@ export async function registerOnboardingRoutes(app: FastifyInstance, db: typeof 
         await db.user.update({ where: { id: sessionUser.id }, data: { onboardingStep: 4 } })
         profileId = old.id
       }
-      return { ok: true, step: step === 3 ? 4 : Math.max(currentStep, step + 1), profileId }
+      return { ok: true, step: step === 3 ? 4 : step + 1, profileId }
     } catch (error) {
+      if (error instanceof Error && /obligatorio|nicarag|8 d.gitos/i.test(error.message)) {
+        return reply.code(400).send({ message: error.message })
+      }
       if (error instanceof Error && /no es vÃ¡lido/.test(error.message)) {
         return reply.code(400).send({ message: error.message })
       }

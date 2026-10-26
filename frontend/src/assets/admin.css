@@ -1,15 +1,15 @@
 ﻿@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap');
 
 :root {
-  --ctl-bg: #f7f5f8;
+  --ctl-bg: #fff;
   --ctl-surface: #fff;
-  --ctl-text: #211c27;
-  --ctl-accent: #7652b5;
-  --ctl-accent-soft: #eae2f5;
-  --ctl-muted: #706a77;
-  --ctl-border: #e3dde8;
+  --ctl-text: #17263a;
+  --ctl-accent: #1769c2;
+  --ctl-accent-soft: #e4f1ff;
+  --ctl-muted: #52657b;
+  --ctl-border: #d6e5f6;
   --ctl-mono: 'DM Mono', monospace;
-  --ctl-shadow: 0 8px 24px #211c270b;
+  --ctl-shadow: 0 8px 24px #1742750b;
 }
 
 .control-shell,
@@ -1256,13 +1256,13 @@
 
 /* Administrative surfaces follow the app theme instead of staying white. */
 .dark .control-shell {
-  --ctl-bg: #17151b;
-  --ctl-surface: #211e26;
-  --ctl-text: #f3eff6;
-  --ctl-muted: #c0b8c8;
-  --ctl-border: #403a47;
-  --ctl-accent: #b69add;
-  --ctl-accent-soft: #392f48;
+  --ctl-bg: #071525;
+  --ctl-surface: #10233a;
+  --ctl-text: #f2f7ff;
+  --ctl-muted: #b8cbe1;
+  --ctl-border: #294562;
+  --ctl-accent: #aed2ff;
+  --ctl-accent-soft: #1d3856;
   --ctl-shadow: 0 8px 24px #0005;
   color: var(--ctl-text);
   background: var(--ctl-bg);

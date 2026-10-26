@@ -118,7 +118,7 @@ router.afterEach(() => {
   position: sticky;
   top: 0;
   z-index: 40;
-  height: 84px;
+  height: 68px;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
 }
@@ -161,7 +161,7 @@ router.afterEach(() => {
 .site-nav__links {
   display: flex;
   align-items: center;
-  gap: 1.75rem;
+  gap: clamp(1rem, 2vw, 1.75rem);
   flex: 1;
   justify-content: center;
   list-style: none;
@@ -170,7 +170,7 @@ router.afterEach(() => {
 }
 
 .site-nav__link {
-  font-size: 1rem;
+  font-size: 0.88rem;
   font-weight: 500;
   color: var(--muted-foreground);
   text-decoration: none;
@@ -196,7 +196,7 @@ router.afterEach(() => {
 }
 
 .site-nav__account-link {
-  font-size: 1rem;
+  font-size: 0.88rem;
   font-weight: 600;
   color: var(--muted-foreground);
   text-decoration: none;

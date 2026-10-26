@@ -2,17 +2,21 @@
 
 :root {
   color-scheme: light;
-  --background: oklch(97.4% 0.004 310);
-  --surface: oklch(100% 0 0);
-  --foreground: oklch(22.6% 0.014 305);
-  --primary: oklch(51.3% 0.139 296);
-  --secondary: oklch(92.7% 0.025 305);
-  --muted-foreground: oklch(52.4% 0.018 305);
-  --border: oklch(90.5% 0.012 305);
-  --panel: oklch(96.3% 0.012 305);
+  --palette-ink: #27005d;
+  --palette-violet: #9400ff;
+  --palette-blue: #aed2ff;
+  --palette-ice: #e4f1ff;
+  --background: #fff;
+  --surface: #fff;
+  --foreground: #17263a;
+  --primary: #1769c2;
+  --secondary: var(--palette-ice);
+  --muted-foreground: #52657b;
+  --border: #d6e5f6;
+  --panel: #f2f7fd;
   --surface-strong: var(--panel);
   --accent-strong: var(--secondary);
-  --shadow: oklch(22.6% 0.014 305 / 0.08);
+  --shadow: rgb(23 66 117 / 8%);
   --bg: var(--background);
   --surface-soft: var(--panel);
   --surface-elevated: var(--surface);
@@ -24,17 +28,17 @@
 
 html.dark {
   color-scheme: dark;
-  --background: oklch(12.5% 0.008 305);
-  --surface: oklch(17.5% 0.01 305);
-  --foreground: oklch(97% 0.008 305);
-  --primary: oklch(70.5% 0.09 305);
-  --secondary: oklch(29.5% 0.035 305);
-  --muted-foreground: oklch(76% 0.015 305);
-  --border: oklch(31% 0.014 305);
-  --panel: oklch(22.5% 0.012 305);
+  --background: #071525;
+  --surface: #10233a;
+  --foreground: #f2f7ff;
+  --primary: var(--palette-blue);
+  --secondary: #1d3856;
+  --muted-foreground: #b8cbe1;
+  --border: #294562;
+  --panel: #162d47;
   --surface-strong: var(--panel);
   --accent-strong: var(--secondary);
-  --shadow: oklch(0% 0 0 / 0.28);
+  --shadow: rgb(0 0 0 / 28%);
   --bg: var(--background);
   --surface-soft: var(--panel);
   --surface-elevated: var(--surface);

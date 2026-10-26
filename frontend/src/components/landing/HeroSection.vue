@@ -12,8 +12,9 @@ import { HERO_IMAGE } from '@/config/assets'
       </p>
 
       <h1 class="hero__title">
-        Conectamos talento<br />
-        <span class="hero__title-accent">con oportunidades</span>
+        Conectamos<br />
+        <span class="hero__word"><span class="hero__keyword">talento</span></span> con<br />
+        <span class="hero__title-accent"><span class="hero__word"><span class="hero__keyword">oportunidades</span></span></span>
       </h1>
 
       <p class="hero__lede">
@@ -106,6 +107,18 @@ import { HERO_IMAGE } from '@/config/assets'
 
 .hero__title-accent {
   color: var(--primary);
+}
+
+.hero__word {
+  position: relative;
+  display: inline-block;
+  overflow: clip;
+  vertical-align: bottom;
+}
+
+.hero__keyword {
+  display: inline-block;
+  white-space: nowrap;
 }
 
 .hero__lede {
@@ -300,8 +313,8 @@ import { HERO_IMAGE } from '@/config/assets'
   margin-left: -50vw;
   display: flex;
   align-items: center;
-  min-height: 560px;
-  padding: 4.5rem 0;
+  min-height: clamp(620px, calc(100svh - 68px), 900px);
+  padding: clamp(3rem, 6vw, 4.5rem) 0;
 }
 
 .hero__copy {
@@ -316,13 +329,13 @@ import { HERO_IMAGE } from '@/config/assets'
   position: absolute;
   inset: 0 0 0 auto;
   z-index: 1;
-  width: 72%;
+  width: 100%;
 }
 
 .hero__visual-fade {
   inset: 0;
   width: auto;
-  background: linear-gradient(90deg, var(--background) 0%, color-mix(in oklab, var(--background) 92%, transparent) 23%, transparent 80%);
+  background: linear-gradient(90deg, #071525 0%, rgb(7 21 37 / 94%) 25%, rgb(7 21 37 / 76%) 42%, rgb(7 21 37 / 18%) 78%, transparent 100%);
 }
 
 .hero__image-wrap { height: 100%; min-height: 0; border-radius: 0; }
@@ -333,13 +346,24 @@ import { HERO_IMAGE } from '@/config/assets'
 .hero__kicker { font-size: 0.86rem; }
 .hero__btn { padding: 0.95rem 1.55rem; font-size: 1rem; }
 .hero__location { font-size: 0.92rem; }
+.hero { --primary: #087ce2; background: #071525; }
+.hero__kicker { color: #35a9ff; }
+.hero__title { color: #fff; }
+.hero__title-accent { color: #178cff; }
+.hero__lede,
+.hero__location { color: rgb(237 245 255 / 82%); }
+.hero__btn--secondary { color: #fff; border-color: rgb(216 234 255 / 38%); }
+.hero__btn--secondary:hover { background: rgb(255 255 255 / 10%); }
+.hero__float-tag { background: rgb(7 21 37 / 92%); border-color: #1769a8; }
+.hero__float-text { color: #fff; }
+.hero__float-line { background: #17a5ff; }
 
 @media (max-width: 800px) {
-  .hero { min-height: 640px; padding: 3rem 0 2.5rem; }
+  .hero { min-height: clamp(620px, calc(100svh - 64px), 850px); padding: 3rem 0 2.5rem; }
   .hero__copy { align-self: flex-end; padding-inline: 20px; }
   .hero__title { font-size: clamp(2.3rem, 7vw, 3rem); }
-  .hero__visual { display: flex; order: initial; width: 100%; max-height: none; opacity: 0.42; }
-  .hero__visual-fade { display: block; background: linear-gradient(180deg, color-mix(in oklab, var(--background) 12%, transparent) 0%, var(--background) 88%); }
+  .hero__visual { display: flex; order: initial; width: 100%; max-height: none; opacity: 1; }
+  .hero__visual-fade { display: block; background: linear-gradient(180deg, rgb(7 21 37 / 8%) 0%, rgb(7 21 37 / 36%) 35%, #071525 78%); }
   .hero__image-wrap { min-height: 100%; }
   .hero__float-tag { display: none; }
 }

@@ -1,239 +1,15 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthForm } from '@/composables/useAuthForm'
-import { authApi, type ApiError } from '@/services/auth'
-import { useAuthStore } from '@/stores/auth'
+import { useAuthPanel } from '@/composables/useAuthPanel'
 import AuthModeTabs from './AuthModeTabs.vue'
 import AuthRoleSelector from './AuthRoleSelector.vue'
 import AuthFeedback from './AuthFeedback.vue'
 
-const router = useRouter()
-const authStore = useAuthStore()
-const { state, isRegister, setMode, setRole } = useAuthForm()
-const password = ref('')
-const rememberedEmailKey = 'jinowork.rememberedEmail'
-const rememberDevice = ref(false)
-const confirmPassword = ref('')
-const firstName = ref('')
-const lastName = ref('')
-const companyName = ref('')
-const busy = ref(false)
-const feedback = ref('')
-const feedbackVariant = ref<'info' | 'success' | 'error'>('info')
-const canResend = ref(false)
-const retryBusy = ref(false)
-const showPassword = ref(false)
-const showConfirmPassword = ref(false)
-const contentRef = ref<HTMLElement | null>(null)
-let contentResizeTimer: number | undefined
-
-try {
-  const rememberedEmail = localStorage.getItem(rememberedEmailKey)
-  if (rememberedEmail) {
-    state.email = rememberedEmail
-    rememberDevice.value = true
-  }
-} catch {
-  // The login form remains usable when browser storage is unavailable.
-}
-
-const heading = computed(() => state.mode === 'register'
-  ? 'Crea tu cuenta en Jinowork'
-  : state.mode === 'recover'
-    ? 'Recupera tu cuenta'
-    : 'Inicia sesión en tu cuenta')
-const description = computed(() => state.mode === 'register'
-  ? 'Regístrate con tu correo y una contraseña segura.'
-  : state.mode === 'recover'
-    ? 'Te enviaremos instrucciones si existe una cuenta con ese correo.'
-    : 'Accede con tu correo electrónico y contraseña.')
-
-function clearProfileFields() {
-  firstName.value = ''
-  lastName.value = ''
-  companyName.value = ''
-}
-
-function clearFeedback() {
-  feedback.value = ''
-  feedbackVariant.value = 'info'
-}
-
-async function animateContentResize(update: () => void) {
-  const content = contentRef.value
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  if (!content || reduceMotion) {
-    update()
-    return
-  }
-
-  window.clearTimeout(contentResizeTimer)
-  const startHeight = content.getBoundingClientRect().height
-  content.style.height = `${startHeight}px`
-  content.style.overflow = 'hidden'
-  update()
-  await nextTick()
-
-  content.style.removeProperty('height')
-  const endHeight = content.getBoundingClientRect().height
-  content.style.height = `${startHeight}px`
-  void content.offsetHeight
-  requestAnimationFrame(() => {
-    content.style.height = `${endHeight}px`
-  })
-
-  contentResizeTimer = window.setTimeout(() => {
-    if (contentRef.value !== content) return
-    content.style.removeProperty('height')
-    content.style.removeProperty('overflow')
-  }, 380)
-}
-
-function changeMode(mode: typeof state.mode) {
-  void animateContentResize(() => {
-    setMode(mode)
-    password.value = ''
-    confirmPassword.value = ''
-    showPassword.value = false
-    showConfirmPassword.value = false
-    clearProfileFields()
-    clearFeedback()
-    if (mode === 'register') canResend.value = false
-  })
-}
-
-function changeRole(role: typeof state.role) {
-  void animateContentResize(() => {
-    setRole(role)
-    clearProfileFields()
-    delete state.errors.profile
-  })
-}
-
-onBeforeUnmount(() => window.clearTimeout(contentResizeTimer))
-
-function onEmailInput() {
-  delete state.errors.email
-  canResend.value = false
-  clearFeedback()
-}
-
-function onPasswordInput() {
-  delete state.errors.password
-}
-
-function onConfirmationInput() {
-  delete state.errors.passwordConfirmation
-}
-
-function onProfileInput() {
-  delete state.errors.profile
-}
-
-async function submit() {
-  if (busy.value) return
-  state.errors = {}
-
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.email.trim())) {
-    state.errors.email = 'Ingresa un correo válido.'
-  }
-  if (state.mode !== 'recover' && (password.value.length < 10 || password.value.length > 128)) {
-    state.errors.password = 'La contraseña debe tener entre 10 y 128 caracteres.'
-  }
-  if (isRegister.value && password.value !== confirmPassword.value) {
-    state.errors.passwordConfirmation = 'Las contraseñas no coinciden.'
-  }
-  if (isRegister.value && state.role === 'candidate' && (!firstName.value.trim() || !lastName.value.trim())) {
-    state.errors.profile = 'Completa tu nombre y apellidos.'
-  }
-  if (isRegister.value && state.role === 'company' && !companyName.value.trim()) {
-    state.errors.profile = 'Ingresa el nombre de la empresa.'
-  }
-  if (Object.keys(state.errors).length) {
-    await nextTick()
-    const firstInvalid = document.querySelector<HTMLInputElement>('.auth-form [aria-invalid="true"]')
-    firstInvalid?.focus()
-    return
-  }
-
-  busy.value = true
-  clearFeedback()
-  canResend.value = false
-
-  try {
-    if (state.mode === 'register') {
-      const result = await authApi.register({
-        email: state.email.trim(),
-        password: password.value,
-        role: state.role,
-        ...(state.role === 'candidate'
-          ? { firstName: firstName.value.trim(), lastName: lastName.value.trim() }
-          : { companyName: companyName.value.trim() }),
-      })
-
-      feedback.value = result.message
-      feedbackVariant.value = 'success'
-      canResend.value = true
-      void animateContentResize(() => setMode('login'))
-      password.value = ''
-      confirmPassword.value = ''
-      showPassword.value = false
-      showConfirmPassword.value = false
-      clearProfileFields()
-    } else if (state.mode === 'recover') {
-      const result = await authApi.requestPasswordReset(state.email.trim())
-      feedback.value = result.message
-      feedbackVariant.value = 'success'
-    } else {
-      const email = state.email.trim()
-      const result = await authApi.login(email, password.value, rememberDevice.value)
-      try {
-        if (rememberDevice.value) localStorage.setItem(rememberedEmailKey, email)
-        else localStorage.removeItem(rememberedEmailKey)
-      } catch {
-        // Remembering the email is optional; authentication already succeeded.
-      }
-      authStore.user = result.user
-      password.value = ''
-      await router.push(['ADMIN', 'SUPERADMIN'].includes(result.user.role) ? '/admin' : '/onboarding')
-    }
-  } catch (error) {
-    feedback.value = error instanceof Error ? error.message : 'No se pudo completar el acceso.'
-    feedbackVariant.value = 'error'
-    const apiError = error as ApiError
-    canResend.value = apiError.code === 'VERIFICATION_EMAIL_FAILED'
-      || (apiError.status === 403 && feedback.value.toLowerCase().includes('verifica'))
-    if (state.mode === 'register' && apiError.code === 'VERIFICATION_EMAIL_FAILED') {
-      void animateContentResize(() => setMode('login'))
-      password.value = ''
-      confirmPassword.value = ''
-      showPassword.value = false
-      showConfirmPassword.value = false
-      clearProfileFields()
-    }
-  } finally {
-    busy.value = false
-  }
-}
-
-async function resend() {
-  if (retryBusy.value) return
-  retryBusy.value = true
-  clearFeedback()
-  try {
-    const result = await authApi.resendVerification(state.email.trim())
-    feedback.value = result.message
-    feedbackVariant.value = 'success'
-    canResend.value = false
-  } catch (error) {
-    feedback.value = error instanceof Error ? error.message : 'No se pudo reenviar el correo.'
-    feedbackVariant.value = 'error'
-    canResend.value = true
-  } finally {
-    retryBusy.value = false
-  }
-}
+const {
+  state, isRegister, password, rememberDevice, confirmPassword, firstName, lastName, companyName,
+  busy, feedback, feedbackVariant, canResend, retryBusy, showPassword, showConfirmPassword,
+  contentRef, heading, description, changeMode, changeRole, clearFeedback, onEmailInput,
+  onPasswordInput, onConfirmationInput, onProfileInput, submit, resend,
+} = useAuthPanel()
 </script>
 
 <template>
@@ -398,8 +174,11 @@ async function resend() {
   justify-content: center;
   max-height: 100dvh;
   overflow-y: auto;
+  scrollbar-width: none;
   padding: clamp(4rem, 9vh, 6rem) clamp(1.5rem, 5vw, 5rem) 2rem;
 }
+
+.auth-form-panel::-webkit-scrollbar { display: none; }
 
 .auth-form-panel__content {
   display: flex;
@@ -408,7 +187,6 @@ async function resend() {
   gap: 1.2rem;
   margin-inline: auto;
   will-change: height;
-  animation: auth-entry 0.35s ease both;
   transition: height 0.36s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -486,7 +264,6 @@ async function resend() {
 .auth-resend-btn:disabled { opacity: 0.65; cursor: wait; }
 .auth-footer { padding-top: 0.8rem; border-top: 1px solid var(--border); color: var(--muted-foreground); font-size: 0.76rem; text-align: center; }
 
-@keyframes auth-entry { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes auth-field-reveal { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes auth-spin { to { transform: rotate(360deg); } }
 

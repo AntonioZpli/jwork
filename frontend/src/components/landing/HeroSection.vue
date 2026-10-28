@@ -1,5 +1,6 @@
 ﻿<script setup lang="ts">
 import { MapPin } from '@lucide/vue'
+import { RouterLink } from 'vue-router'
 import { HERO_IMAGE } from '@/config/assets'
 </script>
 
@@ -23,12 +24,12 @@ import { HERO_IMAGE } from '@/config/assets'
       </p>
 
       <div class="hero__actions">
-        <a href="/auth" class="hero__btn hero__btn--primary">
+        <RouterLink to="/jobs" class="hero__btn hero__btn--primary">
           Explorar empleos <span aria-hidden="true">&rarr;</span>
-        </a>
-        <a href="/auth" class="hero__btn hero__btn--secondary">
+        </RouterLink>
+        <RouterLink to="/auth?redirect=/company/jobs/new" class="hero__btn hero__btn--secondary">
           Publicar una oferta <span aria-hidden="true">&nearr;</span>
-        </a>
+        </RouterLink>
       </div>
 
       <p class="hero__location">

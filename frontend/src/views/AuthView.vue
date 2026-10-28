@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { gsap } from 'gsap'
 import AuthStoryPanel from '@/components/auth/AuthStoryPanel.vue'
 import AuthFormPanel from '@/components/auth/AuthFormPanel.vue'
 import AppBrand from '@/components/ui/AppBrand.vue'
@@ -6,13 +8,57 @@ import { useTheme } from '@/composables/useTheme'
 import { ArrowLeft, Sun, Moon } from '@lucide/vue'
 
 const { theme, toggleTheme } = useTheme()
+const authViewRef = ref<HTMLElement | null>(null)
+let authMotion: gsap.MatchMedia | undefined
+let authContext: gsap.Context | undefined
+
 function chooseTheme(value: 'light' | 'dark') {
   if (theme.value !== value) toggleTheme()
 }
+
+onMounted(() => {
+  if (!authViewRef.value) return
+  authContext = gsap.context(() => {
+    authMotion = gsap.matchMedia()
+    authMotion.add('(prefers-reduced-motion: no-preference)', () => {
+      const intro = gsap.timeline({ defaults: { ease: 'power2.out' } })
+
+      intro.fromTo('.story-panel__brand',
+        { autoAlpha: 0, y: -10 },
+        { autoAlpha: 1, y: 0, duration: 0.55 },
+      )
+      intro.fromTo('.story-panel__map iframe',
+        { autoAlpha: 0, scale: 0.97 },
+        { autoAlpha: 1, scale: 1, duration: 1.15 },
+        0.12,
+      )
+      intro.fromTo('.story-panel__text > *',
+        { autoAlpha: 0, y: 12 },
+        { autoAlpha: 1, y: 0, duration: 0.65, stagger: 0.1 },
+        0.22,
+      )
+      intro.fromTo('.auth-form-panel__content > *',
+        { autoAlpha: 0, y: 10 },
+        { autoAlpha: 1, y: 0, duration: 0.55, stagger: 0.075 },
+        0.18,
+      )
+      intro.fromTo('.auth-theme-toggle',
+        { autoAlpha: 0, y: -6 },
+        { autoAlpha: 1, y: 0, duration: 0.4 },
+        0.28,
+      )
+    }, authViewRef.value)
+  }, authViewRef.value)
+})
+
+onBeforeUnmount(() => {
+  authMotion?.revert()
+  authContext?.revert()
+})
 </script>
 
 <template>
-  <div class="auth-view">
+  <div ref="authViewRef" class="auth-view">
     <!-- Mobile-only compact header -->
     <header class="auth-mobile-header">
       <a href="/" class="auth-mobile-brand" aria-label="Jinowork — volver al inicio">
@@ -127,12 +173,16 @@ function chooseTheme(value: 'light' | 'dark') {
 
 .auth-story {
   position: absolute;
+  z-index: 0;
   inset: 0 auto 0 0;
   width: 50%;
   max-width: none;
+  overflow: visible;
 }
 
 .auth-layout :deep(.auth-form-panel) {
+  position: relative;
+  z-index: 1;
   flex: 0 0 50%;
   margin-left: auto;
   min-width: 0;
@@ -189,7 +239,8 @@ function chooseTheme(value: 'light' | 'dark') {
 
 @media (min-width: 761px) and (max-width: 1100px) {
   .auth-story {
-    width: 46%;
+    width: 50%;
   }
+  .auth-layout :deep(.auth-form-panel) { flex-basis: 50%; }
 }
 </style>

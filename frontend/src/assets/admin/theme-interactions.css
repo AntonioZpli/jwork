@@ -1,0 +1,78 @@
+/* Interactive surfaces use the active theme for hover, focus and selection states. */
+.dark .control-shell {
+  --ctl-hover: #302b36;
+  --ctl-selected: #382e46;
+  --ctl-control: #29252f;
+  --ctl-danger-soft: #482d30;
+  --ctl-success-soft: #263d30;
+  --ctl-warning-soft: #493c28;
+}
+.dark .control-shell :where(
+  .metric-card:hover, .quick-strip > button:hover, .records-toolbar button:hover,
+  .table-footer button:hover, .saved-views button:hover, .btn-secondary:hover,
+  .column-picker summary:hover, .column-picker > label:hover,
+  .inspector-actions button:hover, .row-open:hover
+) {
+  color: var(--ctl-text);
+  background-color: var(--ctl-hover);
+  border-color: var(--ctl-border);
+}
+.dark .control-shell :where(.nav-item:hover:not(.active)) {
+  color: var(--ctl-text);
+  background-color: var(--ctl-hover);
+}
+.dark .control-shell :where(.attention-foot button:hover, .text-link:hover) {
+  color: #d8c5f2;
+  background-color: transparent;
+}
+.dark .control-shell .row-open {
+  color: #d2b9f1 !important;
+  background-color: var(--ctl-control) !important;
+  border-color: var(--ctl-border) !important;
+}
+.dark .control-shell .row-open:hover {
+  color: var(--ctl-text) !important;
+  background-color: var(--ctl-hover) !important;
+}
+.dark .control-shell tbody tr:hover:not(.selected-row) { background-color: var(--ctl-hover); }
+.dark .control-shell tbody tr.selected-row { background-color: var(--ctl-selected); }
+.dark .control-shell :where(button, input, select, summary):focus-visible {
+  outline: 2px solid var(--ctl-accent);
+  outline-offset: 2px;
+}
+.dark .control-shell .status-pill { color: #e2dce8; background-color: #39343f; }
+.dark .control-shell .status-pill.pending,
+.dark .control-shell .status-pill.review,
+.dark .control-shell .status-pill.pending_review { color: #f1ce8e; background-color: #493c28; }
+.dark .control-shell .status-pill.active,
+.dark .control-shell .status-pill.approved,
+.dark .control-shell .status-pill.verified,
+.dark .control-shell .status-pill.published,
+.dark .control-shell .status-pill.resolved { color: #a9dfbd; background-color: #263d30; }
+.dark .control-shell .status-pill.rejected,
+.dark .control-shell .status-pill.banned,
+.dark .control-shell .status-pill.removed,
+.dark .control-shell .status-pill.dismissed { color: #f1aaaa; background-color: #482d30; }
+.dark .control-shell :where(.metric-card > i, .activity-icon, .avatar, .top-avatar) {
+  color: #d2b9f1;
+  background-color: var(--ctl-selected);
+}
+.dark .control-shell .attention-count {
+  color: #f1ce8e;
+  background-color: var(--ctl-warning-soft);
+}
+.dark .control-shell .inspector-actions button.danger {
+  color: #f1aaaa;
+  background-color: var(--ctl-danger-soft);
+  border-color: #704247;
+}
+.dark .control-shell .error-notice {
+  color: #f1aaaa;
+  background-color: #382427;
+  border-color: #704247;
+}
+.dark .control-shell .success-notice {
+  color: #a9dfbd;
+  background-color: var(--ctl-success-soft);
+  border-color: #365c45;
+}

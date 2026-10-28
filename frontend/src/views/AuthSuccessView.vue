@@ -7,6 +7,7 @@ import { CircleCheck } from '@lucide/vue'
 const router = useRouter()
 const authStore = useAuthStore()
 const checkingSession = ref(true)
+const workspacePath = () => authStore.user?.role === 'CANDIDATE' ? '/candidate' : authStore.user?.role === 'COMPANY' ? '/company' : '/'
 
 onMounted(async () => {
   if (!authStore.user) await authStore.hydrateSession()
@@ -31,7 +32,7 @@ async function signOut() {
         <p>Tu cuenta está lista para continuar.</p>
         <p class="auth-success__email">{{ authStore.user.email }}</p>
         <div class="auth-success__actions">
-          <button type="button" class="auth-success__primary" @click="router.push('/')">Ir al inicio</button>
+          <button type="button" class="auth-success__primary" @click="router.push(workspacePath())">Ir a mi espacio</button>
           <button type="button" class="auth-success__secondary" @click="signOut">Cerrar sesión</button>
         </div>
       </template>

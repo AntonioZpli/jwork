@@ -32,6 +32,8 @@ const economicSectors = [
   'Tecnología',
 ]
 
+const languages = ['Alemán', 'Español', 'Francés', 'Inglés', 'Italiano', 'Mandarín', 'Portugués']
+
 export async function ensureCatalogDefaults(db: any) {
   const result = await db.$transaction(async (tx: any) => {
     let areas = 0
@@ -72,6 +74,10 @@ export async function ensureCatalogDefaults(db: any) {
         create: { name: sectorName },
       })
       sectors += 1
+    }
+
+    for (const languageName of languages) {
+      await tx.language.upsert({ where: { name: languageName }, update: {}, create: { name: languageName } })
     }
 
     return { areas, sectors, specializations }

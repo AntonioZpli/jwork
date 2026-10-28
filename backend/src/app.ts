@@ -10,6 +10,13 @@ import { ensureNicaraguaLocationCatalog } from './lib/locationCatalog'
 import { registerAdminRoutes } from './admin'
 import { registerAuthRoutes } from './routes/auth'
 import { registerOnboardingRoutes } from './routes/onboarding'
+import { registerWorkspaceRoutes } from './routes/workspace'
+import { registerJobManagementRoutes } from './routes/jobs'
+import { registerPublicJobRoutes } from './routes/publicJobs'
+import { registerCandidateJobRoutes } from './routes/candidateJobs'
+import { registerCompanyApplicationRoutes } from './routes/companyApplications'
+import { registerProfileRoutes } from './routes/profiles'
+import { registerCandidateFileRoutes } from './routes/candidateFiles'
 
 export async function buildServer(dependencies: {
   prisma?: typeof prisma
@@ -18,7 +25,7 @@ export async function buildServer(dependencies: {
   sendAdminCredentialsEmail?: typeof sendAdminCredentialsEmail
   logger?: boolean
 } = {}) {
-  const app = Fastify({ logger: dependencies.logger === false ? false : { level: 'info' }, trustProxy: true })
+  const app = Fastify({ logger: dependencies.logger === false ? false : { level: 'info' }, trustProxy: config.trustedProxies })
   const db = dependencies.prisma ?? prisma
   const deliverAdminCredentials = dependencies.sendAdminCredentialsEmail ?? sendAdminCredentialsEmail
   const resolveUser = (request: any) => resolveSessionUser(request, db)
@@ -40,5 +47,12 @@ export async function buildServer(dependencies: {
     sendLoginAlertEmail: dependencies.sendLoginAlertEmail,
   })
   await registerOnboardingRoutes(app, db)
+  await registerWorkspaceRoutes(app, db)
+  await registerJobManagementRoutes(app, db)
+  await registerPublicJobRoutes(app, db)
+  await registerCandidateJobRoutes(app, db)
+  await registerCompanyApplicationRoutes(app, db)
+  await registerProfileRoutes(app, db)
+  await registerCandidateFileRoutes(app, db)
   return app
 }

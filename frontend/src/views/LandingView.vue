@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import SiteHeader from '@/components/layout/SiteHeader.vue'
 import SiteFooter from '@/components/layout/SiteFooter.vue'
 import HeroSection from '@/components/landing/HeroSection.vue'
+import JobSearchBar from '@/components/landing/JobSearchBar.vue'
 import FeaturedJobs from '@/components/landing/FeaturedJobs.vue'
 import HowItWorksSection from '@/components/landing/HowItWorksSection.vue'
 import CompaniesSection from '@/components/landing/CompaniesSection.vue'
@@ -114,6 +115,7 @@ onBeforeUnmount(() => {
     <main>
       <div class="container">
         <HeroSection />
+        <JobSearchBar />
         <FeaturedJobs />
         <HowItWorksSection />
         <CompaniesSection />

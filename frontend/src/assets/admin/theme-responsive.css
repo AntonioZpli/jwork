@@ -1,0 +1,332 @@
+/* Administrative surfaces follow the app theme instead of staying white. */
+.dark .control-shell {
+  --ctl-bg: #071525;
+  --ctl-surface: #10233a;
+  --ctl-text: #f2f7ff;
+  --ctl-muted: #b8cbe1;
+  --ctl-border: #294562;
+  --ctl-accent: #aed2ff;
+  --ctl-accent-soft: #1d3856;
+  --ctl-shadow: 0 8px 24px #0005;
+  color: var(--ctl-text);
+  background: var(--ctl-bg);
+  color-scheme: dark;
+}
+.dark .control-shell :where(
+  .control-sidebar, .control-topbar, .surface-block, .metric-card, .quick-strip,
+  .sidebar-help, .attention-list > button, .attention-foot, .quick-strip > button,
+  .global-results, .global-results button, .top-search, .search-box, .icon-action,
+  .btn-secondary, .records-toolbar select, .records-toolbar button,
+  .column-picker summary, .column-picker > label, .user-extra-filters select,
+  .saved-views button, .table-footer button, .period-picker, .period-picker input,
+  .stats-summary > div, .record-inspector, .inspector-actions button,
+  .record-fields > div, .schema-chip, .schema-info, .record-id,
+  .control-shell input, .control-shell select
+) {
+  color: var(--ctl-text);
+  background-color: var(--ctl-surface);
+  border-color: var(--ctl-border);
+}
+.dark .control-shell :where(.control-content, .control-main, .control-nav) {
+  color: var(--ctl-text);
+}
+.dark .control-shell :where(
+  .page-heading h1, .metric-card > b, .block-heading h2, .attention-list b,
+  .empty-inline b, .activity-row b, .quick-strip > div > b, .stats-summary b,
+  .record-inspector h2, .record-fields b, .global-results b, .control-shell td
+) {
+  color: var(--ctl-text);
+}
+.dark .control-shell :where(
+  .crumb, .crumb b, .page-heading p, .eyebrow, .metric-card > span,
+  .metric-card > small, .attention-list small, .attention-foot small,
+  .empty-inline, .activity-row small, .activity-row time, .data-note,
+  .stats-summary span, .schema-info small, .table-footer, .record-id,
+  .record-fields small, .inspector-note, .nav-group, .user-meta small
+) {
+  color: var(--ctl-muted);
+}
+.dark .control-shell :where(.sidebar-help p, .sidebar-help small, .sidebar-help > span) {
+  color: var(--ctl-muted);
+}
+.dark .control-shell td { color: var(--ctl-text); }
+.dark .control-shell :where(
+  .control-sidebar, .control-topbar, .surface-block, .metric-card, .quick-strip,
+  .records-toolbar, .block-heading, .control-shell th, .control-shell td,
+  .activity-row, .attention-list > button, .attention-foot, .table-footer,
+  .schema-info, .record-fields
+) {
+  border-color: var(--ctl-border);
+}
+.dark .control-shell :where(
+  .control-sidebar, .sidebar-help, .surface-block, .metric-card, .quick-strip,
+  .quick-strip > button, .attention-list > button, .attention-foot, .global-results,
+  .global-results button, .top-search, .search-box, .icon-action, .btn-secondary,
+  .records-toolbar select, .records-toolbar button, .column-picker summary,
+  .column-picker > label, .user-extra-filters select, .saved-views button,
+  .table-footer button, .period-picker, .stats-summary > div, .record-inspector,
+  .inspector-actions button, .record-fields > div, .schema-chip
+) {
+  border-color: var(--ctl-border);
+}
+.dark .control-shell .control-brand img {
+  filter: invert(1);
+}
+.dark .control-shell :where(
+  .nav-item:hover, .global-results button:hover, .attention-list > button:hover,
+  .control-shell tbody tr:hover
+) {
+  background-color: #302b36;
+}
+.dark .control-shell .nav-item.active,
+.dark .control-shell tbody tr.selected-row {
+  color: #e8dcf7;
+  background-color: #382e46;
+}
+.dark .control-shell .control-topbar {
+  background-color: #211e26ed;
+}
+.dark .control-shell .control-shell th,
+.dark .control-shell th {
+  background-color: #29252f;
+}
+.dark .control-shell .record-id,
+.dark .control-shell .schema-info,
+.dark .control-shell .attention-foot,
+.dark .control-shell .column-picker > label {
+  background-color: #29252f;
+}
+.dark .control-shell .nav-item { color: var(--ctl-muted); }
+.dark .control-shell .nav-item.active,
+.dark .control-shell .nav-item.active .nav-icon { color: #ddc8f7; }
+.dark .control-shell .btn-primary { color: #21192b; }
+.dark .control-shell .invite-admin-block > p,
+.dark .control-shell .invite-admin-form label,
+.dark .control-shell .invite-admin-block > small,
+.dark .control-shell .invite-admin-badge { color: var(--ctl-muted); }
+.dark .control-shell .invite-admin-form input { color: var(--ctl-text); background: var(--ctl-bg); }
+.dark .control-shell :where(input, select) { color-scheme: dark; }
+
+@media (max-width: 1050px) {
+  .control-sidebar {
+    width: 216px;
+  }
+  .control-main {
+    width: calc(100% - 216px);
+    margin-left: 216px;
+  }
+  .control-content {
+    padding: 25px 22px;
+  }
+  .control-topbar {
+    padding: 0 22px;
+  }
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .quick-strip {
+    flex-wrap: wrap;
+  }
+  .quick-strip > div {
+    width: 100%;
+  }
+}
+@media (max-width: 900px) {
+  .control-shell {
+    display: block;
+    padding-bottom: 59px;
+  }
+  .control-sidebar {
+    inset: auto 0 0;
+    width: auto;
+    height: 59px;
+    padding: 4px 7px;
+    border: 0;
+    border-top: 1px solid var(--ctl-border);
+    box-shadow: 0 -4px 16px #211c270a;
+  }
+  .control-brand,
+  .sidebar-help,
+  .sidebar-user {
+    display: none;
+  }
+  .control-nav {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 3px;
+    margin: 0;
+  }
+  .nav-group {
+    display: none;
+  }
+  .nav-item {
+    display: flex;
+    min-width: 61px;
+    height: 48px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0;
+    padding: 3px;
+    font-size: 12px;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .nav-item b {
+    position: absolute;
+    transform: translate(15px, -8px);
+    font-size: 12px;
+  }
+  .nav-icon {
+    font-size: 20px;
+  }
+  .control-main {
+    width: 100%;
+    margin: 0;
+  }
+  .control-topbar {
+    height: 49px;
+    padding: 0 14px;
+  }
+  .top-search {
+    width: 32px;
+    overflow: hidden;
+    padding: 0 8px;
+    white-space: nowrap;
+  }
+  .top-search span,
+  .top-search kbd {
+    display: none;
+  }
+  .top-actions {
+    gap: 7px;
+  }
+  .mobile-signout {
+    display: grid;
+  }
+  .control-content {
+    padding: 20px 13px 26px;
+  }
+  .page-heading {
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .page-heading h1 {
+    font-size: 26px;
+  }
+  .page-heading p {
+    max-width: 230px;
+    font-size: 14px;
+  }
+  .invite-admin-form {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .invite-admin-form .btn-primary {
+    width: 100%;
+  }
+  .invite-admin-block .block-heading {
+    align-items: flex-start;
+  }
+  .invite-admin-badge {
+    white-space: nowrap;
+  }
+  .eyebrow {
+    font-size: 12px;
+  }
+  .heading-tools {
+    flex-direction: column;
+  }
+  .heading-tools .btn-secondary {
+    display: none;
+  }
+  .btn-primary {
+    min-height: 31px;
+    font-size: 14px;
+  }
+  .metric-grid {
+    gap: 8px;
+  }
+  .metric-card {
+    min-height: 103px;
+    padding: 12px;
+  }
+  .metric-card > b {
+    font-size: 26px;
+  }
+  .overview-grid {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+  .quick-strip > button {
+    flex: 1;
+    justify-content: space-between;
+  }
+  .records-toolbar {
+    display: block;
+  }
+  .toolbar-left,
+  .toolbar-right {
+    overflow: auto;
+  }
+  .toolbar-left {
+    margin-bottom: 7px;
+  }
+  .search-box {
+    flex: 1;
+    min-width: 150px;
+  }
+  .search-box input {
+    width: 100%;
+    min-width: 80px;
+  }
+  .toolbar-right {
+    justify-content: flex-end;
+  }
+  .records-block table {
+    min-width: 680px;
+  }
+  .table-footer {
+    padding: 9px;
+    font-size: 13px;
+  }
+  .table-footer > div {
+    gap: 5px;
+  }
+  .table-footer button {
+    padding: 5px;
+  }
+  .stats-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .block-heading {
+    padding: 13px;
+  }
+  .activity-row time,
+  .data-note {
+    display: none;
+  }
+  .crumb {
+    font-size: 13px;
+  }
+  .user-extra-filters {
+    overflow: auto;
+  }
+  .user-extra-filters > span {
+    white-space: nowrap;
+  }
+  .period-picker {
+    flex-wrap: wrap;
+  }
+  .period-picker > span {
+    width: 100%;
+    margin: 0;
+  }
+  .schema-info {
+    grid-template-columns: 1fr;
+  }
+  .schema-info > div:first-child {
+    display: flex;
+  }
+}
+

@@ -45,7 +45,7 @@ export type OnboardingCatalogs = {
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3001'
 
-async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
+export async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
   let response: Response
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
@@ -62,7 +62,7 @@ async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T
   }
 
   const text = await response.text()
-  let payload: any = null
+  let payload: unknown = null
   try {
     payload = text ? JSON.parse(text) : null
   } catch {
@@ -70,7 +70,10 @@ async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T
   }
 
   if (!response.ok) {
-    const safeMessage = typeof payload?.message === 'string' ? payload.message.trim() : ''
+    const errorPayload = typeof payload === 'object' && payload !== null
+      ? payload as { message?: unknown; code?: unknown }
+      : null
+    const safeMessage = typeof errorPayload?.message === 'string' ? errorPayload.message.trim() : ''
     const containsInternals = safeMessage.length > 240 || /prisma|invocation|node_modules|stack trace|\bat\s+.+\.(?:js|ts):\d+/i.test(safeMessage)
     const message = response.status >= 500
       ? 'El servidor no pudo completar la solicitud. Inténtalo de nuevo en unos momentos.'
@@ -79,7 +82,7 @@ async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T
         : 'No se pudo completar la solicitud. Revisa los datos e inténtalo de nuevo.'
     const error = new Error(message) as ApiError
     error.status = response.status
-    error.code = payload?.code
+    error.code = typeof errorPayload?.code === 'string' ? errorPayload.code : undefined
     throw error
   }
 

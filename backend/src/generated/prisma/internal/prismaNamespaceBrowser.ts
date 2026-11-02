@@ -180,6 +180,7 @@ export const CandidateProfileScalarFieldEnum = {
   specializationId: 'specializationId',
   description: 'description',
   cvUrl: 'cvUrl',
+  cvFileName: 'cvFileName',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -237,6 +238,7 @@ export const CompanyProfileScalarFieldEnum = {
   id: 'id',
   ownerUserId: 'ownerUserId',
   name: 'name',
+  logoUrl: 'logoUrl',
   description: 'description',
   website: 'website',
   economicSectorId: 'economicSectorId',
@@ -341,6 +343,7 @@ export const JobScalarFieldEnum = {
   status: 'status',
   publishedAt: 'publishedAt',
   expiresAt: 'expiresAt',
+  archivedAt: 'archivedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -375,7 +378,8 @@ export const ApplicationScalarFieldEnum = {
   candidateProfileId: 'candidateProfileId',
   status: 'status',
   appliedAt: 'appliedAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  candidateHiddenAt: 'candidateHiddenAt'
 } as const
 
 export type ApplicationScalarFieldEnum = (typeof ApplicationScalarFieldEnum)[keyof typeof ApplicationScalarFieldEnum]

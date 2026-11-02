@@ -12,19 +12,19 @@ export type CandidateDashboardData = {
 }
 
 export type CompanyDashboardData = {
-  company: { id: string; name: string; verificationStatus: string; department: { name: string } | null; municipality: { name: string } | null; economicSector: { name: string } | null }
-  stats: { totalJobs: number; publishedJobs: number; totalApplications: number }
-  recentJobs: { id: string; title: string; status: string; createdAt: string; publishedAt: string | null; _count: { applications: number; views: number } }[]
+  company: { id: string; name: string; logoUrl: string | null; verificationStatus: string; department: { name: string } | null; municipality: { name: string } | null; economicSector: { name: string } | null }
+  stats: { totalJobs: number; publishedJobs: number; pendingApplications: number }
+  recentJobs: { id: string; title: string; status: string; createdAt: string; publishedAt: string | null; professionalArea: { name: string }; _count: { applications: number; views: number } }[]
 }
 
 export type CompanyJob = {
   id: string; title: string; description: string; requirements: string
-  professionalAreaId: string; specializationId: string | null; departmentId: string | null; municipalityId: string | null
+  professionalAreaId: string; professionalArea: { name: string }; specializationId: string | null; departmentId: string | null; municipalityId: string | null
   workMode: string; remoteScope: string | null; contractType: string; workday: string; scheduleType: string
   scheduleDescription: string | null; salaryMin: number | string | null; salaryMax: number | string | null
   salaryCurrency: string | null; salaryPeriod: string | null; salaryNegotiable: boolean
   experienceYearsMin: number | null; isUrgent: boolean; vacancies: number; status: string
-  publishedAt: string | null; expiresAt: string | null; createdAt: string; updatedAt: string
+  publishedAt: string | null; expiresAt: string | null; archivedAt: string | null; createdAt: string; updatedAt: string
   _count: { applications: number; views: number }
 }
 
@@ -44,4 +44,6 @@ export const workspaceApi = {
   createCompanyJob: (data: Record<string, unknown>) => apiRequest<{ job: CompanyJob }>('/api/company/jobs', { method: 'POST', body: JSON.stringify(data) }),
   updateCompanyJob: (id: string, data: Record<string, unknown>) => apiRequest<{ job: CompanyJob }>(`/api/company/jobs/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
   updateCompanyJobStatus: (id: string, status: string) => apiRequest<{ job: Pick<CompanyJob, 'id' | 'title' | 'status' | 'publishedAt'> }>(`/api/company/jobs/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
+  removeCompanyJob: (id: string) => apiRequest<{ removed: true }>(`/api/company/jobs/${id}`, { method: 'DELETE' }),
+  archiveCompanyJob: (id: string) => apiRequest<{ archived: true }>(`/api/company/jobs/${id}/archive`, { method: 'PATCH', body: JSON.stringify({}) }),
 }

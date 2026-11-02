@@ -290,6 +290,7 @@ model CandidateProfile {
   specializationId   String? @db.Uuid
   description        String?
   cvUrl              String?
+  cvFileName         String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -367,6 +368,7 @@ model CompanyProfile {
   id               String  @id @default(uuid()) @db.Uuid
   ownerUserId      String  @unique @db.Uuid
   name             String
+  logoUrl          String?
   description      String?
   website          String?
   economicSectorId String? @db.Uuid
@@ -510,6 +512,7 @@ model Job {
   status      JobStatus @default(DRAFT)
   publishedAt DateTime?
   expiresAt   DateTime?
+  archivedAt  DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -534,6 +537,7 @@ model Job {
   @@index([workMode, contractType, workday])
   @@index([companyProfileId, status])
   @@index([companyProfileId, publishedAt])
+  @@index([companyProfileId, archivedAt, createdAt])
 }
 
 model JobView {
@@ -574,6 +578,7 @@ model Application {
   status             ApplicationStatus @default(RECEIVED)
   appliedAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
+  candidateHiddenAt  DateTime?
 
   job              Job              @relation(fields: [jobId], references: [id], onDelete: Restrict)
   candidateProfile CandidateProfile @relation(fields: [candidateProfileId], references: [id], onDelete: Restrict)
@@ -582,6 +587,7 @@ model Application {
 
   @@unique([jobId, candidateProfileId])
   @@index([candidateProfileId, status])
+  @@index([candidateProfileId, candidateHiddenAt])
   @@index([jobId, status, appliedAt])
   @@index([appliedAt])
 }

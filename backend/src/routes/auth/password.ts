@@ -12,8 +12,8 @@ export function registerPasswordRoutes(app: FastifyInstance, context: AuthRouteC
   app.post('/api/auth/password/forgot', async (request, reply) => {
     const body = (request.body ?? {}) as PasswordPayload
     const email = typeof body.email === 'string' ? normalizeEmail(body.email) : ''
-    if (rateLimited(`forgot:${request.ip}`, 5)) return reply.code(429).send({ message: 'Demasiadas solicitudes. IntÃ©ntalo mÃ¡s tarde.' })
-    const generic = { ok: true, message: 'Si existe una cuenta, enviaremos instrucciones para restablecer la contraseÃ±a.' }
+    if (rateLimited(`forgot:${request.ip}`, 5)) return reply.code(429).send({ message: 'Demasiadas solicitudes. Inténtalo más tarde.' })
+    const generic = { ok: true, message: 'Si existe una cuenta, enviaremos instrucciones para restablecer la contraseña.' }
     const user = await db.user.findUnique({ where: { email } })
     if (!user || user.status !== 'ACTIVE' || !user.emailVerifiedAt) return generic
     const recent = await db.verificationToken.findFirst({ where: { userId: user.id, type: 'PASSWORD_RESET', createdAt: { gt: new Date(Date.now() - 60_000) } } })
@@ -28,7 +28,7 @@ export function registerPasswordRoutes(app: FastifyInstance, context: AuthRouteC
 
   app.post('/api/auth/password/reset', async (request, reply) => {
     const body = (request.body ?? {}) as { token?: string; password?: string }
-    if (!body.token || !/^[a-f0-9]{64}$/i.test(body.token) || !body.password || body.password.length < 10 || body.password.length > 128) return reply.code(400).send({ message: 'El enlace o la nueva contraseÃ±a no son vÃ¡lidos.' })
+    if (!body.token || !/^[a-f0-9]{64}$/i.test(body.token) || !body.password || body.password.length < 10 || body.password.length > 128) return reply.code(400).send({ message: 'El enlace o la nueva contraseña no son válidos.' })
     const updated = await db.$transaction(async tx => {
       const token = await tx.verificationToken.findUnique({ where: { tokenHash: hashToken(body.token!) } })
       if (!token || token.type !== 'PASSWORD_RESET' || token.usedAt || token.expiresAt <= new Date()) return false
@@ -39,7 +39,7 @@ export function registerPasswordRoutes(app: FastifyInstance, context: AuthRouteC
       await tx.verificationToken.updateMany({ where: { userId: token.userId, type: 'TRUSTED_DEVICE', usedAt: null }, data: { usedAt: new Date() } })
       return true
     })
-    if (!updated) return reply.code(400).send({ message: 'El enlace no es vÃ¡lido o ya venciÃ³.' })
+    if (!updated) return reply.code(400).send({ message: 'El enlace no es válido o ya venció.' })
     return { ok: true }
   })
 }

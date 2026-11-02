@@ -2,6 +2,8 @@
 import { computed, nextTick, onMounted, ref, watch, type Component } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import AppMessage from '@/components/ui/AppMessage.vue'
+import { useToast } from '@/composables/useToast'
 import { authApi } from '@/services/auth'
 import { Activity, BarChart3, BriefcaseBusiness, Building2, Check, ClipboardList, Clock3, Columns3, Database, FileText, Flag, LayoutDashboard, LogOut, Moon, Search, Sun, Users } from '@lucide/vue'
 import { useTheme } from '@/composables/useTheme'
@@ -13,6 +15,7 @@ type Row = Record<string, any>
 const router = useRouter()
 const auth = useAuthStore()
 const { theme, toggleTheme } = useTheme()
+const { notify } = useToast()
 const sections: { id: Section; label: string; group: string; icon: Component }[] = [
   { id: 'overview', label: 'Centro de operaciones', group: 'OPERACIONES', icon: LayoutDashboard },
   { id: 'users', label: 'Usuarios', group: 'GESTIÓN', icon: Users },
@@ -39,7 +42,6 @@ const inspector = ref<HTMLElement | null>(null)
 let previousFocus: HTMLElement | null = null
 const loading = ref(false)
 const error = ref('')
-const notice = ref('')
 const busyAction = ref(false)
 type AdminDialog = { title: string; message: string; confirmLabel: string; inputLabel?: string; placeholder?: string; required?: boolean; danger?: boolean }
 const activeDialog = ref<AdminDialog | null>(null)
@@ -198,7 +200,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return payload
 }
 async function load() {
-  loading.value = true; error.value = ''; notice.value = ''
+  loading.value = true; error.value = ''
   try {
     if (section.value === 'overview') {
       overview.value = await request('/api/admin/overview')
@@ -229,13 +231,13 @@ async function inviteAdmin() {
   if (invitationBusy.value) return
   const email = invitationEmail.value.trim()
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { error.value = 'Ingresa un correo válido para la invitación.'; return }
-  invitationBusy.value = true; error.value = ''; notice.value = ''
+  invitationBusy.value = true; error.value = ''
   try {
     const result = await request<{ message: string }>('/api/admin/invitations', { method: 'POST', body: JSON.stringify({ email }) })
-    notice.value = result.message
+    notify('Invitación enviada', result.message)
     invitationEmail.value = ''
   } catch (cause) {
-    error.value = cause instanceof Error ? cause.message : 'No se pudo enviar la invitación.'
+    notify('No se pudo enviar la invitación', cause instanceof Error ? cause.message : 'Inténtalo de nuevo.', 'error')
   } finally { invitationBusy.value = false }
 }
 function openGlobalResult(group: string, item: Row) {
@@ -250,7 +252,7 @@ async function saveViewWithDialog() {
   const view = JSON.stringify({ title, section: section.value, search: search.value, status: status.value, userRole: userRole.value, verified: verified.value, explorerModel: explorerModel.value, sortField: sortField.value, sortDirection: sortDirection.value })
   savedViews.value = [...savedViews.value.filter(item => JSON.parse(item).title !== title), view]
   localStorage.setItem('jw-admin-views', JSON.stringify(savedViews.value))
-  notice.value = `Vista “${title}” guardada en este navegador.`
+  notify('Vista guardada', `“${title}” quedó disponible en esta consola.`)
 }
 function applyView(value: string) {
   const view = JSON.parse(value); section.value = view.section; search.value = view.search; status.value = view.status; userRole.value = view.userRole ?? ''; verified.value = view.verified ?? ''; explorerModel.value = view.explorerModel ?? 'users'; sortField.value = view.sortField ?? ''; sortDirection.value = view.sortDirection ?? 'desc'; page.value = 1
@@ -286,8 +288,8 @@ async function act(kind: string, value: string) {
       }
       await request(path, { method: 'PATCH', body: JSON.stringify({ [kind === 'role' ? 'role' : 'status']: value, ...(reason ? { reason } : {}) }) })
     }
-    notice.value = 'Cambios guardados y registrados.'; selected.value = null; await load()
-  } catch (cause) { error.value = cause instanceof Error ? cause.message : 'La acción no se completó.' }
+    selected.value = null; await load(); notify('Acción completada', 'Los cambios se guardaron y quedaron registrados.')
+  } catch (cause) { notify('La acción no se completó', cause instanceof Error ? cause.message : 'Inténtalo de nuevo.', 'error') }
   finally { busyAction.value = false }
 }
 function actionOptions(row: Row): [string, string, string][] {
@@ -344,8 +346,7 @@ onMounted(async () => { if (!auth.user) await auth.hydrateSession(); if (!auth.u
       <section class="control-content">
         <div class="page-heading"><div><div class="eyebrow">CONSOLA DE ADMINISTRACIÓN <span class="live-dot"></span> SISTEMA ACTIVO</div><h1>{{ heading }}</h1><p v-if="section === 'overview'">Prioridades y actividad reciente de la plataforma.</p><p v-else-if="section === 'explorer'">Inspección de registros permitidos; los campos sensibles están excluidos.</p><p v-else-if="section === 'stats'">Tendencias calculadas desde los snapshots guardados.</p><p v-else>Consulta datos reales, revisa relaciones y ejecuta acciones autorizadas.</p></div><div class="heading-tools"><button v-if="section !== 'overview' && section !== 'stats'" class="btn-secondary" data-tooltip="Descarga las filas visibles en formato CSV" @click="exportCsv">↓ Exportar página CSV</button><button v-if="resource[section]" class="btn-secondary" data-tooltip="Guarda los filtros y el orden actuales en este navegador" @click="saveView">＋ Guardar vista</button><button class="btn-primary" data-tooltip="Vuelve a consultar los datos del servidor" @click="load">↻ Actualizar</button></div></div>
 
-        <div v-if="error" class="notice error-notice" role="alert"><b>Se produjo un problema</b><span>{{ error }}</span><button @click="load">Reintentar</button></div>
-        <div v-if="notice" class="notice success-notice" role="status">✓ {{ notice }}<button @click="notice = ''">Cerrar</button></div>
+        <AppMessage v-if="error" variant="error" title="Se produjo un problema" :message="error"><template #actions><button type="button" @click="load">Reintentar</button></template></AppMessage>
 
         <template v-if="section === 'overview'">
           <div class="metric-grid" v-if="overview"><button class="metric-card" data-tooltip="Abre la lista completa de cuentas y sus estados" @click="go('users')"><span>USUARIOS</span><b>{{ overview.metrics.users.toLocaleString('es-NI') }}</b><small>Registros de cuenta</small><i><Users :size="18" :stroke-width="1.8" aria-hidden="true" /></i></button><button class="metric-card" data-tooltip="Revisa empresas y sus solicitudes de verificación" @click="go('companies')"><span>EMPRESAS</span><b>{{ overview.metrics.companies.toLocaleString('es-NI') }}</b><small>{{ overview.metrics.pendingCompanies }} pendientes de revisión</small><i><Building2 :size="18" :stroke-width="1.8" aria-hidden="true" /></i></button><button class="metric-card" data-tooltip="Consulta las ofertas y su estado de publicación" @click="go('jobs')"><span>OFERTAS</span><b>{{ overview.metrics.jobs.toLocaleString('es-NI') }}</b><small>Ver todas las ofertas</small><i><BriefcaseBusiness :size="18" :stroke-width="1.8" aria-hidden="true" /></i></button><button class="metric-card" data-tooltip="Revisa postulaciones y sus etapas" @click="go('applications')"><span>POSTULACIONES</span><b>{{ overview.metrics.applications.toLocaleString('es-NI') }}</b><small>Revisar actividad</small><i><FileText :size="18" :stroke-width="1.8" aria-hidden="true" /></i></button></div>
@@ -370,7 +371,7 @@ onMounted(async () => { if (!auth.user) await auth.hydrateSession(); if (!auth.u
             <div class="records-toolbar"><div class="toolbar-left"><label class="search-box" data-tooltip="Filtra las filas de esta sección"><Search :size="18" :stroke-width="1.8" aria-hidden="true" /><input id="admin-search" v-model="search" :placeholder="`Buscar ${heading.toLowerCase()}…`"></label><select v-if="section !== 'audit'" v-model="status" aria-label="Filtrar por estado"><option value="">Todos los estados</option><option v-for="state in (section === 'users' ? ['ACTIVE','SUSPENDED','BANNED'] : section === 'companies' ? ['PENDING','VERIFIED','REJECTED'] : section === 'jobs' ? ['DRAFT','PUBLISHED','PAUSED','CLOSED','REMOVED'] : section === 'applications' ? ['RECEIVED','IN_REVIEW','SHORTLISTED','INTERVIEW','SELECTED','REJECTED','WITHDRAWN'] : ['PENDING','IN_REVIEW','RESOLVED','DISMISSED'])" :key="state" :value="state">{{ state.replaceAll('_', ' ') }}</option></select><select v-if="section === 'explorer'" v-model="explorerModel" aria-label="Modelo"><option value="users">Usuarios</option><option value="jobs">Ofertas</option><option value="applications">Postulaciones</option><option value="reports">Reportes</option><option value="audit">Auditoría</option><option value="members">CompanyMember</option><option value="moderation">ModerationAction</option><option value="companyStats">CompanyDailyStats</option><option value="jobStats">JobDailyStats</option></select></div><div class="toolbar-right"><details class="column-picker" v-if="allColumns.length"><summary data-tooltip="Elige qué columnas se muestran"><Columns3 :size="16" aria-hidden="true" /> Columnas</summary><label v-for="column in allColumns" :key="column"><input type="checkbox" :checked="columns.includes(column)" @change="toggleColumn(column)">{{ column }}</label></details><select v-model="density" aria-label="Densidad de tabla" title="Ajusta el espacio vertical de las filas"><option value="comfortable">Densidad cómoda</option><option value="compact">Densidad compacta</option></select><select v-model.number="pageSize" aria-label="Filas por página" title="Elige cuántas filas cargar por página"><option :value="25">25 filas</option><option :value="50">50 filas</option><option :value="100">100 filas</option></select></div></div>
             <section v-if="section === 'explorer' && explorerModels.find(model => model.id === explorerModel)" class="schema-info"><div><span class="eyebrow">MODEL AND RELATIONS</span><b>{{ explorerModels.find(model => model.id === explorerModel).label }}</b></div><div><small>Fields</small><span v-for="field in explorerModels.find(model => model.id === explorerModel).fields" :key="field[0]" class="schema-chip"><code>{{ field[0] }}</code> {{ field[1] }}</span></div><div><small>Relations</small><span v-for="relation in explorerModels.find(model => model.id === explorerModel).relations" :key="relation" class="schema-chip">{{ relation }}</span></div></section><div v-if="section === 'users'" class="user-extra-filters"><span>FILTROS DE CUENTA</span><select v-model="userRole" aria-label="Filtrar por rol"><option value="">Todos los roles</option><option value="CANDIDATE">Candidato</option><option value="COMPANY">Empresa</option><option value="ADMIN">Administrador</option><option v-if="auth.user?.role === 'SUPERADMIN'" value="SUPERADMIN">Superadministrador</option></select><select v-model="verified" aria-label="Filtrar por verificación de correo"><option value="">Cualquier verificación</option><option value="yes">Correo verificado</option><option value="no">Pendiente de verificación</option></select></div>
             <div v-if="savedViews.length" class="saved-views"><span>VISTAS</span><button v-for="view in savedViews" :key="view" @click="applyView(view)">{{ JSON.parse(view).title }}</button></div>
-            <div v-if="loading" class="loading-state"><span class="spinner"></span>Cargando registros…</div>
+            <AppMessage v-if="loading" variant="loading" message="Cargando registros…" />
             <div v-else class="table-scroll"><table><thead><tr><th v-for="column in columns" :key="column" class="sortable" @click="toggleSort(column)">{{ column.replaceAll('.', ' / ').replace(/([A-Z])/g, ' $1').toUpperCase() }}</th><th class="action-col">DETALLE</th></tr></thead><tbody><tr v-for="(row, index) in rows" :key="row.id ?? index" :class="{ 'selected-row': selected?.id === row.id }" @click="selected = selected?.id === row.id ? null : row"><td v-for="column in columns" :key="column"><span v-if="column.toLowerCase().includes('status') || column.toLowerCase() === 'role'" class="status-pill" :class="String(row[column]).toLowerCase()">{{ pretty(row[column]) }}</span><span v-else-if="column === 'email'">{{ pretty(row[column]) }}</span><span v-else>{{ pretty(row[column]) }}</span></td><td class="action-col"><button class="row-open" data-tooltip="Abre el detalle y las acciones disponibles" @click.stop="selected = row">Inspeccionar ↗</button></td></tr><tr v-if="!rows.length"><td :colspan="columns.length + 1" class="empty-cell"><span><Search :size="18" aria-hidden="true" /></span><b>No se encontraron registros</b><small>Prueba otra búsqueda o cambia los filtros.</small></td></tr></tbody></table></div>
             <footer class="table-footer"><span>{{ total ? `${((page - 1) * pageSize + 1).toLocaleString('es-NI')}–${Math.min(page * pageSize, total).toLocaleString('es-NI')} de ${total.toLocaleString('es-NI')} registros` : '0 registros' }}</span><div><button :disabled="page <= 1" @click="page--">← Anterior</button><span>Página {{ page }}</span><button :disabled="page * pageSize >= total" @click="page++">Siguiente →</button></div></footer>
           </section>

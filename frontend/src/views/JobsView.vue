@@ -4,7 +4,10 @@ import { useRoute, useRouter, RouterLink } from 'vue-router'
 import SiteHeader from '@/components/layout/SiteHeader.vue'
 import SiteFooter from '@/components/layout/SiteFooter.vue'
 import WorkspaceFrame from '@/components/workspace/WorkspaceFrame.vue'
+import AppMessage from '@/components/ui/AppMessage.vue'
+import AppEmptyState from '@/components/ui/AppEmptyState.vue'
 import JobCard from '@/components/landing/JobCard.vue'
+import PublicJobDialog from '@/components/jobs/PublicJobDialog.vue'
 import { jobsApi, type PublicJob, type PublicJobOptions } from '@/services/jobs'
 import { useAuthStore } from '@/stores/auth'
 
@@ -24,31 +27,51 @@ const total = ref(0)
 const pages = ref(0)
 const loading = ref(false)
 const error = ref('')
+const selectedJobId = ref<string | null>(null)
 const filters = reactive({ q: '', professionalAreaId: '', specializationId: '', departmentId: '', municipalityId: '', workMode: '', contractType: '', workday: '' })
+let filtersSyncing = false
+let filterTimer: ReturnType<typeof setTimeout> | undefined
+let loadSequence = 0
 const specializations = computed(() => options.value?.specializations.filter(item => item.professionalAreaId === filters.professionalAreaId) ?? [])
 const municipalities = computed(() => options.value?.municipalities.filter(item => item.departmentId === filters.departmentId) ?? [])
 const activeFilterCount = computed(() => Object.values(filters).filter(Boolean).length)
 
 function queryValue(value: unknown) { return typeof value === 'string' ? value : '' }
-function syncFilters() { for (const key of Object.keys(filters) as (keyof typeof filters)[]) filters[key] = queryValue(route.query[key]) }
+function syncFilters() {
+  filtersSyncing = true
+  for (const key of Object.keys(filters) as (keyof typeof filters)[]) filters[key] = queryValue(route.query[key])
+  filtersSyncing = false
+}
 async function load() {
+  const sequence = ++loadSequence
   loading.value = true
   error.value = ''
   try {
     const result = await jobsApi.list({ ...filters, page: Number(queryValue(route.query.page)) || 1 })
-    jobs.value = result.jobs; total.value = result.total; pages.value = result.pages
-  } catch (e) { error.value = e instanceof Error ? e.message : 'No se pudieron cargar las vacantes.' }
-  finally { loading.value = false }
+    if (sequence === loadSequence) { jobs.value = result.jobs; total.value = result.total; pages.value = result.pages }
+  } catch (e) { if (sequence === loadSequence) error.value = e instanceof Error ? e.message : 'No se pudieron cargar las vacantes.' }
+  finally { if (sequence === loadSequence) loading.value = false }
 }
 function search() {
   const query = Object.fromEntries(Object.entries(filters).filter(([, value]) => value))
-  void router.push({ name: 'jobs', query })
+  void router.replace({ name: 'jobs', query })
 }
 function clearFilters() {
+  filtersSyncing = true
   Object.assign(filters, { q: '', professionalAreaId: '', specializationId: '', departmentId: '', municipalityId: '', workMode: '', contractType: '', workday: '' })
-  void router.push({ name: 'jobs' })
+  filtersSyncing = false
+  if (filterTimer) clearTimeout(filterTimer)
+  void router.replace({ name: 'jobs' })
 }
 function pageUrl(page: number) { return { name: 'jobs', query: { ...route.query, page: String(page) } } }
+function closeJobDialog(navigating = false) {
+  selectedJobId.value = null
+  if (!navigating && typeof route.query.vacante === 'string') {
+    const query = { ...route.query }
+    delete query.vacante
+    void router.replace({ query })
+  }
+}
 
 onMounted(async () => {
   if (!auth.user) void auth.hydrateSession().catch(() => undefined)
@@ -56,7 +79,13 @@ onMounted(async () => {
   try { options.value = await jobsApi.options() } catch { /* The backend returns a visible request error for listings. */ }
   await load()
 })
+watch(filters, () => {
+  if (filtersSyncing) return
+  if (filterTimer) clearTimeout(filterTimer)
+  filterTimer = setTimeout(search, filters.q ? 280 : 120)
+}, { flush: 'sync' })
 watch(() => route.query, async () => { syncFilters(); await load() })
+watch(() => route.query.vacante, value => { selectedJobId.value = queryValue(value) || null }, { immediate: true })
 </script>
 
 <template>
@@ -74,12 +103,19 @@ watch(() => route.query, async () => { syncFilters(); await load() })
       <button class="workspace__cta" type="submit">Buscar ofertas</button>
     </form>
     <p v-if="activeFilterCount" class="jobs-page__active-filters" aria-live="polite">{{ activeFilterCount }} {{ activeFilterCount === 1 ? 'filtro activo' : 'filtros activos' }}<button type="button" @click="clearFilters">Limpiar filtros</button></p>
-    <p v-if="error" class="workspace__error" role="alert">{{ error }}</p>
-    <p v-else-if="loading" class="jobs-page__state" role="status">Buscando vacantes…</p>
-    <template v-else><p class="jobs-page__count">{{ total }} {{ total === 1 ? 'vacante encontrada' : 'vacantes encontradas' }}</p><ul v-if="jobs.length" class="jobs-page__results"><li v-for="job in jobs" :key="job.id"><JobCard :job="job" /></li></ul><p v-else class="jobs-page__state">No hay vacantes con esos filtros. <button v-if="activeFilterCount" type="button" @click="clearFilters">Quitar filtros y ver todas</button></p>
+    <AppMessage v-if="error" variant="error" title="No se pudieron cargar las vacantes" :message="error" />
+    <div class="jobs-page__results-region" :class="{ 'is-loading': loading }" :aria-busy="loading">
+      <p v-if="loading && jobs.length" class="jobs-page__refresh" role="status">Actualizando vacantes…</p>
+      <p class="jobs-page__count" aria-live="polite">{{ total }} {{ total === 1 ? 'vacante encontrada' : 'vacantes encontradas' }}</p>
+      <TransitionGroup name="job-results" tag="ul" class="jobs-page__results" aria-label="Vacantes disponibles">
+        <li v-for="job in jobs" :key="job.id"><JobCard :job="job" @select="selectedJobId = $event" /></li>
+      </TransitionGroup>
+      <p v-if="!jobs.length && loading" class="jobs-page__state" role="status">Buscando vacantes…</p>
+      <AppEmptyState v-else-if="!jobs.length" title="No hay vacantes con esos filtros" description="Prueba con otros criterios para encontrar oportunidades."><template #actions><button v-if="activeFilterCount" type="button" @click="clearFilters">Quitar filtros</button></template></AppEmptyState>
       <nav v-if="pages > 1" class="jobs-page__pagination" aria-label="Paginación"><RouterLink v-if="Number(route.query.page) > 1" :to="pageUrl(Number(route.query.page) - 1)">Anterior</RouterLink><span>Página {{ Number(route.query.page) || 1 }} de {{ pages }}</span><RouterLink v-if="(Number(route.query.page) || 1) < pages" :to="pageUrl((Number(route.query.page) || 1) + 1)">Siguiente</RouterLink></nav>
-    </template>
+    </div>
   </component><SiteFooter v-if="!isCandidateWorkspace" />
+  <PublicJobDialog :oob-id="selectedJobId" @close="closeJobDialog" />
   </component>
 </template>
 
@@ -94,5 +130,12 @@ watch(() => route.query, async () => { syncFilters(); await load() })
 .jobs-filters button { align-self: end; }
 .jobs-page__count { color: var(--muted-foreground); }.jobs-page__results { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1rem; list-style: none; margin: 0; padding: 0; }.jobs-page__state { min-height: 8rem; display: grid; place-items: center; color: var(--muted-foreground); }.jobs-page__pagination { display: flex; justify-content: center; align-items: center; gap: 1rem; margin: 2rem 0; }.jobs-page__pagination a { color: var(--primary); font-weight: 700; }
 .jobs-page__active-filters{display:flex;align-items:center;gap:.6rem;margin:.1rem 0 .7rem;color:var(--muted-foreground);font-size:.72rem}.jobs-page__active-filters button,.jobs-page__state button{border:0;background:transparent;color:var(--primary);font:inherit;font-weight:800;cursor:pointer}
+.jobs-page__results-region{position:relative;min-height:5rem}.jobs-page__results-region.is-loading>.jobs-page__count{opacity:.62}.jobs-page__refresh{margin:.4rem 0;color:var(--primary);font-size:.72rem;font-weight:700;animation:jobs-refresh-in .18s ease-out both}
+.job-results-enter-active,.job-results-leave-active{transition:opacity .18s ease}
+.job-results-enter-from,.job-results-leave-to{opacity:0}
+.job-results-leave-active{pointer-events:none}
+.job-results-enter-active{transition-delay:.035s}
+@keyframes jobs-refresh-in{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.job-results-enter-active,.job-results-leave-active,.jobs-page__refresh{animation:none!important;transition:none!important}}
 @media(max-width:850px){.jobs-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.jobs-page__results{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.jobs-filters,.jobs-page__results{grid-template-columns:1fr}}
 </style>

@@ -80,36 +80,36 @@ const companySteps = [
 .how-it-works{position:relative;left:50%;width:100vw;margin:0 0 0 -50vw;padding:clamp(3.5rem,7vw,6rem) clamp(20px,4vw,64px);background:linear-gradient(115deg,#e8f0fa 0%,#dfeaf6 52%,#e9f1f9 100%)}
 .how-it-works__grid{display:grid;width:min(100%,1500px);grid-template-columns:minmax(16rem,.78fr) minmax(0,1.7fr);align-items:center;gap:clamp(2rem,5vw,5rem);margin-inline:auto}
 .how-it-works__intro{max-width:31rem}
-.hiw-kicker{display:flex;align-items:center;gap:.55rem;margin:0 0 1rem;color:#1769c2;font-size:.74rem;font-weight:850;letter-spacing:.14em;text-transform:uppercase}
-.hiw-kicker::before{width:1.5rem;height:2px;border-radius:2px;background:#1769c2;content:""}
+.hiw-kicker{display:flex;align-items:center;gap:.55rem;margin:0 0 1rem;color:var(--primary);font-size:.74rem;font-weight:850;letter-spacing:.14em;text-transform:uppercase}
+.hiw-kicker::before{width:1.5rem;height:2px;border-radius:2px;background:var(--primary);content:""}
 .hiw-title{max-width:11ch;margin:0;color:#10233a;font:850 clamp(2.35rem,4vw,3.55rem)/1.06 Manrope,sans-serif;letter-spacing:-.055em}
 .hiw-desc{max-width:36ch;margin:1.1rem 0 1.2rem;color:#52657b;font-size:1.05rem;line-height:1.7}
 .hiw-origin{display:inline-flex;align-items:center;gap:.45rem;padding:.5rem .7rem;border:1px solid #d4e4f5;border-radius:999px;background:rgb(255 255 255 / 72%);color:#355472;font-size:.74rem;font-weight:750}
-.hiw-origin svg{color:#1769c2}
+.hiw-origin svg{color:var(--primary)}
 .how-it-works__journeys{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:1rem}
-.hiw-journey{--journey-accent:#1769c2;position:relative;display:flex;min-width:0;min-height:25rem;flex-direction:column;overflow:hidden;padding:clamp(1.2rem,2vw,1.65rem);border:1px solid #d2e2f4;border-radius:1rem;background:#fff;box-shadow:0 12px 32px rgb(16 35 58 / 6%)}
+.hiw-journey{--journey-accent:var(--primary);position:relative;display:flex;min-width:0;min-height:25rem;flex-direction:column;overflow:hidden;padding:clamp(1.2rem,2vw,1.65rem);border:1px solid #d2e2f4;border-radius:1rem;background:#fff;box-shadow:0 12px 32px rgb(16 35 58 / 6%)}
 .hiw-journey::before{position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(90deg,var(--journey-accent),color-mix(in srgb,var(--journey-accent) 25%,white));content:""}
-.hiw-journey--candidate{--journey-accent:#1769c2;border-color:#c9dcf3;background:#fff}
+.hiw-journey--candidate{--journey-accent:var(--primary);border-color:#c9dcf3;background:#fff}
 .hiw-journey--company{--journey-accent:#315f8a;border-color:#d3e0ed;background:linear-gradient(145deg,#fff 0%,#f2f6fa 100%);box-shadow:0 12px 32px rgb(16 35 58 / 6%)}
 .hiw-journey--company::after{position:absolute;right:-4rem;bottom:-6rem;width:13rem;height:13rem;border:1px solid rgb(49 95 138 / 9%);border-radius:50%;box-shadow:0 0 0 1.4rem rgb(49 95 138 / 3%),0 0 0 2.8rem rgb(49 95 138 / 2%);content:"";pointer-events:none}
-.hiw-journey__eyebrow{margin:0 0 .55rem;color:#1769c2;font-size:.66rem;font-weight:850;letter-spacing:.13em;text-transform:uppercase}
+.hiw-journey__eyebrow{margin:0 0 .55rem;color:var(--primary);font-size:.66rem;font-weight:850;letter-spacing:.13em;text-transform:uppercase}
 .hiw-journey--company .hiw-journey__eyebrow{position:relative;z-index:1;color:#315f8a}
 .hiw-journey__title{display:flex;align-items:center;gap:.75rem;margin:0 0 1.45rem;color:#17263a;font:800 1.08rem/1.3 Manrope,sans-serif;letter-spacing:-.02em}
 .hiw-journey--company .hiw-journey__title{color:#17263a}
-.hiw-journey__icon{display:grid;width:2.7rem;height:2.7rem;flex:none;place-items:center;border-radius:.8rem;background:#1769c2;color:#fff;box-shadow:0 5px 14px rgb(23 105 194 / 20%)}
+.hiw-journey__icon{display:grid;width:2.7rem;height:2.7rem;flex:none;place-items:center;border-radius:.8rem;background:var(--primary);color:#fff;box-shadow:0 5px 14px rgb(23 105 194 / 20%)}
 .hiw-journey--company .hiw-journey__icon{background:#e5edf5;color:#315f8a;box-shadow:0 5px 14px rgb(49 95 138 / 8%)}
 .hiw-steps{position:relative;display:grid;gap:1.3rem;margin:0 0 1.5rem;padding:0;list-style:none}
 .hiw-steps::before{position:absolute;top:1.15rem;bottom:1.15rem;left:.92rem;width:1px;background:linear-gradient(#9cc7f3,#d9e7f6);content:""}
 .hiw-journey--company .hiw-steps::before{background:linear-gradient(#9db8d1,#dbe5ef)}
 .hiw-step{position:relative;display:grid;grid-template-columns:2rem minmax(0,1fr);align-items:start;gap:.8rem;min-width:0}
-.hiw-step__number{z-index:1;display:grid;width:1.9rem;height:1.9rem;place-items:center;border:2px solid #fff;border-radius:50%;background:#1769c2;color:#fff;font-size:.63rem;font-weight:850;box-shadow:0 0 0 1px #bcd6f2}
+.hiw-step__number{z-index:1;display:grid;width:1.9rem;height:1.9rem;place-items:center;border:2px solid #fff;border-radius:50%;background:var(--primary);color:#fff;font-size:.63rem;font-weight:850;box-shadow:0 0 0 1px #bcd6f2}
 .hiw-journey--company .hiw-step__number{border-color:#fff;background:#e5edf5;color:#315f8a;box-shadow:0 0 0 1px #d3e0ed}
 .hiw-step__body{min-width:0;padding-top:.12rem}
 .hiw-step__name{display:block;margin:0 0 .3rem;color:#17263a;font-size:.9rem;font-weight:800;line-height:1.4}
 .hiw-step__desc{margin:0;color:#52657b;font-size:.82rem;line-height:1.6;overflow-wrap:anywhere}
 .hiw-journey--company .hiw-step__name{color:#17263a}
 .hiw-journey--company .hiw-step__desc{color:#52657b}
-.hiw-action{display:inline-flex;min-height:2.65rem;align-items:center;justify-content:space-between;gap:.75rem;margin-top:auto;padding:.35rem .45rem .35rem .8rem;border-radius:.7rem;background:#1769c2;color:#fff;font-size:.78rem;font-weight:800;transition:background .18s,transform .18s,box-shadow .18s}
+.hiw-action{display:inline-flex;min-height:2.65rem;align-items:center;justify-content:space-between;gap:.75rem;margin-top:auto;padding:.35rem .45rem .35rem .8rem;border-radius:.7rem;background:var(--primary);color:#fff;font-size:.78rem;font-weight:800;transition:background .18s,transform .18s,box-shadow .18s}
 .hiw-action svg{width:16px;height:16px;padding:0;border-radius:0;background:transparent;transition:transform .18s}
 .hiw-action:hover{transform:translateY(-1px);background:#1356a2;box-shadow:0 7px 16px rgb(23 105 194 / 20%)}
 .hiw-action:hover svg{transform:translateX(2px)}

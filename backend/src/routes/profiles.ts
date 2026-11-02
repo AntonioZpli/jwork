@@ -94,7 +94,7 @@ export async function registerProfileRoutes(app: FastifyInstance, db: typeof pri
     if (!context) return
     const [profile, catalogs] = await Promise.all([
       db.candidateProfile.findUnique({ where: { id: context.profileId }, select: {
-        firstName: true, lastName: true, contactEmail: true, phone: true, photoUrl: true, cvUrl: true, description: true,
+        firstName: true, lastName: true, contactEmail: true, phone: true, photoUrl: true, cvUrl: true, cvFileName: true, description: true,
         departmentId: true, municipalityId: true, professionalAreaId: true, specializationId: true,
         department: { select: { name: true } }, municipality: { select: { name: true } },
         experiences: { orderBy: { startDate: 'desc' }, select: { id: true, position: true, company: true, startDate: true, endDate: true, description: true } },
@@ -206,7 +206,7 @@ export async function registerProfileRoutes(app: FastifyInstance, db: typeof pri
   app.get('/api/company/profile', async (request, reply) => {
     const user = await requireRole(request, reply, db, 'COMPANY'); if (!user) return
     const [profile, departments, municipalities, economicSectors] = await Promise.all([
-      db.companyProfile.findUnique({ where: { ownerUserId: user.id }, select: { id: true, name: true, description: true, website: true, economicSectorId: true, departmentId: true, municipalityId: true, address: true, contactEmail: true, phone: true, taxId: true, verificationStatus: true } }),
+      db.companyProfile.findUnique({ where: { ownerUserId: user.id }, select: { id: true, name: true, logoUrl: true, description: true, website: true, economicSectorId: true, departmentId: true, municipalityId: true, address: true, contactEmail: true, phone: true, taxId: true, verificationStatus: true } }),
       db.department.findMany({ select: { id: true, name: true }, orderBy: { name: 'asc' } }),
       db.municipality.findMany({ select: { id: true, name: true, departmentId: true }, orderBy: { name: 'asc' } }),
       db.economicSector.findMany({ where: { isActive: true }, select: { id: true, name: true }, orderBy: { name: 'asc' } }),
@@ -216,7 +216,7 @@ export async function registerProfileRoutes(app: FastifyInstance, db: typeof pri
   })
   app.patch('/api/company/profile', async (request, reply) => {
     const user = await requireRole(request, reply, db, 'COMPANY'); if (!user) return
-    const existing = await db.companyProfile.findUnique({ where: { ownerUserId: user.id }, select: { id: true, name: true, description: true, website: true, economicSectorId: true, departmentId: true, municipalityId: true, address: true, contactEmail: true, phone: true, taxId: true } })
+    const existing = await db.companyProfile.findUnique({ where: { ownerUserId: user.id }, select: { id: true, name: true, logoUrl: true, description: true, website: true, economicSectorId: true, departmentId: true, municipalityId: true, address: true, contactEmail: true, phone: true, taxId: true } })
     if (!existing) return reply.code(404).send({ message: 'Completa primero el perfil de tu empresa.' })
     try {
       const body = objectBody(request.body, ['name', 'description', 'website', 'economicSectorId', 'departmentId', 'municipalityId', 'address', 'contactEmail', 'phone', 'taxId'])
@@ -234,7 +234,7 @@ export async function registerProfileRoutes(app: FastifyInstance, db: typeof pri
       if (contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) throw new ProfileInputError('El correo de contacto no es válido.')
       const phone = body.phone === undefined ? existing.phone : companyPhone(body.phone)
       const taxId = body.taxId === undefined ? existing.taxId : text(body.taxId, 'La identificación fiscal', 80)
-      const profile = await db.companyProfile.update({ where: { id: existing.id }, data: { name, description, website, economicSectorId, departmentId, municipalityId, address, contactEmail, phone, taxId }, select: { id: true, name: true, description: true, website: true, economicSectorId: true, departmentId: true, municipalityId: true, address: true, contactEmail: true, phone: true, taxId: true, verificationStatus: true } })
+      const profile = await db.companyProfile.update({ where: { id: existing.id }, data: { name, description, website, economicSectorId, departmentId, municipalityId, address, contactEmail, phone, taxId }, select: { id: true, name: true, logoUrl: true, description: true, website: true, economicSectorId: true, departmentId: true, municipalityId: true, address: true, contactEmail: true, phone: true, taxId: true, verificationStatus: true } })
       return { profile }
     } catch (error) { if (error instanceof ProfileInputError) return reply.code(400).send({ message: error.message }); throw error }
   })

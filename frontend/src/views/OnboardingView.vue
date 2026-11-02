@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ArrowLeft, ArrowRight, BriefcaseBusiness, Check, CircleCheck, MapPin, ShieldCheck, UserRound } from '@lucide/vue'
-import AuthFeedback from '@/components/auth/AuthFeedback.vue'
+import AppMessage from '@/components/ui/AppMessage.vue'
 import { useOnboardingWizard } from '@/composables/useOnboardingWizard'
 
 const {
@@ -59,7 +59,7 @@ const {
         </header>
         <div class="onboarding-progress" role="progressbar" :aria-valuenow="step" aria-valuemin="1" aria-valuemax="3" :aria-label="'Paso ' + step + ' de 3'"><span :style="{ width: progressWidth }" /></div>
         <header class="onboarding-heading"><h2>{{ title }}</h2><p>{{ description }}</p></header>
-        <AuthFeedback v-if="isError" :message="errorMessage" variant="error" @dismiss="isError = false" />
+        <AppMessage v-if="isError" variant="error" title="No se pudo guardar tu avance" :message="errorMessage" dismissible @dismiss="isError = false" />
 
         <template v-if="isCandidate && step === 1">
           <div class="onboarding-account" :class="{ 'onboarding-account--unverified': !emailVerified }">
@@ -67,7 +67,7 @@ const {
             <span class="onboarding-account__copy"><small>Correo de tu cuenta</small><strong>{{ accountEmail }}</strong></span>
             <span class="onboarding-account__status">{{ emailVerified ? 'Verificado' : 'Pendiente' }}</span>
           </div>
-          <p v-if="!emailVerified" class="onboarding-inline-alert" role="alert">Verifica este correo antes de completar tu perfil.</p>
+          <AppMessage v-if="!emailVerified" variant="warning" title="Verifica tu correo" message="Necesitas verificar esta dirección antes de completar tu perfil." />
           <div class="onboarding-fields">
             <label class="onboarding-field"><span>Nombre <b>*</b></span><input v-model="form.firstName" autocomplete="given-name" maxlength="100" placeholder="Tu nombre" required :aria-invalid="Boolean(fieldErrors.firstName)" :aria-describedby="fieldErrors.firstName ? 'first-name-error' : 'name-hint'" @input="fieldErrors.firstName = ''" /><small v-if="fieldErrors.firstName" id="first-name-error" class="onboarding-field__error" role="alert">{{ fieldErrors.firstName }}</small><small v-else id="name-hint" class="onboarding-field__hint">Como aparece en tu identificación.</small></label>
             <label class="onboarding-field"><span>Apellidos <b>*</b></span><input v-model="form.lastName" autocomplete="family-name" maxlength="100" placeholder="Tus apellidos" required :aria-invalid="Boolean(fieldErrors.lastName)" :aria-describedby="fieldErrors.lastName ? 'last-name-error' : undefined" @input="fieldErrors.lastName = ''" /><small v-if="fieldErrors.lastName" id="last-name-error" class="onboarding-field__error" role="alert">{{ fieldErrors.lastName }}</small></label>
@@ -75,7 +75,7 @@ const {
             <label class="onboarding-field"><span>Departamento <b>*</b></span><select v-model="form.departmentId" required :aria-invalid="Boolean(fieldErrors.departmentId)" :aria-describedby="fieldErrors.departmentId ? 'department-error' : undefined"><option value="" disabled>Selecciona tu departamento</option><option v-for="department in catalogs.departments" :key="department.id" :value="department.id">{{ department.name }}</option></select><small v-if="fieldErrors.departmentId" id="department-error" class="onboarding-field__error" role="alert">{{ fieldErrors.departmentId }}</small></label>
             <label class="onboarding-field"><span>Municipio <b>*</b></span><select v-model="form.municipalityId" required :disabled="!form.departmentId" :aria-invalid="Boolean(fieldErrors.municipalityId)" :aria-describedby="fieldErrors.municipalityId ? 'municipality-error' : undefined"><option value="" disabled>{{ form.departmentId ? 'Selecciona tu municipio' : 'Primero elige un departamento' }}</option><option v-for="municipality in filteredMunicipalities" :key="municipality.id" :value="municipality.id">{{ municipality.name }}</option></select><small v-if="fieldErrors.municipalityId" id="municipality-error" class="onboarding-field__error" role="alert">{{ fieldErrors.municipalityId }}</small></label>
           </div>
-          <p v-if="!catalogsReady" class="onboarding-catalog-alert" role="status">No se pudieron cargar los catálogos de ubicación y áreas. Actualiza la página o inténtalo de nuevo más tarde.</p>
+          <AppMessage v-if="!catalogsReady" variant="error" title="No se pudieron cargar los datos del formulario" message="Actualiza la página o inténtalo de nuevo más tarde." />
         </template>
 
         <div v-else-if="isCandidate && step === 2" class="onboarding-fields">
@@ -143,4 +143,111 @@ const {
 @media(max-width:760px){.onboarding-page{align-items:stretch;padding:0}.onboarding-brand{top:1rem;left:1rem}.onboarding-workspace{grid-template-columns:1fr;min-height:100dvh}.onboarding-aside{min-height:auto;padding:1.35rem 1.4rem 1.2rem}.onboarding-aside__icon{display:none}.onboarding-aside .onboarding-eyebrow{margin-bottom:.45rem}.onboarding-aside h1{max-width:none;margin-bottom:.4rem;font-size:1.45rem}.onboarding-aside__intro>p:last-child{max-width:none;font-size:.8rem}.onboarding-steps{display:flex;justify-content:space-between;gap:.5rem;margin:1.15rem 0 .2rem}.onboarding-steps li{gap:.4rem;font-size:.68rem}.onboarding-steps__number{width:1.55rem;height:1.55rem}.onboarding-aside__privacy,.onboarding-aside__decoration{display:none}.onboarding-panel{padding:1.5rem 1.3rem 1.35rem}.onboarding-progress{margin-bottom:1.6rem}.onboarding-heading{margin-bottom:1.25rem}.onboarding-heading h2{font-size:1.7rem}.onboarding-heading p{font-size:.84rem}}
 @media(max-width:480px){.onboarding-page{padding-inline:.7rem}.onboarding-panel{padding-inline:1rem}.onboarding-fields{grid-template-columns:1fr;gap:.85rem}.onboarding-field--wide{grid-column:auto}.onboarding-steps li{flex-direction:column;align-items:center;gap:.3rem;text-align:center}.onboarding-review>div:not(.onboarding-review__identity){grid-template-columns:1fr;gap:.3rem}.onboarding-actions{gap:.5rem}.onboarding-button{padding-inline:.75rem;font-size:.79rem}.onboarding-review__note{font-size:.72rem}}
 @media(prefers-reduced-motion:reduce){.onboarding-progress span,.onboarding-steps li,.onboarding-field input,.onboarding-field select,.onboarding-phone,.onboarding-button{transition:none}.onboarding-button__spinner,.onboarding-loading__spinner{animation:none}}
+</style>
+
+<style scoped>
+.onboarding-page{min-height:100dvh;align-items:center;overflow-x:hidden;overflow-y:auto;padding:5rem 1.5rem 2rem;background:radial-gradient(ellipse at 18% 12%,color-mix(in srgb,var(--palette-ice) 75%,transparent),transparent 35%),var(--background)}
+.dark .onboarding-page{background:radial-gradient(ellipse at 18% 12%,color-mix(in srgb,var(--primary) 9%,transparent),transparent 35%),var(--background)}
+.onboarding-glow{display:none}
+.onboarding-brand{top:1.15rem;left:max(1.5rem,calc((100vw - 72rem)/2));color:var(--palette-ink)}
+.dark .onboarding-brand{color:var(--foreground)}
+.onboarding-brand__mark{border-radius:.65rem!important;background:linear-gradient(145deg,var(--palette-ink),var(--primary));box-shadow:0 5px 14px color-mix(in srgb,var(--palette-ink) 20%,transparent)}
+.onboarding-workspace{width:min(72rem,100%);min-height:min(47rem,calc(100dvh - 7rem));margin:auto;grid-template-columns:minmax(16rem,.78fr) minmax(0,1.42fr);overflow:hidden;border:1px solid color-mix(in srgb,var(--palette-ink) 10%,var(--border));border-radius:1.25rem!important;background:var(--surface);box-shadow:0 24px 70px color-mix(in srgb,var(--palette-ink) 10%,transparent)}
+.dark .onboarding-workspace{border-color:var(--border);box-shadow:0 24px 70px rgb(0 0 0 / 24%)}
+.onboarding-aside{min-height:100%;padding:2.4rem 2rem;background:linear-gradient(155deg,#102b4d 0%,#163f70 55%,#1769a8 100%)}
+.onboarding-aside__icon{width:3rem;height:3rem;margin-bottom:2rem;border-radius:.85rem!important;background:rgb(255 255 255 / 10%)}
+.onboarding-aside .onboarding-eyebrow{margin-bottom:.75rem;color:#9acaff}
+.onboarding-aside h1{max-width:17rem;font-size:clamp(1.8rem,3vw,2.35rem);line-height:1.08}
+.onboarding-aside__intro>p:last-child{max-width:18rem;color:#d2e4f7;font-size:.88rem}
+.onboarding-steps{gap:1.15rem;margin:2.5rem 0 auto}
+.onboarding-steps li{position:relative;min-height:2.4rem;gap:.75rem;color:#c4d7e9;font-size:.78rem}
+.onboarding-steps li:not(:last-child)::after{position:absolute;top:2.05rem;left:.92rem;width:1px;height:.7rem;background:rgb(255 255 255 / 23%);content:""}
+.onboarding-steps__number{width:1.9rem;height:1.9rem;border-radius:50%!important;background:rgb(255 255 255 / 5%)}
+.onboarding-aside__privacy{margin-top:2rem;padding-top:1rem;border-top:1px solid rgb(255 255 255 / 18%);color:#d2e4f7;font-size:.71rem}
+.onboarding-panel{justify-content:flex-start;padding:clamp(2rem,4vw,3.5rem)}
+.onboarding-panel__top{margin-bottom:1rem}
+.onboarding-panel__role{color:var(--primary);font-size:.74rem;font-weight:800;letter-spacing:.015em}
+.onboarding-panel__step{padding:.4rem .65rem;border:1px solid var(--border);border-radius:999px!important;background:var(--panel);font-size:.72rem}
+.onboarding-progress{height:.4rem;margin-bottom:2rem;border-radius:999px!important;background:var(--panel)}
+.onboarding-progress span{border-radius:999px!important;background:linear-gradient(90deg,var(--palette-ink),var(--primary))}
+.onboarding-heading{margin-bottom:1.35rem}
+.onboarding-heading h2{font-size:clamp(1.65rem,2.7vw,2.15rem);letter-spacing:-.05em}
+.onboarding-heading p{font-size:.85rem}
+.onboarding-account{border-radius:.8rem!important;background:color-mix(in srgb,#e8f7ef 65%,var(--surface))}
+.onboarding-account--unverified{background:color-mix(in srgb,#fff5e8 65%,var(--surface))}
+.onboarding-account__icon{border-radius:.65rem!important}
+.onboarding-fields{gap:1rem .85rem}
+.onboarding-field{gap:.42rem;font-size:.75rem}
+.onboarding-field input,.onboarding-field select,.onboarding-phone{min-height:3rem;border-radius:.62rem!important;font-size:.82rem}
+.onboarding-field input,.onboarding-field select{padding:.65rem .8rem}
+.onboarding-field input:focus,.onboarding-field select:focus,.onboarding-phone:focus-within{box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 17%,transparent)}
+.onboarding-field__hint,.onboarding-field__error{font-size:.68rem}
+.onboarding-phone{padding-left:.7rem}
+.onboarding-phone__prefix{font-size:.74rem}
+.onboarding-phone__prefix b{font-size:.74rem}
+.onboarding-tip{border-color:color-mix(in srgb,var(--primary) 17%,var(--border));border-radius:.7rem!important;background:color-mix(in srgb,var(--palette-ice) 48%,var(--surface))}
+.dark .onboarding-tip{background:color-mix(in srgb,var(--primary) 7%,var(--surface))}
+.onboarding-panel :deep(.app-message){margin-bottom:1rem;border-radius:.7rem!important}
+.onboarding-review{gap:.4rem}
+.onboarding-review>div:not(.onboarding-review__identity){grid-template-columns:minmax(8rem,.55fr) minmax(0,1fr);padding:.75rem .85rem;border:1px solid var(--border);border-radius:.65rem!important;background:var(--surface)}
+.onboarding-review__identity{margin-bottom:.35rem;padding:.85rem;border:1px solid var(--border);border-radius:.8rem!important;background:var(--panel)}
+.onboarding-review__avatar{border-radius:50%!important;background:linear-gradient(145deg,var(--palette-ink),var(--primary));color:#fff}
+.onboarding-review__verified{border-radius:999px!important;background:#e8f7ef;color:#16744f}
+.onboarding-review__note{border-radius:.65rem!important;background:var(--panel)}
+.onboarding-actions{margin-top:auto;padding-top:1.5rem}
+.onboarding-button{min-height:3.15rem;border-radius:.65rem!important}
+.onboarding-button--primary{background:linear-gradient(110deg,var(--palette-ink),var(--primary));box-shadow:0 8px 20px color-mix(in srgb,var(--palette-ink) 18%,transparent)}
+.onboarding-button--primary:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 12px 24px color-mix(in srgb,var(--palette-ink) 23%,transparent)}
+.onboarding-button--back{border-color:var(--border);border-radius:.65rem!important}
+.onboarding-later{text-underline-offset:4px}
+.onboarding-footnote{justify-content:flex-start;padding-top:.8rem;border-top:1px solid var(--border);font-size:.67rem}
+.onboarding-loading{min-height:20rem;justify-content:center}
+.onboarding-loading__spinner{border-radius:50%!important}
+.onboarding-success{border-radius:1.25rem!important}
+.onboarding-success__icon{border-radius:50%!important;background:linear-gradient(145deg,#e8f7ef,#d5f1e4)}
+.onboarding-success__summary{border-radius:.75rem!important}
+.onboarding-success .onboarding-button{margin-top:.1rem}
+
+@media(max-width:900px){
+  .onboarding-workspace{grid-template-columns:minmax(14rem,.7fr) minmax(0,1.3fr)}
+  .onboarding-aside{padding:2rem 1.4rem}
+  .onboarding-panel{padding:2rem 1.6rem}
+}
+@media(max-width:760px){
+  .onboarding-page{align-items:flex-start;padding:4.5rem 1rem 1rem}
+  .onboarding-brand{top:1rem;left:1rem}
+  .onboarding-workspace{width:min(100%,42rem);min-height:0;margin:0 auto 1rem;grid-template-columns:1fr;border-radius:.9rem!important}
+  .onboarding-aside{min-height:0;padding:1.25rem 1.35rem 1rem}
+  .onboarding-aside__icon{display:none}
+  .onboarding-aside h1{max-width:none;font-size:1.35rem}
+  .onboarding-aside__intro>p:last-child{font-size:.78rem}
+  .onboarding-steps{gap:.4rem;margin:1rem 0 0}
+  .onboarding-steps li{min-height:0;flex:1;flex-direction:column;gap:.35rem;text-align:center;font-size:.63rem;line-height:1.25}
+  .onboarding-steps li:not(:last-child)::after{top:.9rem;left:calc(50% + 1rem);width:calc(100% - 1rem);height:1px}
+  .onboarding-steps__number{width:1.8rem;height:1.8rem}
+  .onboarding-aside__privacy,.onboarding-aside__decoration{display:none}
+  .onboarding-panel{padding:1.5rem 1.35rem}
+  .onboarding-progress{margin-bottom:1.4rem}
+  .onboarding-heading{margin-bottom:1.15rem}
+  .onboarding-actions{margin-top:1.25rem;padding-top:0}
+  .onboarding-footnote{justify-content:center}
+}
+@media(max-width:480px){
+  .onboarding-page{padding:4rem .65rem .65rem}
+  .onboarding-workspace{border-radius:.7rem!important}
+  .onboarding-aside{padding:1rem .9rem .85rem}
+  .onboarding-panel{padding:1.15rem .9rem}
+  .onboarding-panel__top{align-items:flex-start}
+  .onboarding-panel__role{font-size:.68rem}
+  .onboarding-panel__step{flex:none}
+  .onboarding-fields{grid-template-columns:1fr;gap:.85rem}
+  .onboarding-field--wide{grid-column:auto}
+  .onboarding-review>div:not(.onboarding-review__identity){grid-template-columns:1fr;gap:.2rem}
+  .onboarding-actions{flex-direction:column-reverse}
+  .onboarding-button{width:100%;min-height:3rem}
+  .onboarding-button--back{order:2}
+  .onboarding-later{margin-top:.5rem}
+  .onboarding-success{padding:1.6rem 1.1rem;border-radius:.9rem!important}
+}
+@media(prefers-reduced-motion:reduce){.onboarding-button--primary:hover:not(:disabled){transform:none}}
 </style>

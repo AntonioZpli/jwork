@@ -33,14 +33,14 @@ describe('Gmail SMTP email transport', () => {
       return { sendMail: async (message: any) => { sentMessage = message; return {} } } as any
     })
 
-    await service.sendVerificationEmail('person@example.com', 'https://app.example.com/auth/verify?token=secret')
+    await service.sendVerificationEmail('person@example.com', '123456')
     assert.deepEqual(transportOptions, {
       host: 'smtp.gmail.com', port: 587, secure: false,
       auth: { user: 'sender@gmail.com', pass: 'app-password' },
     })
     assert.equal(sentMessage.from, 'Jinowork <sender@gmail.com>')
     assert.equal(sentMessage.to, 'person@example.com')
-    assert.match(sentMessage.text, /token=secret/)
+    assert.match(sentMessage.text, /123456/)
     assert.match(sentMessage.subject, /Verifica tu correo/)
   })
 

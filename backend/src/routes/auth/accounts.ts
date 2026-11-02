@@ -79,11 +79,11 @@ export function registerAccountRoutes(app: FastifyInstance, context: AuthRouteCo
     const body = (request.body ?? {}) as PasswordPayload
     const email = typeof body.email === 'string' ? normalizeEmail(body.email) : ''
     const password = typeof body.password === 'string' ? body.password : ''
-    if (rateLimited(`login:${request.ip}`, 15)) return reply.code(429).send({ message: 'Demasiados intentos. IntÃ©ntalo mÃ¡s tarde.' })
+    if (rateLimited(`login:${request.ip}`, 15)) return reply.code(429).send({ message: 'Demasiados intentos. Inténtalo más tarde.' })
     const user = await db.user.findUnique({ where: { email } })
-    if (!user || !(await verifyPassword(password, user.passwordHash))) return reply.code(401).send({ message: 'Correo o contraseÃ±a incorrectos.' })
-    if (user.status !== 'ACTIVE') return reply.code(403).send({ message: 'Esta cuenta no estÃ¡ habilitada para iniciar sesiÃ³n.' })
-    if (!user.emailVerifiedAt) return reply.code(403).send({ code: 'EMAIL_NOT_VERIFIED', message: 'Verifica tu correo antes de iniciar sesiÃ³n.' })
+    if (!user || !(await verifyPassword(password, user.passwordHash))) return reply.code(401).send({ message: 'Correo o contraseña incorrectos.' })
+    if (user.status !== 'ACTIVE') return reply.code(403).send({ message: 'Esta cuenta no está habilitada para iniciar sesión.' })
+    if (!user.emailVerifiedAt) return reply.code(403).send({ code: 'EMAIL_NOT_VERIFIED', message: 'Verifica tu correo antes de iniciar sesión.' })
     const rememberDevice = body.rememberDevice === true
     const deviceCookieName = 'jwork_remembered_device'
     const rememberedToken = request.cookies?.[deviceCookieName]

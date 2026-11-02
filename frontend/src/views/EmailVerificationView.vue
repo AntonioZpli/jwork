@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { CircleAlert, CircleCheck, LoaderCircle } from '@lucide/vue'
+import AppMessage from '@/components/ui/AppMessage.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -36,7 +37,7 @@ onMounted(async () => {
         <component :is="status === 'success' ? CircleCheck : status === 'error' ? CircleAlert : LoaderCircle" :size="26" :class="{ 'email-verification__spinner': status === 'loading' }" />
       </div>
       <h1>{{ status === 'success' ? 'Correo verificado' : status === 'error' ? 'No se pudo verificar' : 'Verificando correo' }}</h1>
-      <p :role="status === 'error' ? 'alert' : 'status'">{{ message }}</p>
+      <AppMessage :variant="status === 'loading' ? 'loading' : status" :message="message" />
       <button v-if="status === 'success'" type="button" @click="router.replace('/onboarding')">
         Completar mi perfil
       </button>

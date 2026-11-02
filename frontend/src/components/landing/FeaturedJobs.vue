@@ -1,6 +1,7 @@
-﻿<script setup lang="ts">
-import { FEATURED_JOBS } from '@/data/jobs'
+<script setup lang="ts">
+import { RouterLink } from 'vue-router'
 import JobCard from './JobCard.vue'
+import { FEATURED_JOBS } from '@/data/jobs'
 </script>
 
 <template>
@@ -9,75 +10,30 @@ import JobCard from './JobCard.vue'
       <div>
         <p class="featured-jobs__kicker">Encuentra tu siguiente paso</p>
         <h2 id="jobs-heading" class="featured-jobs__title">Oportunidades que inspiran.</h2>
-        <p class="featured-jobs__intro">Un nuevo reto, un equipo diferente, una oportunidad para crecer.</p>
+        <p class="featured-jobs__intro">Ejemplos de cómo se mostrarán las vacantes.</p>
       </div>
-      <a class="featured-jobs__all" href="/auth">Ver todas las ofertas <span aria-hidden="true">&nearr;</span></a>
+      <RouterLink class="featured-jobs__all" to="/auth">Ver todas las ofertas <span aria-hidden="true">&nearr;</span></RouterLink>
     </div>
-    <p class="featured-jobs__disclaimer" role="note">Ofertas ilustrativas · Empresas ficticias</p>
-    <ul class="featured-jobs__grid" role="list" aria-label="Listado de ofertas ilustrativas">
-      <li v-for="job in FEATURED_JOBS" :key="job.id">
-        <JobCard :job="job" />
-      </li>
+    <ul class="featured-jobs__grid" role="list" aria-label="Ejemplos de vacantes">
+      <li v-for="job in FEATURED_JOBS.slice(0, 3)" :key="job.id"><JobCard :job="job" example /></li>
     </ul>
   </section>
 </template>
+
 <style scoped>
-.featured-jobs { margin-top: 2rem; padding: 3.5rem; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; }
-.featured-jobs__header { display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; margin-bottom: 1.25rem; }
-.featured-jobs__kicker { margin: 0 0 0.55rem; color: var(--primary); font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; }
-.featured-jobs__title { margin: 0; color: var(--foreground); font-family: 'Manrope', sans-serif; font-size: clamp(2rem, 3.3vw, 2.65rem); font-weight: 800; line-height: 1.15; }
-.featured-jobs__intro { margin: 0.7rem 0 0; color: var(--muted-foreground); font-size: 1.12rem; }
-.featured-jobs__all { display: inline-flex; align-items: center; gap: 0.45rem; flex-shrink: 0; color: var(--primary); font-size: 1rem; font-weight: 700; }
-.featured-jobs__disclaimer { margin: 1.5rem 0 1rem; color: var(--muted-foreground); font-size: 0.9rem; }
-.featured-jobs__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; list-style: none; margin: 0; padding: 0; }
-.featured-jobs__grid > li { min-width: 0; }
-.featured-jobs a:focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; }
-@media (max-width: 1100px) { .featured-jobs { padding: 2.5rem; } .featured-jobs__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 560px) { .featured-jobs { padding: 1.35rem; } .featured-jobs__header { align-items: flex-start; flex-direction: column; gap: 0.8rem; } .featured-jobs__grid { grid-template-columns: 1fr; } }
-
-/* This is a page band, with its content aligned to the same editorial grid. */
-.featured-jobs {
-  position: relative;
-  left: 50%;
-  width: 100vw;
-  margin: 0 0 0 -50vw;
-  padding: 4rem max(clamp(20px, 4vw, 64px), calc((100vw - 1600px) / 2 + clamp(20px, 4vw, 64px)));
-  border: 0;
-  border-radius: 0;
-}
-
-.featured-jobs__header,
-.featured-jobs__disclaimer,
-.featured-jobs__grid {
-  width: min(100%, 1600px);
-  margin-inline: auto;
-}
-
-.featured-jobs__header { margin-bottom: 1rem; }
-.featured-jobs__disclaimer { margin-top: 1.5rem; }
-.featured-jobs__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-
-@media (max-width: 1100px) {
-  .featured-jobs { padding-block: 3rem; }
-  .featured-jobs__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-
-@media (max-width: 560px) {
-  .featured-jobs { padding-inline: 20px; }
-  .featured-jobs__grid { grid-template-columns: 1fr; }
-}
-
-.featured-jobs { padding-block: 5rem; }
-.featured-jobs { background: var(--panel); }
-.featured-jobs__header { margin-bottom: 1.35rem; }
-.featured-jobs__disclaimer { margin-top: 1.75rem; }
-.featured-jobs__grid { gap: 1.15rem; }
-.featured-jobs__header > div { min-width: 0; }
-
-@media (max-width: 1100px) {
-  .featured-jobs { padding-block: 4rem; }
-}
-@media (max-width: 560px) {
-  .featured-jobs { padding-block: 3rem; }
-}
+.featured-jobs { position:relative; left:50%; width:100vw; margin:0 0 0 -50vw; padding:5rem max(clamp(20px,4vw,64px),calc((100vw - 1600px)/2 + clamp(20px,4vw,64px))); background:var(--panel); }
+.featured-jobs__header,.featured-jobs__grid { width:min(100%,1600px); margin-inline:auto; }
+.featured-jobs__header { display:flex; align-items:flex-end; justify-content:space-between; gap:2rem; margin-bottom:1.35rem; }
+.featured-jobs__header>div { min-width:0; }
+.featured-jobs__kicker { margin:0 0 .55rem; color:var(--primary); font-size:.78rem; font-weight:800; text-transform:uppercase; letter-spacing:.1em; }
+.featured-jobs__title { margin:0; color:var(--foreground); font-family:Manrope,sans-serif; font-size:clamp(2rem,3.3vw,2.65rem); font-weight:800; line-height:1.15; }
+.featured-jobs__intro { margin:.7rem 0 0; color:var(--muted-foreground); font-size:1.05rem; }
+.featured-jobs__all { display:inline-flex; flex-shrink:0; align-items:center; gap:.45rem; color:var(--primary); font-size:.95rem; font-weight:750; }
+.featured-jobs__grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1.15rem; list-style:none; margin-top:1.75rem; padding:0; }
+.featured-jobs__grid>li { min-width:0; }
+.featured-jobs__state { width:min(100%,1600px); min-height:7rem; display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:.35rem .5rem; margin:0 auto; color:var(--muted-foreground); text-align:center; }
+.featured-jobs__state a { color:var(--primary); font-weight:750; }
+.featured-jobs a:focus-visible { outline:2px solid var(--primary); outline-offset:4px; }
+@media(max-width:1100px){.featured-jobs{padding-block:4rem}.featured-jobs__grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.featured-jobs{padding:3rem 20px}.featured-jobs__header{align-items:flex-start;flex-direction:column;gap:.8rem}.featured-jobs__grid{grid-template-columns:1fr}}
 </style>

@@ -48,11 +48,12 @@ function jobSelect() {
   return {
     id: true, title: true, description: true, requirements: true,
     professionalAreaId: true, specializationId: true, departmentId: true, municipalityId: true,
+    professionalArea: { select: { name: true } },
     workMode: true, remoteScope: true, contractType: true, workday: true,
     scheduleType: true, scheduleDescription: true, salaryMin: true, salaryMax: true,
     salaryCurrency: true, salaryPeriod: true, salaryNegotiable: true,
     experienceYearsMin: true, isUrgent: true, vacancies: true, status: true,
-    publishedAt: true, expiresAt: true, createdAt: true, updatedAt: true,
+    publishedAt: true, expiresAt: true, archivedAt: true, createdAt: true, updatedAt: true,
     _count: { select: { applications: true, views: true } },
   }
 }
@@ -77,7 +78,7 @@ export async function registerJobManagementRoutes(app: FastifyInstance, db: type
     const context = await requireCompany(request, reply, db)
     if (!context) return
     const jobs = await db.job.findMany({
-      where: { companyProfileId: context.company.id }, orderBy: { createdAt: 'desc' },
+      where: { companyProfileId: context.company.id, archivedAt: null }, orderBy: { createdAt: 'desc' },
       select: jobSelect(),
     })
     return { jobs }
@@ -152,5 +153,39 @@ export async function registerJobManagementRoutes(app: FastifyInstance, db: type
       if (error instanceof JobValidationError) return reply.code(400).send({ message: error.message })
       throw error
     }
+  })
+
+  app.patch('/api/company/jobs/:id/archive', async (request, reply) => {
+    const context = await requireCompany(request, reply, db)
+    if (!context) return
+    const { id } = request.params as { id: string }
+    if (!UUID_PATTERN.test(id)) return reply.code(400).send({ message: 'Identificador de vacante no válido.' })
+    const job = await db.job.findFirst({ where: { id, companyProfileId: context.company.id }, select: { id: true, status: true, archivedAt: true } })
+    if (!job) return reply.code(404).send({ message: 'No se encontró la vacante.' })
+    if (!['CLOSED', 'REMOVED'].includes(job.status)) return reply.code(409).send({ message: 'Solo puedes quitar vacantes cerradas o retiradas del resumen.' })
+    if (!job.archivedAt) await db.job.update({ where: { id }, data: { archivedAt: new Date() } })
+    return { archived: true }
+  })
+
+  app.delete('/api/company/jobs/:id', async (request, reply) => {
+    const context = await requireCompany(request, reply, db)
+    if (!context) return
+    const { id } = request.params as { id: string }
+    if (!UUID_PATTERN.test(id)) return reply.code(400).send({ message: 'El identificador de vacante no es válido.' })
+    const result = await db.$transaction(async tx => {
+      const existing = await tx.job.findFirst({ where: { id, companyProfileId: context.company.id }, select: { id: true, status: true } })
+      if (!existing) return { code: 404 as const, message: 'No se encontró la vacante.' }
+      if (existing.status !== 'CLOSED') return { code: 409 as const, message: 'Solo puedes eliminar vacantes cerradas.' }
+      await tx.job.update({ where: { id }, data: { status: 'REMOVED' } })
+      await tx.auditLog.create({
+        data: {
+          actorUserId: context.user.id, actionType: 'JOB_STATUS_CHANGED', entityType: 'Job', entityId: id,
+          metadata: { previousStatus: existing.status, status: 'REMOVED' },
+        },
+      })
+      return { code: 200 as const }
+    }, { isolationLevel: 'Serializable' })
+    if ('message' in result) return reply.code(result.code).send({ message: result.message })
+    return { removed: true }
   })
 }

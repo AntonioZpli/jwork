@@ -21,10 +21,10 @@ export async function registerWorkspaceRoutes(app: FastifyInstance, db: typeof p
     const now = new Date()
     const where = { status: 'PUBLISHED' as const, OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] }
     const [applications, savedJobs, recentApplications, jobs] = await Promise.all([
-      db.application.count({ where: { candidateProfile: { userId: user.id } } }),
+      db.application.count({ where: { candidateProfile: { userId: user.id }, candidateHiddenAt: null, status: { not: 'WITHDRAWN' } } }),
       db.savedJob.count({ where: { candidateProfile: { userId: user.id }, job: { status: 'PUBLISHED', OR: [{ expiresAt: null }, { expiresAt: { gt: now } }], company: { verificationStatus: 'VERIFIED' } } } }),
       db.application.findMany({
-        where: { candidateProfile: { userId: user.id } },
+        where: { candidateProfile: { userId: user.id }, candidateHiddenAt: null, status: { not: 'WITHDRAWN' } },
         orderBy: { appliedAt: 'desc' }, take: 5,
         select: { id: true, status: true, appliedAt: true, job: { select: { title: true, company: { select: { name: true } } } } },
       }),
@@ -48,25 +48,25 @@ export async function registerWorkspaceRoutes(app: FastifyInstance, db: typeof p
     const company = await db.companyProfile.findUnique({
       where: { ownerUserId: user.id },
       select: {
-        id: true, name: true, verificationStatus: true,
+        id: true, name: true, logoUrl: true, verificationStatus: true,
         department: { select: { name: true } }, municipality: { select: { name: true } },
         economicSector: { select: { name: true } },
       },
     })
     if (!company) return reply.code(404).send({ message: 'Completa primero el perfil de tu empresa.' })
 
-    const [totalJobs, publishedJobs, totalApplications, recentJobs] = await Promise.all([
-      db.job.count({ where: { companyProfileId: company.id } }),
-      db.job.count({ where: { companyProfileId: company.id, status: 'PUBLISHED', OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] } }),
-      db.application.count({ where: { job: { companyProfileId: company.id } } }),
+    const [totalJobs, publishedJobs, pendingApplications, recentJobs] = await Promise.all([
+      db.job.count({ where: { companyProfileId: company.id, archivedAt: null } }),
+      db.job.count({ where: { companyProfileId: company.id, archivedAt: null, status: 'PUBLISHED', OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] } }),
+      db.application.count({ where: { job: { companyProfileId: company.id }, status: 'RECEIVED' } }),
       db.job.findMany({
-        where: { companyProfileId: company.id }, orderBy: { createdAt: 'desc' }, take: 6,
+        where: { companyProfileId: company.id, archivedAt: null }, orderBy: { createdAt: 'desc' }, take: 6,
         select: {
-          id: true, title: true, status: true, createdAt: true, publishedAt: true,
-          _count: { select: { applications: true, views: true } },
+          id: true, title: true, status: true, createdAt: true, publishedAt: true, professionalArea: { select: { name: true } },
+          _count: { select: { applications: { where: { status: { not: 'WITHDRAWN' } } }, views: true } },
         },
       }),
     ])
-    return { company, stats: { totalJobs, publishedJobs, totalApplications }, recentJobs }
+    return { company, stats: { totalJobs, publishedJobs, pendingApplications }, recentJobs }
   })
 }

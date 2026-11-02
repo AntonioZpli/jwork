@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ExternalLink, MapPin } from 'lucide-vue-next'
+import { RouterLink } from 'vue-router'
 
 defineProps<{
   company: {
+    id?: string
     name: string
     description?: string | null
     website?: string | null
@@ -25,6 +27,7 @@ defineProps<{
       <span v-if="company.economicSector">{{ company.economicSector.name }}</span>
       <span v-if="company.department || company.municipality"><MapPin :size="14" aria-hidden="true" />{{ [company.municipality?.name, company.department?.name].filter(Boolean).join(', ') }}</span>
     </div>
+    <RouterLink v-if="company.id" class="company-public-summary__profile" :to="`/companies/${company.id}`">Ver perfil de empresa <span aria-hidden="true">→</span></RouterLink>
     <a v-if="company.website" class="company-public-summary__website" :href="company.website" target="_blank" rel="noopener noreferrer">Visitar sitio web <ExternalLink :size="15" aria-hidden="true" /></a>
     <p class="company-public-summary__privacy">Solo se muestra información de presentación de la empresa.</p>
   </section>
@@ -40,5 +43,7 @@ defineProps<{
 .company-public-summary__details{display:flex;flex-wrap:wrap;gap:.5rem}
 .company-public-summary__details span{display:inline-flex;align-items:center;gap:.35rem;padding:.35rem .55rem;border-radius:999px;background:var(--secondary);color:var(--primary);font-size:.69rem;font-weight:750}
 .company-public-summary__website{display:inline-flex;align-items:center;gap:.4rem;margin-top:1rem;color:var(--primary);font-size:.78rem;font-weight:800}
+.company-public-summary__profile{display:inline-flex;align-items:center;gap:.4rem;margin-top:1rem;padding:.55rem .75rem;border:1px solid color-mix(in srgb,var(--primary) 22%,var(--border));border-radius:.6rem;background:var(--surface);color:var(--primary);font-size:.75rem;font-weight:800;transition:background .16s,border-color .16s}
+.company-public-summary__profile:hover{border-color:var(--primary);background:var(--secondary)}
 .company-public-summary__privacy{margin:.9rem 0 0;padding-top:.65rem;border-top:1px solid var(--border);color:var(--muted-foreground);font-size:.65rem;line-height:1.5}
 </style>

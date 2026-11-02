@@ -24,10 +24,10 @@ import { HERO_IMAGE } from '@/config/assets'
       </p>
 
       <div class="hero__actions">
-        <RouterLink to="/jobs" class="hero__btn hero__btn--primary">
+        <RouterLink to="/auth" class="hero__btn hero__btn--primary">
           Explorar empleos <span aria-hidden="true">&rarr;</span>
         </RouterLink>
-        <RouterLink to="/auth?redirect=/company/jobs/new" class="hero__btn hero__btn--secondary">
+        <RouterLink to="/auth" class="hero__btn hero__btn--secondary">
           Publicar una oferta <span aria-hidden="true">&nearr;</span>
         </RouterLink>
       </div>

@@ -10,19 +10,26 @@ const items = computed(() => isCompany.value ? [
   { label: 'Resumen', to: '/company', icon: LayoutDashboard, exact: true },
   { label: 'Mis vacantes', to: '/company/jobs', icon: BriefcaseBusiness },
   { label: 'Postulantes', to: '/company/applications', icon: UsersRound },
-  { label: 'Perfil de empresa', to: '/company/profile', icon: Building2 },
+  { label: 'Mi perfil', to: '/company/profile/edit', icon: Building2 },
 ] : [
-  { label: 'Resumen', to: '/candidate', icon: LayoutDashboard, exact: true },
-  { label: 'Explorar vacantes', to: '/jobs', icon: Search },
+  { label: 'Inicio', to: '/candidate', icon: LayoutDashboard, exact: true },
+  { label: 'Ofertas', to: '/jobs', icon: Search },
   { label: 'Mis postulaciones', to: '/candidate/applications', icon: ClipboardList },
   { label: 'Guardados', to: '/candidate/saved-jobs', icon: Bookmark },
   { label: 'Mi perfil', to: '/candidate/profile', icon: UserRound },
 ])
-function active(to: string, exact = false) { return exact ? route.path === to : route.path === to || route.path.startsWith(`${to}/`) }
+function active(to: string, exact = false) {
+  if (isCompany.value && route.name === 'company-job-applicants') {
+    if (to === '/company/jobs') return true
+    if (to === '/company/applications') return false
+  }
+  if (isCompany.value && to === '/company/profile/edit' && route.path.startsWith('/company/profile')) return true
+  return exact ? route.path === to : route.path === to || route.path.startsWith(`${to}/`)
+}
 </script>
 
 <template>
-  <nav class="workspace-nav" :aria-label="`Navegación de ${isCompany ? 'empresa' : 'candidato'}`">
+  <nav class="workspace-nav" :class="{ 'workspace-nav--candidate': !isCompany, 'workspace-nav--company': isCompany }" :aria-label="`Navegación de ${isCompany ? 'empresa' : 'candidato'}`">
     <div class="workspace-nav__inner">
       <p class="workspace-nav__label">Menú principal</p>
       <RouterLink v-for="item in items" :key="item.to" :to="item.to" class="workspace-nav__link" :title="item.label" :class="{ 'workspace-nav__link--active': active(item.to, item.exact) }" :aria-current="active(item.to, item.exact) ? 'page' : undefined">

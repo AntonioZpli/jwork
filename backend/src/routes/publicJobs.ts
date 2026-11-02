@@ -38,7 +38,7 @@ function publicJobSelect() {
     salaryCurrency: true, salaryPeriod: true, salaryNegotiable: true,
     experienceYearsMin: true, isUrgent: true, vacancies: true, publishedAt: true, expiresAt: true,
     company: { select: {
-      name: true, website: true, description: true,
+      id: true, name: true, logoUrl: true, website: true, description: true,
       economicSector: { select: { name: true } },
       department: { select: { name: true } },
       municipality: { select: { name: true } },
@@ -59,6 +59,31 @@ export async function registerPublicJobRoutes(app: FastifyInstance, db: typeof p
       db.municipality.findMany({ select: { id: true, name: true, departmentId: true }, orderBy: { name: 'asc' } }),
     ])
     return { professionalAreas, specializations, departments, municipalities }
+  })
+
+  app.get('/api/companies/:id', async (request, reply) => {
+    const { id } = request.params as { id: string }
+    if (!UUID_PATTERN.test(id)) return reply.code(400).send({ message: 'El identificador de empresa no es válido.' })
+    const now = new Date()
+    const company = await db.companyProfile.findFirst({
+      where: { id, verificationStatus: 'VERIFIED' },
+      select: {
+        id: true, name: true, logoUrl: true, description: true, website: true, contactEmail: true, phone: true,
+        economicSector: { select: { name: true } },
+        department: { select: { name: true } }, municipality: { select: { name: true } },
+        jobs: {
+          where: { status: 'PUBLISHED', OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] },
+          orderBy: [{ isUrgent: 'desc' }, { publishedAt: 'desc' }],
+          select: {
+            id: true, title: true, workMode: true, contractType: true, publishedAt: true,
+            professionalArea: { select: { id: true, name: true } },
+            department: { select: { id: true, name: true } }, municipality: { select: { id: true, name: true } },
+          },
+        },
+      },
+    })
+    if (!company) return reply.code(404).send({ message: 'No se encontró el perfil público de esta empresa.' })
+    return { company }
   })
 
   app.get('/api/jobs', async (request, reply) => {

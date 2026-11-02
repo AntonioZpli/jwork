@@ -48,13 +48,15 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3001
 export async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
   let response: Response
   try {
+    const headers = new Headers(options.headers)
+    if (!headers.has('Accept')) headers.set('Accept', 'application/json')
+    const hasBody = options.body !== undefined && options.body !== null && !(typeof options.body === 'string' && options.body.length === 0)
+    const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData
+    if (hasBody && !isFormData && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json')
     response = await fetch(`${API_BASE_URL}${path}`, {
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
       ...options,
+      credentials: 'include',
+      headers,
     })
   } catch {
     const error = new Error('No se pudo conectar con Jinowork. Revisa tu conexión e inténtalo de nuevo.') as ApiError
@@ -113,6 +115,11 @@ export const authApi = {
     apiRequest<{ ok: true; user: AuthUser }>('/api/auth/email/verify', {
       method: 'POST',
       body: JSON.stringify({ token }),
+    }),
+  verifyEmailCode: (email: string, code: string) =>
+    apiRequest<{ ok: true; user: AuthUser }>('/api/auth/email/verify', {
+      method: 'POST',
+      body: JSON.stringify({ email, code }),
     }),
   getOnboarding: () =>
     apiRequest<OnboardingState>('/api/onboarding'),

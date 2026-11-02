@@ -6,6 +6,7 @@
   --palette-violet: #9400ff;
   --palette-blue: #aed2ff;
   --palette-ice: #e4f1ff;
+  --palette-platinum: #51625c;
   --background: #fff;
   --surface: #fff;
   --foreground: #17263a;
@@ -32,6 +33,7 @@ html.dark {
   --surface: #10233a;
   --foreground: #f2f7ff;
   --primary: var(--palette-blue);
+  --palette-platinum: #51625c;
   --secondary: #1d3856;
   --muted-foreground: #b8cbe1;
   --border: #294562;
@@ -91,4 +93,90 @@ select {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Las superficies tipo card usan esquinas rectas en toda la app. */
+:where(
+  .workspace__card,
+  .workspace__stat,
+  .profile-section,
+  .company-profile,
+  .company-form,
+  .company-profile__group,
+  .candidate-application,
+  .saved-job,
+  .company-application,
+  .company-job-row,
+  .job-card,
+  .applicant-card,
+  .profile-content,
+  .profile-modal__panel,
+  .oob-detail,
+  .oob-detail__summary,
+  .oob-detail__apply-card,
+  [class$="-card"],
+  [class~="card"]
+) {
+  border-radius: 0 !important;
+}
+
+/* Mantén rectas las superficies, controles y navegación de los workspaces. */
+body:has(.workspace) :is(
+  .workspace__card,
+  .workspace__section,
+  .workspace__stat,
+  .workspace__notice,
+  .workspace__error,
+  .profile-section,
+  .company-profile,
+  .company-form,
+  .company-profile__group,
+  .candidate-application,
+  .saved-job,
+  .company-application,
+  .company-job-row,
+  .job-card,
+  .applicant-card,
+  .company-applicant-card,
+  .profile-content,
+  .profile-modal__panel,
+  .oob-detail,
+  .oob-detail__summary,
+  .oob-detail__apply-card,
+  .workspace__pill,
+  .workspace__cta,
+  .workspace-nav__link,
+  .workspace-nav__create,
+  .company-profile-hero__status,
+  .candidate-profile-hero__cv,
+  .app-message,
+  .app-message__dismiss,
+  .app-notice,
+  .toast-card,
+  .toast-card__icon,
+  .toast-card__dismiss,
+  button,
+  input:not([type="checkbox"]):not([type="file"]),
+  select,
+  textarea,
+  [class$="-card"],
+  [class~="card"]
+) {
+  border-radius: 0 !important;
+}
+
+body:has(.workspace) :is(
+  .candidate-topbar__avatar:has(img),
+  .candidate-topbar__avatar:has(img) img,
+  .profile-photo,
+  .candidate-profile-hero__photo,
+  .candidate-preview__photo,
+  .applicant-card__avatar,
+  .applicant-card__avatar img,
+  .company-applicant-card__photo,
+  .company-applicant-card__photo img,
+  .profile-modal__avatar,
+  .profile-modal__avatar img
+) {
+  border-radius: 50% !important;
 }

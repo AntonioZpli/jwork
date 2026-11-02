@@ -62,11 +62,11 @@ export function createEmailService(createTransport: MailTransportFactory = optio
   }
 
   return {
-    sendVerificationEmail: (email: string, verificationUrl: string) => send({
+    sendVerificationEmail: (email: string, verificationCode: string) => send({
       to: email,
-      subject: 'Verifica tu correo para entrar a Jinowork',
-      text: `Crea o confirma tu cuenta de Jinowork con este enlace (válido por 15 minutos): ${verificationUrl}\n\nSi no solicitaste esta cuenta, ignora este mensaje.`,
-      html: `<div style="font-family:Arial,sans-serif;line-height:1.6;color:#202124"><h2>Confirma tu correo</h2><p>Usa este enlace para verificar tu cuenta. Vence en 15 minutos.</p><p><a href="${verificationUrl}" style="display:inline-block;padding:12px 20px;background:#2563eb;color:#fff;text-decoration:none;border-radius:6px">Verificar correo</a></p><p>Si no solicitaste esta cuenta, ignora este mensaje.</p></div>`,
+      subject: 'Tu código de verificación de Jinowork',
+      text: `Tu código de 6 caracteres para verificar el correo en Jinowork es: ${verificationCode}\n\nVence en 15 minutos. Ingresa el código en la página donde creaste tu cuenta. Si no solicitaste esta cuenta, ignora este mensaje.`,
+      html: `<div style="font-family:Arial,sans-serif;line-height:1.6;color:#202124"><h2>Confirma tu correo</h2><p>Ingresa este código de 6 caracteres en la página donde creaste tu cuenta. Vence en 15 minutos.</p><p style="display:inline-block;padding:12px 20px;background:#eff6ff;color:#1d4ed8;font-size:28px;font-weight:700;letter-spacing:8px">${verificationCode}</p><p>Si no solicitaste esta cuenta, ignora este mensaje.</p></div>`,
     }),
     sendPasswordResetEmail: (email: string, resetUrl: string) => send({
       to: email,

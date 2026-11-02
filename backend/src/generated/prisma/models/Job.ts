@@ -68,6 +68,7 @@ export type JobMinAggregateOutputType = {
   status: $Enums.JobStatus | null
   publishedAt: Date | null
   expiresAt: Date | null
+  archivedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -100,6 +101,7 @@ export type JobMaxAggregateOutputType = {
   status: $Enums.JobStatus | null
   publishedAt: Date | null
   expiresAt: Date | null
+  archivedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -132,6 +134,7 @@ export type JobCountAggregateOutputType = {
   status: number
   publishedAt: number
   expiresAt: number
+  archivedAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -180,6 +183,7 @@ export type JobMinAggregateInputType = {
   status?: true
   publishedAt?: true
   expiresAt?: true
+  archivedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -212,6 +216,7 @@ export type JobMaxAggregateInputType = {
   status?: true
   publishedAt?: true
   expiresAt?: true
+  archivedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -244,6 +249,7 @@ export type JobCountAggregateInputType = {
   status?: true
   publishedAt?: true
   expiresAt?: true
+  archivedAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -363,6 +369,7 @@ export type JobGroupByOutputType = {
   status: $Enums.JobStatus
   publishedAt: Date | null
   expiresAt: Date | null
+  archivedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: JobCountAggregateOutputType | null
@@ -418,6 +425,7 @@ export type JobWhereInput = {
   status?: Prisma.EnumJobStatusFilter<"Job"> | $Enums.JobStatus
   publishedAt?: Prisma.DateTimeNullableFilter<"Job"> | Date | string | null
   expiresAt?: Prisma.DateTimeNullableFilter<"Job"> | Date | string | null
+  archivedAt?: Prisma.DateTimeNullableFilter<"Job"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Job"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Job"> | Date | string
   company?: Prisma.XOR<Prisma.CompanyProfileScalarRelationFilter, Prisma.CompanyProfileWhereInput>
@@ -461,6 +469,7 @@ export type JobOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  archivedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   company?: Prisma.CompanyProfileOrderByWithRelationInput
@@ -507,6 +516,7 @@ export type JobWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumJobStatusFilter<"Job"> | $Enums.JobStatus
   publishedAt?: Prisma.DateTimeNullableFilter<"Job"> | Date | string | null
   expiresAt?: Prisma.DateTimeNullableFilter<"Job"> | Date | string | null
+  archivedAt?: Prisma.DateTimeNullableFilter<"Job"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Job"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Job"> | Date | string
   company?: Prisma.XOR<Prisma.CompanyProfileScalarRelationFilter, Prisma.CompanyProfileWhereInput>
@@ -550,6 +560,7 @@ export type JobOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  archivedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.JobCountOrderByAggregateInput
@@ -590,6 +601,7 @@ export type JobScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumJobStatusWithAggregatesFilter<"Job"> | $Enums.JobStatus
   publishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Job"> | Date | string | null
   expiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Job"> | Date | string | null
+  archivedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Job"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Job"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Job"> | Date | string
 }
@@ -617,6 +629,7 @@ export type JobCreateInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyProfileCreateNestedOneWithoutJobsInput
@@ -660,6 +673,7 @@ export type JobUncheckedCreateInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutJobInput
@@ -693,6 +707,7 @@ export type JobUpdateInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyProfileUpdateOneRequiredWithoutJobsNestedInput
@@ -736,6 +751,7 @@ export type JobUncheckedUpdateInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutJobNestedInput
@@ -774,6 +790,7 @@ export type JobCreateManyInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -801,6 +818,7 @@ export type JobUpdateManyMutationInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -833,6 +851,7 @@ export type JobUncheckedUpdateManyInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -875,6 +894,7 @@ export type JobCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
+  archivedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -914,6 +934,7 @@ export type JobMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
+  archivedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -946,6 +967,7 @@ export type JobMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
+  archivedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -1336,6 +1358,7 @@ export type JobCreateWithoutCompanyInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   professionalArea: Prisma.ProfessionalAreaCreateNestedOneWithoutJobsInput
@@ -1377,6 +1400,7 @@ export type JobUncheckedCreateWithoutCompanyInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutJobInput
@@ -1444,6 +1468,7 @@ export type JobScalarWhereInput = {
   status?: Prisma.EnumJobStatusFilter<"Job"> | $Enums.JobStatus
   publishedAt?: Prisma.DateTimeNullableFilter<"Job"> | Date | string | null
   expiresAt?: Prisma.DateTimeNullableFilter<"Job"> | Date | string | null
+  archivedAt?: Prisma.DateTimeNullableFilter<"Job"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Job"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Job"> | Date | string
 }
@@ -1471,6 +1496,7 @@ export type JobCreateWithoutProfessionalAreaInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyProfileCreateNestedOneWithoutJobsInput
@@ -1512,6 +1538,7 @@ export type JobUncheckedCreateWithoutProfessionalAreaInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutJobInput
@@ -1571,6 +1598,7 @@ export type JobCreateWithoutSpecializationInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyProfileCreateNestedOneWithoutJobsInput
@@ -1612,6 +1640,7 @@ export type JobUncheckedCreateWithoutSpecializationInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutJobInput
@@ -1671,6 +1700,7 @@ export type JobCreateWithoutDepartmentInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyProfileCreateNestedOneWithoutJobsInput
@@ -1712,6 +1742,7 @@ export type JobUncheckedCreateWithoutDepartmentInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutJobInput
@@ -1771,6 +1802,7 @@ export type JobCreateWithoutMunicipalityInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyProfileCreateNestedOneWithoutJobsInput
@@ -1812,6 +1844,7 @@ export type JobUncheckedCreateWithoutMunicipalityInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutJobInput
@@ -1871,6 +1904,7 @@ export type JobCreateWithoutViewsInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyProfileCreateNestedOneWithoutJobsInput
@@ -1913,6 +1947,7 @@ export type JobUncheckedCreateWithoutViewsInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutJobInput
@@ -1961,6 +1996,7 @@ export type JobUpdateWithoutViewsInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyProfileUpdateOneRequiredWithoutJobsNestedInput
@@ -2003,6 +2039,7 @@ export type JobUncheckedUpdateWithoutViewsInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutJobNestedInput
@@ -2035,6 +2072,7 @@ export type JobCreateWithoutSavedByInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyProfileCreateNestedOneWithoutJobsInput
@@ -2077,6 +2115,7 @@ export type JobUncheckedCreateWithoutSavedByInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutJobInput
@@ -2125,6 +2164,7 @@ export type JobUpdateWithoutSavedByInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyProfileUpdateOneRequiredWithoutJobsNestedInput
@@ -2167,6 +2207,7 @@ export type JobUncheckedUpdateWithoutSavedByInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutJobNestedInput
@@ -2199,6 +2240,7 @@ export type JobCreateWithoutApplicationsInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyProfileCreateNestedOneWithoutJobsInput
@@ -2241,6 +2283,7 @@ export type JobUncheckedCreateWithoutApplicationsInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetJobInput
@@ -2289,6 +2332,7 @@ export type JobUpdateWithoutApplicationsInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyProfileUpdateOneRequiredWithoutJobsNestedInput
@@ -2331,6 +2375,7 @@ export type JobUncheckedUpdateWithoutApplicationsInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reports?: Prisma.ReportUncheckedUpdateManyWithoutTargetJobNestedInput
@@ -2363,6 +2408,7 @@ export type JobCreateWithoutReportsInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyProfileCreateNestedOneWithoutJobsInput
@@ -2405,6 +2451,7 @@ export type JobUncheckedCreateWithoutReportsInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutJobInput
@@ -2453,6 +2500,7 @@ export type JobUpdateWithoutReportsInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyProfileUpdateOneRequiredWithoutJobsNestedInput
@@ -2495,6 +2543,7 @@ export type JobUncheckedUpdateWithoutReportsInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutJobNestedInput
@@ -2527,6 +2576,7 @@ export type JobCreateWithoutModerationActionsInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyProfileCreateNestedOneWithoutJobsInput
@@ -2569,6 +2619,7 @@ export type JobUncheckedCreateWithoutModerationActionsInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutJobInput
@@ -2617,6 +2668,7 @@ export type JobUpdateWithoutModerationActionsInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyProfileUpdateOneRequiredWithoutJobsNestedInput
@@ -2659,6 +2711,7 @@ export type JobUncheckedUpdateWithoutModerationActionsInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutJobNestedInput
@@ -2691,6 +2744,7 @@ export type JobCreateWithoutDailyStatsInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyProfileCreateNestedOneWithoutJobsInput
@@ -2733,6 +2787,7 @@ export type JobUncheckedCreateWithoutDailyStatsInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutJobInput
@@ -2781,6 +2836,7 @@ export type JobUpdateWithoutDailyStatsInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyProfileUpdateOneRequiredWithoutJobsNestedInput
@@ -2823,6 +2879,7 @@ export type JobUncheckedUpdateWithoutDailyStatsInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutJobNestedInput
@@ -2859,6 +2916,7 @@ export type JobCreateManyCompanyInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -2886,6 +2944,7 @@ export type JobUpdateWithoutCompanyInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   professionalArea?: Prisma.ProfessionalAreaUpdateOneRequiredWithoutJobsNestedInput
@@ -2927,6 +2986,7 @@ export type JobUncheckedUpdateWithoutCompanyInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutJobNestedInput
@@ -2964,6 +3024,7 @@ export type JobUncheckedUpdateManyWithoutCompanyInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -2995,6 +3056,7 @@ export type JobCreateManyProfessionalAreaInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -3022,6 +3084,7 @@ export type JobUpdateWithoutProfessionalAreaInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyProfileUpdateOneRequiredWithoutJobsNestedInput
@@ -3063,6 +3126,7 @@ export type JobUncheckedUpdateWithoutProfessionalAreaInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutJobNestedInput
@@ -3100,6 +3164,7 @@ export type JobUncheckedUpdateManyWithoutProfessionalAreaInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -3131,6 +3196,7 @@ export type JobCreateManySpecializationInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -3158,6 +3224,7 @@ export type JobUpdateWithoutSpecializationInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyProfileUpdateOneRequiredWithoutJobsNestedInput
@@ -3199,6 +3266,7 @@ export type JobUncheckedUpdateWithoutSpecializationInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutJobNestedInput
@@ -3236,6 +3304,7 @@ export type JobUncheckedUpdateManyWithoutSpecializationInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -3267,6 +3336,7 @@ export type JobCreateManyDepartmentInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -3294,6 +3364,7 @@ export type JobUpdateWithoutDepartmentInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyProfileUpdateOneRequiredWithoutJobsNestedInput
@@ -3335,6 +3406,7 @@ export type JobUncheckedUpdateWithoutDepartmentInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutJobNestedInput
@@ -3372,6 +3444,7 @@ export type JobUncheckedUpdateManyWithoutDepartmentInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -3403,6 +3476,7 @@ export type JobCreateManyMunicipalityInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   expiresAt?: Date | string | null
+  archivedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -3430,6 +3504,7 @@ export type JobUpdateWithoutMunicipalityInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyProfileUpdateOneRequiredWithoutJobsNestedInput
@@ -3471,6 +3546,7 @@ export type JobUncheckedUpdateWithoutMunicipalityInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutJobNestedInput
@@ -3508,6 +3584,7 @@ export type JobUncheckedUpdateManyWithoutMunicipalityInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -3616,6 +3693,7 @@ export type JobSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
   status?: boolean
   publishedAt?: boolean
   expiresAt?: boolean
+  archivedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   company?: boolean | Prisma.CompanyProfileDefaultArgs<ExtArgs>
@@ -3660,6 +3738,7 @@ export type JobSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extension
   status?: boolean
   publishedAt?: boolean
   expiresAt?: boolean
+  archivedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   company?: boolean | Prisma.CompanyProfileDefaultArgs<ExtArgs>
@@ -3697,6 +3776,7 @@ export type JobSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extension
   status?: boolean
   publishedAt?: boolean
   expiresAt?: boolean
+  archivedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   company?: boolean | Prisma.CompanyProfileDefaultArgs<ExtArgs>
@@ -3734,11 +3814,12 @@ export type JobSelectScalar = {
   status?: boolean
   publishedAt?: boolean
   expiresAt?: boolean
+  archivedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type JobOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyProfileId" | "createdByUserId" | "title" | "description" | "requirements" | "professionalAreaId" | "specializationId" | "departmentId" | "municipalityId" | "workMode" | "remoteScope" | "contractType" | "workday" | "scheduleType" | "scheduleDescription" | "salaryMin" | "salaryMax" | "salaryCurrency" | "salaryPeriod" | "salaryNegotiable" | "experienceYearsMin" | "isUrgent" | "vacancies" | "status" | "publishedAt" | "expiresAt" | "createdAt" | "updatedAt", ExtArgs["result"]["job"]>
+export type JobOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyProfileId" | "createdByUserId" | "title" | "description" | "requirements" | "professionalAreaId" | "specializationId" | "departmentId" | "municipalityId" | "workMode" | "remoteScope" | "contractType" | "workday" | "scheduleType" | "scheduleDescription" | "salaryMin" | "salaryMax" | "salaryCurrency" | "salaryPeriod" | "salaryNegotiable" | "experienceYearsMin" | "isUrgent" | "vacancies" | "status" | "publishedAt" | "expiresAt" | "archivedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["job"]>
 export type JobInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyProfileDefaultArgs<ExtArgs>
   professionalArea?: boolean | Prisma.ProfessionalAreaDefaultArgs<ExtArgs>
@@ -3811,6 +3892,7 @@ export type $JobPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     status: $Enums.JobStatus
     publishedAt: Date | null
     expiresAt: Date | null
+    archivedAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["job"]>
@@ -4274,6 +4356,7 @@ export interface JobFieldRefs {
   readonly status: Prisma.FieldRef<"Job", 'JobStatus'>
   readonly publishedAt: Prisma.FieldRef<"Job", 'DateTime'>
   readonly expiresAt: Prisma.FieldRef<"Job", 'DateTime'>
+  readonly archivedAt: Prisma.FieldRef<"Job", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Job", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Job", 'DateTime'>
 }

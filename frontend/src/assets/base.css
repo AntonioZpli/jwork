@@ -1,4 +1,4 @@
-﻿*,
+*,
 *::before,
 *::after {
   box-sizing: border-box;
@@ -15,9 +15,82 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+:is([class*="icon"], [class*="__mark"], [class*="__keyword"], [class*="__tag"], [class*="__pill"], [class*="__badge"], [class*="__status"]):not(.company-dashboard__job-mark):not(.candidate-job-row__mark):not(.candidate-saved__job-mark):not(.candidate-application__company-mark):not(.job-card__vacancy-mark):not(.oob-card__vacancy-mark):not(.public-job-hero__mark):not(.public-company-job__mark):not(.job-detail__company-mark):not(.company-form__preview-mark):not(.company-job-row__icon):not(.company-profile-hero__mark):not(.vacancy-mark) {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.vacancy-mark {
+  border: 1px solid rgb(173 211 247 / 76%) !important;
+  border-radius: 0 !important;
+  background: linear-gradient(145deg, #244a70, #173653) !important;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 7%), 0 4px 10px rgb(13 38 65 / 15%) !important;
+  color: #fff !important;
+  font-weight: 850 !important;
+  letter-spacing: .035em;
+}
+.vacancy-mark--banner {
+  border-color: rgb(255 255 255 / 30%) !important;
+  background: rgb(255 255 255 / 12%) !important;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 5%) !important;
+  backdrop-filter: blur(8px);
+}
 button,
 input,
 select,
 textarea {
   font: inherit;
+}
+
+.profile-save-button {
+  display: inline-flex;
+  position: fixed !important;
+  z-index: 40;
+  bottom: max(1.5rem, env(safe-area-inset-bottom));
+  right: 0;
+  left: 0;
+  width: 13rem;
+  min-height: 3.15rem;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  margin: 0 auto !important;
+  padding-inline: 1.2rem;
+  border-radius: 999px !important;
+  background: linear-gradient(110deg, var(--palette-violet), var(--primary)) !important;
+  color: #fff !important;
+  box-shadow: 0 12px 32px rgb(16 46 86 / 24%);
+  transform: none !important;
+  white-space: nowrap;
+  transition: box-shadow .18s ease, filter .18s ease;
+}
+
+.profile-save-button:hover:not(:disabled),
+.profile-save-button:focus-visible,
+.profile-save-button:active {
+  transform: none !important;
+  filter: brightness(1.04);
+  box-shadow: 0 12px 32px rgb(16 46 86 / 24%);
+}
+
+@media (max-width: 600px) {
+  .profile-save-button {
+    right: 1rem;
+    bottom: max(.85rem, env(safe-area-inset-bottom));
+    left: 1rem;
+    width: calc(100% - 2rem);
+    min-width: 0;
+    margin-inline: 0 !important;
+    transform: none;
+  }
+
+  .profile-save-button:hover:not(:disabled),
+  .profile-save-button:focus-visible,
+  .profile-save-button:active {
+    transform: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-save-button { transition: none; }
 }

@@ -1,34 +1,88 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
-import { LogOut, Menu, Moon, Sun, X } from 'lucide-vue-next'
+import { Moon, Search, Sun } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
 import { useTheme } from '@/composables/useTheme'
 import WorkspaceNavigation from './WorkspaceNavigation.vue'
+import { companyLogoUrl, loadCandidatePhoto, profilesApi } from '@/services/profiles'
+import { profileAvatarStyle, profileInitials } from '@/utils/profileAvatar'
 
-defineProps<{ eyebrow: string; title: string; subtitle: string; initials: string }>()
+const props = defineProps<{ eyebrow: string; title: string; subtitle: string; initials: string }>()
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 const { theme, toggleTheme } = useTheme()
 const isCompany = computed(() => route.path.startsWith('/company'))
-const accountType = computed(() => isCompany.value ? 'Espacio de empresa' : 'Espacio del candidato')
-const sidebarOpen = ref(false)
-const sidebarCollapsed = ref(false)
-const isMobileViewport = ref(false)
-let viewportQuery: MediaQueryList | undefined
-function syncViewport() { isMobileViewport.value = viewportQuery?.matches ?? false }
-watch(() => route.path, () => { sidebarOpen.value = false })
-onMounted(() => {
-  viewportQuery = window.matchMedia('(max-width: 900px)')
-  syncViewport()
-  viewportQuery.addEventListener('change', syncViewport)
+const candidateSearch = ref(typeof route.query.q === 'string' ? route.query.q : '')
+const companySearch = ref(typeof route.query.q === 'string' ? route.query.q : '')
+const candidatePhoto = ref('')
+const companyLogoId = ref<string | null>(null)
+const companyName = ref('')
+const companySector = ref('')
+const candidateName = ref('')
+const candidateArea = ref('')
+const avatarInitials = computed(() => profileInitials(isCompany.value ? companyName.value || props.initials : candidateName.value || props.initials))
+const avatarStyle = computed(() => profileAvatarStyle(isCompany.value ? companyName.value : candidateName.value, isCompany.value ? companySector.value : candidateArea.value))
+const companyLogo = computed(() => companyLogoId.value ? companyLogoUrl(companyLogoId.value) : '')
+let candidatePhotoRequest = 0
+onBeforeUnmount(() => {
+  window.removeEventListener('jinowork:candidate-photo-updated', onCandidatePhotoUpdated)
+  window.removeEventListener('jinowork:company-logo-updated', onCompanyLogoUpdated)
+  candidatePhotoRequest += 1
+  if (candidatePhoto.value) URL.revokeObjectURL(candidatePhoto.value)
 })
-onBeforeUnmount(() => viewportQuery?.removeEventListener('change', syncViewport))
-function toggleSidebar() {
-  if (isMobileViewport.value) sidebarOpen.value = !sidebarOpen.value
-  else sidebarCollapsed.value = !sidebarCollapsed.value
+function searchJobs() {
+  const query = candidateSearch.value.trim()
+  void router.push({ path: '/jobs', query: query ? { q: query } : {} })
 }
+function searchCompanyJobs() {
+  const query = companySearch.value.trim()
+  void router.push({ path: '/company/jobs', query: query ? { q: query } : {} })
+}
+watch(() => route.query.q, value => {
+  candidateSearch.value = typeof value === 'string' ? value : ''
+  companySearch.value = typeof value === 'string' ? value : ''
+})
+async function refreshCandidatePhoto(fileId?: string | null) {
+  if (isCompany.value || auth.user?.role !== 'CANDIDATE') return
+  const requestId = ++candidatePhotoRequest
+  try {
+    const result = await profilesApi.candidate()
+    candidateName.value = `${result.profile.firstName} ${result.profile.lastName}`.trim()
+    candidateArea.value = result.catalogs.professionalAreas.find(item => item.id === result.profile.professionalAreaId)?.name ?? ''
+    const id = fileId === undefined ? result.profile.photoUrl : fileId
+    if (!id) {
+      if (requestId === candidatePhotoRequest && candidatePhoto.value) URL.revokeObjectURL(candidatePhoto.value)
+      if (requestId === candidatePhotoRequest) candidatePhoto.value = ''
+      return
+    }
+    const nextPhoto = await loadCandidatePhoto(id)
+    if (requestId !== candidatePhotoRequest) { URL.revokeObjectURL(nextPhoto); return }
+    if (candidatePhoto.value) URL.revokeObjectURL(candidatePhoto.value)
+    candidatePhoto.value = nextPhoto
+  } catch { /* The navigation keeps a neutral placeholder if the profile has no accessible photo. */ }
+}
+function onCandidatePhotoUpdated(event: Event) {
+  const detail = (event as CustomEvent<{ fileId: string | null }>).detail
+  void refreshCandidatePhoto(detail?.fileId ?? null)
+}
+async function refreshCompanyLogo() {
+  if (!isCompany.value) return
+  try {
+    const result = await profilesApi.company()
+    companyName.value = result.profile.name
+    companySector.value = result.catalogs.economicSectors.find(item => item.id === result.profile.economicSectorId)?.name ?? ''
+    companyLogoId.value = result.profile.logoUrl
+  } catch { /* Keep the initials placeholder when the company profile is unavailable. */ }
+}
+function onCompanyLogoUpdated() { void refreshCompanyLogo() }
+onMounted(() => {
+  window.addEventListener('jinowork:candidate-photo-updated', onCandidatePhotoUpdated)
+  window.addEventListener('jinowork:company-logo-updated', onCompanyLogoUpdated)
+  if (isCompany.value) void refreshCompanyLogo()
+  else void refreshCandidatePhoto()
+})
 
 async function signOut() {
   try { await auth.logout() } finally { await router.replace('/auth') }
@@ -36,19 +90,29 @@ async function signOut() {
 </script>
 
 <template>
-  <div class="workspace" :class="{ 'workspace--collapsed': sidebarCollapsed }">
-    <button v-if="sidebarOpen" class="workspace__scrim" type="button" aria-label="Cerrar menú" @click="sidebarOpen = false" />
-    <aside class="workspace__sidebar" :class="{ 'workspace__sidebar--open': sidebarOpen }">
-      <RouterLink class="workspace__brand" to="/" aria-label="Jinowork, inicio"><span class="workspace__brand-mark">J</span><span>jinowork</span></RouterLink>
-      <div class="workspace__sidebar-label">{{ accountType }}</div>
-      <WorkspaceNavigation :role="isCompany ? 'COMPANY' : 'CANDIDATE'" />
-      <div class="workspace__sidebar-bottom"><span class="workspace__sidebar-avatar">{{ initials }}</span><span class="workspace__sidebar-account"><strong>{{ auth.user?.email ?? accountType }}</strong><small>Cuenta activa</small></span><button class="workspace__sidebar-logout" type="button" aria-label="Cerrar sesión" @click="signOut"><LogOut :size="17" /></button></div>
-    </aside>
+  <div class="workspace" :class="{ 'workspace--company': isCompany, 'workspace--candidate': !isCompany }">
     <div class="workspace__content">
-      <header class="workspace__topbar">
-        <button class="workspace__menu-button" type="button" :aria-label="sidebarOpen ? 'Cerrar navegación' : isMobileViewport ? 'Abrir navegación' : sidebarCollapsed ? 'Expandir navegación' : 'Contraer navegación'" :aria-expanded="isMobileViewport ? sidebarOpen : !sidebarCollapsed" @click="toggleSidebar"><X v-if="sidebarOpen" :size="20" /><Menu v-else :size="20" /></button>
-        <div class="workspace__topbar-right">
+      <header v-if="isCompany" class="company-topbar">
+        <RouterLink class="company-topbar__brand" to="/company" aria-label="Jinowork, panel de empresa">jinowork</RouterLink>
+        <form class="company-topbar__search" role="search" @submit.prevent="searchCompanyJobs"><Search :size="18" aria-hidden="true" /><input v-model="companySearch" type="search" aria-label="Buscar en mis vacantes" placeholder="Buscar vacantes…"></form>
+        <WorkspaceNavigation role="COMPANY" />
+        <div class="company-topbar__actions">
+          <RouterLink class="company-topbar__avatar" :style="avatarStyle" to="/company/profile" aria-label="Ver perfil completo de la empresa" title="Ver perfil completo"><img v-if="companyLogo" :src="companyLogo" alt=""><span v-else>{{ avatarInitials }}</span></RouterLink>
           <button class="workspace__icon-button" type="button" :aria-label="theme === 'dark' ? 'Activar tema claro' : 'Activar tema oscuro'" @click="toggleTheme"><Sun v-if="theme === 'dark'" :size="18" /><Moon v-else :size="18" /></button>
+          <button class="company-topbar__logout" type="button" @click="signOut">Salir</button>
+        </div>
+      </header>
+      <header v-else class="candidate-topbar">
+        <RouterLink class="candidate-topbar__brand" to="/candidate" aria-label="Jinowork, inicio">jinowork</RouterLink>
+        <form class="candidate-topbar__search" role="search" @submit.prevent="searchJobs"><Search :size="18" aria-hidden="true" /><input v-model="candidateSearch" type="search" aria-label="Buscar empleos o empresas" placeholder="Buscar empleos, empresas…"></form>
+        <WorkspaceNavigation role="CANDIDATE" />
+        <div class="candidate-topbar__actions">
+          <RouterLink class="candidate-topbar__avatar" to="/candidate/profile/preview" aria-label="Vista previa de mi perfil" title="Vista previa del perfil">
+            <img v-if="candidatePhoto" :src="candidatePhoto" alt="">
+            <span v-else :style="avatarStyle">{{ avatarInitials }}</span>
+          </RouterLink>
+          <button class="workspace__icon-button" type="button" :aria-label="theme === 'dark' ? 'Activar tema claro' : 'Activar tema oscuro'" @click="toggleTheme"><Sun v-if="theme === 'dark'" :size="18" /><Moon v-else :size="18" /></button>
+          <button class="candidate-topbar__logout" type="button" @click="signOut">Salir</button>
         </div>
       </header>
       <main class="workspace__main">
@@ -69,6 +133,41 @@ async function signOut() {
 .workspace__card{border:1px solid color-mix(in srgb,var(--palette-ink) 10%,var(--border));border-radius:1rem;background:var(--surface);box-shadow:0 16px 42px color-mix(in srgb,var(--palette-ink) 6%,transparent)}.workspace__stat{position:relative;overflow:hidden;padding:1.35rem}.workspace__stat::after{position:absolute;right:-2.1rem;bottom:-3.2rem;width:7.5rem;height:7.5rem;border-radius:50%;background:color-mix(in srgb,var(--primary) 10%,transparent);content:""}.workspace__stat-label{position:relative;z-index:1;color:var(--muted-foreground);font-size:.83rem;font-weight:650}.workspace__stat-value{position:relative;z-index:1;margin-top:.65rem;font:800 clamp(1.7rem,3vw,2.35rem)/1 Manrope,sans-serif;letter-spacing:-.06em}.workspace__section{margin-top:1.35rem;padding:1.4rem}.workspace__section h2{margin:0 0 1rem;font:750 1.16rem Manrope,sans-serif;letter-spacing:-.035em}.workspace__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}.workspace__list{display:grid;gap:.25rem}.workspace__row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 0;border-top:1px solid var(--border)}.workspace__row:first-child{padding-top:0;border-top:0}.workspace__row strong{display:block}.workspace__meta,.workspace__empty{color:var(--muted-foreground);font-size:.84rem;line-height:1.55}.workspace__pill{display:inline-flex;align-items:center;border:1px solid color-mix(in srgb,var(--primary) 14%,transparent);border-radius:999px;padding:.35rem .72rem;background:var(--secondary);color:var(--primary);font-size:.74rem;font-weight:750;white-space:nowrap}.workspace__cta{display:inline-flex;min-height:2.75rem;align-items:center;justify-content:center;border:1px solid transparent;border-radius:.75rem;padding:0 1.05rem;background:var(--primary);color:#fff;font-size:.85rem;font-weight:750;box-shadow:0 8px 20px color-mix(in srgb,var(--primary) 20%,transparent);transition:transform .18s,box-shadow .18s}.workspace__cta:hover{transform:translateY(-1px);box-shadow:0 11px 25px color-mix(in srgb,var(--primary) 27%,transparent)}.workspace__error{padding:1rem;border:1px solid #e3a5a5;border-radius:.8rem;background:#fff5f5;color:#8b1c1c}.workspace__notice{margin:0 0 1rem;padding:.9rem 1rem;border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);border-radius:.8rem;background:var(--secondary);color:var(--foreground)}.workspace-loading{display:grid;min-height:70vh;place-items:center;padding:1.5rem}.candidate-dashboard__links{display:flex;flex-wrap:wrap;gap:.65rem;margin:0 0 1.2rem}.candidate-dashboard__links a{border:1px solid var(--border);border-radius:.7rem;padding:.55rem .8rem;background:var(--surface);color:var(--primary);font-size:.82rem;font-weight:700;transition:border-color .18s,background .18s}.candidate-dashboard__links a:hover{border-color:var(--primary);background:var(--secondary)}.candidate-job__title{display:block;font-weight:800}.candidate-job__title:hover{color:var(--primary)}.company-actions{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}.company-actions__link{color:var(--primary);font-size:.85rem;font-weight:700}
 @media(max-width:760px){.workspace__topbar{height:4.1rem;padding-inline:1rem}.workspace-nav{top:4.1rem}.workspace-nav__inner{min-height:3.65rem;gap:.1rem;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;padding-inline:.75rem}.workspace-nav__inner::-webkit-scrollbar{display:none}.workspace-nav__link{gap:.4rem;padding-inline:.72rem;font-size:.75rem}.workspace-nav__link svg{width:16px;height:16px}.workspace-nav__create{min-height:2.1rem;margin-left:.25rem;padding-inline:.65rem;font-size:.7rem}.workspace__account-type{display:none}.workspace__logout{width:2.3rem;height:2.3rem;justify-content:center;padding:0}.workspace__logout span{display:none}.workspace__main{padding:2rem 1rem}.workspace__heading{align-items:flex-start;flex-direction:column}.workspace__heading h1{font-size:2.4rem}.workspace__grid{grid-template-columns:1fr}.workspace__section{padding:1.05rem}.workspace__row{align-items:flex-start}.workspace__footer{padding-inline:1rem}}
 @media(max-width:480px){.workspace__heading h1{font-size:2rem}.workspace__topbar-right{gap:.55rem}.workspace-nav__inner{padding-inline:.6rem}.workspace-nav__link{padding-inline:.65rem}.workspace-nav__link span{font-size:.7rem}.workspace__row{flex-direction:column}}
+</style>
+
+<style>
+.workspace--candidate{display:block;min-height:100vh}
+.candidate-topbar{position:sticky;z-index:20;top:0;display:flex;min-height:5.1rem;align-items:center;gap:clamp(1rem,2vw,2rem);padding:0 max(1.25rem,calc((100% - 96rem)/2));border-bottom:1px solid #e2e8f0;background:color-mix(in srgb,var(--surface) 97%,transparent)}
+.candidate-topbar__brand{flex:none;color:var(--primary);font:850 1.3rem Manrope,sans-serif;letter-spacing:-.055em;text-decoration:none}
+.candidate-topbar__search{display:flex;min-width:12rem;max-width:35rem;height:3rem;flex:1;align-items:center;gap:.65rem;padding:0 .9rem;border:1px solid #dce4ef;border-radius:.75rem;background:#f4f7fb;color:#8b9ab0;transition:border-color .16s,box-shadow .16s}
+.candidate-topbar__search:focus-within{border-color:#4c8aff;box-shadow:0 0 0 3px rgb(52 115 245 / 12%)}
+.candidate-topbar__search input{width:100%;min-width:0;border:0!important;outline:0!important;background:transparent!important;box-shadow:none!important;color:var(--foreground);font:500 .86rem Manrope,sans-serif}
+.candidate-topbar__search input::placeholder{color:#8b96a8;opacity:1}
+.candidate-topbar__actions{display:flex;flex:none;align-items:center;gap:.9rem}
+.candidate-topbar__avatar{display:grid;width:2.45rem;height:2.45rem;flex:none;overflow:hidden;place-items:center;border:0;border-radius:50%;background:linear-gradient(145deg,color-mix(in srgb,var(--job-accent,#63758d) 72%,white),var(--job-accent,#63758d));color:#fff;text-decoration:none;transition:filter .16s}
+.candidate-topbar__avatar:hover,.candidate-topbar__avatar:focus-visible{border-color:#4c8aff;box-shadow:0 0 0 3px rgb(52 115 245 / 13%);outline:0}
+.candidate-topbar__avatar img{width:100%;height:100%;object-fit:cover}
+.candidate-topbar__avatar>span{display:grid;width:100%;height:100%;place-items:center;color:#fff;font-size:.72rem;font-weight:850;letter-spacing:.02em}
+.candidate-topbar__actions .workspace__icon-button{width:2.35rem;height:2.35rem;border:0;background:transparent;color:#63738b}
+.candidate-topbar__actions .workspace__icon-button:hover{background:#f0f5fb;color:var(--primary)}
+.candidate-topbar__logout{border:0;background:transparent;color:#7c899d;font:600 .82rem Manrope,sans-serif;cursor:pointer}
+.candidate-topbar__logout:hover{color:var(--primary)}
+.workspace-nav.workspace-nav--candidate{position:static;z-index:auto;top:auto;flex:none;overflow:visible;border:0;background:transparent;backdrop-filter:none}
+.workspace-nav--candidate .workspace-nav__inner{display:flex;width:auto;min-height:0;align-items:center;flex-direction:row;gap:.3rem;margin:0;padding:0}
+.workspace-nav--candidate .workspace-nav__label,.workspace-nav--candidate .workspace-nav__link svg{display:none}
+.workspace-nav--candidate .workspace-nav__link{min-height:2.5rem;justify-content:center;gap:0;padding:0 .8rem;border:1px solid transparent;border-radius:.65rem;color:#58677e;font-size:.8rem;font-weight:700;white-space:nowrap}
+.workspace-nav--candidate .workspace-nav__link:hover{background:#f4f7fb;color:#175ee8}
+.workspace-nav--candidate .workspace-nav__link--active,.dark .workspace-nav--candidate .workspace-nav__link--active{border-color:#d7e9ff;background:#edf7ff;color:var(--primary);box-shadow:none}
+.workspace-nav--candidate .workspace-nav__link:after{display:none}
+.dark .candidate-topbar{border-color:var(--border);background:color-mix(in srgb,var(--surface) 96%,transparent)}
+.dark .candidate-topbar__search{border-color:var(--border);background:var(--panel);color:var(--muted-foreground)}
+.dark .candidate-topbar__search input{color:var(--foreground)}
+.dark .candidate-topbar__actions .workspace__icon-button:hover,.dark .workspace-nav--candidate .workspace-nav__link:hover{background:var(--panel)}
+.dark .workspace-nav--candidate .workspace-nav__link{color:var(--muted-foreground)}
+.dark .workspace-nav--candidate .workspace-nav__link--active{border-color:color-mix(in srgb,var(--primary) 35%,var(--border));background:color-mix(in srgb,var(--primary) 12%,var(--surface));color:var(--primary)}
+@media(max-width:1100px){.candidate-topbar{gap:1rem}.candidate-topbar__search{max-width:25rem}.workspace-nav--candidate .workspace-nav__link{padding-inline:.55rem;font-size:.75rem}.candidate-topbar__actions{gap:.55rem}}
+@media(max-width:900px){.candidate-topbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.55rem 1rem;padding:.65rem 1rem}.candidate-topbar__brand{grid-column:1;grid-row:1}.candidate-topbar__search{display:none}.candidate-topbar__actions{grid-column:2;grid-row:1}.workspace-nav.workspace-nav--candidate{grid-column:1/-1;grid-row:2;width:100%;overflow:hidden}.workspace-nav--candidate .workspace-nav__inner{width:100%;justify-content:flex-start;gap:.25rem;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}.workspace-nav--candidate .workspace-nav__inner::-webkit-scrollbar{display:none}}
+@media(max-width:480px){.candidate-topbar{padding-inline:.75rem}.workspace-nav--candidate .workspace-nav__link{min-height:2.35rem;padding-inline:.5rem;font-size:.7rem}.candidate-topbar__actions{gap:.35rem}.candidate-topbar__avatar{width:2.2rem;height:2.2rem}}
 </style>
 
 <style>
@@ -178,4 +277,49 @@ async function signOut() {
 .workspace button:disabled{cursor:not-allowed;opacity:.58}
 .workspace button:disabled:hover{transform:none;box-shadow:none}
 @media(max-width:760px){.workspace__heading>:last-child{align-self:flex-start}}
+</style>
+
+<style>
+.workspace.workspace--candidate{display:block;min-height:100vh}
+.workspace.workspace--candidate .candidate-topbar__brand{font-size:1.3rem!important}
+</style>
+
+<style>
+.workspace.workspace--company{display:block!important;width:100%;min-width:0;min-height:100vh;grid-template-columns:none!important}
+.workspace.workspace--company>.workspace__content{display:block;width:100%;min-width:0;max-width:none}
+.workspace.workspace--company>.workspace__content{padding-top:5.1rem}
+.workspace.workspace--company .workspace__main{display:block;width:min(92rem,100%);min-width:0;box-sizing:border-box;margin-inline:auto;padding-inline:clamp(1.25rem,3.5vw,3rem)}
+.workspace.workspace--company .workspace__footer{width:min(92rem,100%);box-sizing:border-box;margin-inline:auto}
+.company-topbar{position:fixed;z-index:100;inset:0 0 auto;display:flex;width:100%;min-height:5.1rem;box-sizing:border-box;align-items:center;gap:clamp(1rem,2vw,2rem);padding:0 max(1.25rem,calc((100% - 96rem)/2));border-bottom:1px solid #e2e8f0;background:color-mix(in srgb,var(--surface) 97%,transparent)}
+.company-topbar__brand{flex:none;color:var(--primary);font:850 1.3rem Manrope,sans-serif;letter-spacing:-.055em;text-decoration:none}
+.company-topbar__search{display:flex;min-width:12rem;max-width:35rem;height:3rem;flex:1;align-items:center;gap:.65rem;padding:0 .9rem;border:1px solid #dce4ef;border-radius:.75rem;background:#f4f7fb;color:#8b9ab0;transition:border-color .16s,box-shadow .16s}
+.company-topbar__search:focus-within{border-color:#4c8aff;box-shadow:0 0 0 3px rgb(52 115 245 / 12%)}
+.company-topbar__search input{width:100%;min-width:0;border:0!important;outline:0!important;background:transparent!important;box-shadow:none!important;color:var(--foreground);font:500 .86rem Manrope,sans-serif}
+.company-topbar__search input::placeholder{color:#8b96a8;opacity:1}
+.company-topbar__actions{display:flex;flex:none;align-items:center;gap:.9rem}
+.company-topbar__logout{border:0;background:transparent;color:#7c899d;font:600 .82rem Manrope,sans-serif;cursor:pointer}
+.company-topbar__logout:hover{color:var(--primary)}
+.company-topbar .workspace-nav.workspace-nav--company{position:static;z-index:auto;top:auto;flex:none;overflow:visible;border:0;background:transparent;backdrop-filter:none}
+.company-topbar .workspace-nav--company .workspace-nav__inner{display:flex;width:auto;min-height:0;align-items:center;flex-direction:row;gap:.3rem;margin:0;padding:0}
+.company-topbar .workspace-nav--company .workspace-nav__label,.company-topbar .workspace-nav--company .workspace-nav__link svg{display:none}
+.company-topbar .workspace-nav--company .workspace-nav__link{min-height:2.5rem;justify-content:center;gap:0;padding:0 .8rem;border:1px solid transparent;border-radius:.65rem;color:#58677e;font-size:.8rem;font-weight:700;white-space:nowrap}
+.company-topbar .workspace-nav--company .workspace-nav__link:hover{background:#f4f7fb;color:#175ee8}
+.company-topbar .workspace-nav--company .workspace-nav__link--active,.dark .company-topbar .workspace-nav--company .workspace-nav__link--active{border-color:#d7e9ff;background:#edf7ff;color:var(--primary);box-shadow:none!important}
+.company-topbar .workspace-nav--company .workspace-nav__link:after{display:none}
+.company-topbar .workspace__icon-button{width:2.35rem;height:2.35rem;border:0;background:transparent;color:#63738b}
+.company-topbar .workspace__icon-button:hover{background:#f0f5fb;color:var(--primary)}
+.company-topbar__avatar{display:grid;width:2.75rem;height:2.75rem;flex:none;overflow:hidden;place-items:center;border:0;border-radius:0;background:linear-gradient(145deg,color-mix(in srgb,var(--job-accent,#63758d) 72%,white),var(--job-accent,#63758d));color:#fff;font-size:.78rem;font-weight:850;text-decoration:none;transition:filter .16s}
+.company-topbar__avatar img{width:100%;height:100%;object-fit:cover}
+.company-topbar__avatar span{display:grid;width:100%;height:100%;place-items:center;color:#fff;font-size:.74rem;font-weight:850;letter-spacing:.02em}
+.company-topbar__avatar:hover,.company-topbar__avatar:focus-visible{border-color:#4c8aff;box-shadow:0 0 0 3px rgb(52 115 245 / 13%);outline:0}
+.dark .company-topbar{border-color:var(--border);background:color-mix(in srgb,var(--surface) 96%,transparent)}
+.dark .company-topbar__search{border-color:var(--border);background:var(--panel);color:var(--muted-foreground)}
+.dark .company-topbar__search input{color:var(--foreground)}
+.dark .company-topbar .workspace__icon-button:hover,.dark .company-topbar .workspace-nav--company .workspace-nav__link:hover{background:var(--panel)}
+.dark .company-topbar .workspace-nav--company .workspace-nav__link{color:var(--muted-foreground)}
+.dark .company-topbar .workspace-nav--company .workspace-nav__link--active{border-color:color-mix(in srgb,var(--primary) 35%,var(--border));background:color-mix(in srgb,var(--primary) 12%,var(--surface));color:var(--primary)}
+@media(max-width:1100px){.company-topbar{gap:1rem}.company-topbar__search{max-width:25rem}.company-topbar .workspace-nav--company .workspace-nav__link{padding-inline:.55rem;font-size:.75rem}.company-topbar__actions{gap:.55rem}}
+@media(max-width:900px){.workspace.workspace--company>.workspace__content{padding-top:7.1rem}.company-topbar{display:grid;min-height:7.1rem;grid-template-columns:minmax(0,1fr) auto;gap:.55rem 1rem;padding:.65rem 1rem}.company-topbar__brand{grid-column:1;grid-row:1}.company-topbar__search{display:none}.company-topbar__actions{grid-column:2;grid-row:1}.company-topbar .workspace-nav.workspace-nav--company{grid-column:1/-1;grid-row:2;width:100%;overflow:hidden}.company-topbar .workspace-nav--company .workspace-nav__inner{width:100%;justify-content:flex-start;gap:.25rem;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}.company-topbar .workspace-nav--company .workspace-nav__inner::-webkit-scrollbar{display:none}}
+@media(max-width:480px){.company-topbar{padding-inline:.75rem}.company-topbar .workspace-nav--company .workspace-nav__link{min-height:2.35rem;padding-inline:.5rem;font-size:.7rem}.company-topbar__actions{gap:.35rem}.company-topbar__avatar{width:2.5rem;height:2.5rem}}
+.candidate-topbar__avatar,.company-topbar__avatar{aspect-ratio:1;border-radius:50%!important}
 </style>

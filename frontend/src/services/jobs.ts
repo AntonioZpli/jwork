@@ -7,13 +7,19 @@ export type PublicJob = {
   salaryMin: number | string | null; salaryMax: number | string | null; salaryCurrency: string | null; salaryPeriod: string | null; salaryNegotiable: boolean
   experienceYearsMin: number | null; isUrgent: boolean; vacancies: number; publishedAt: string | null; expiresAt: string | null
   company: {
-    name: string; website?: string | null; description?: string | null
+    id: string; name: string; logoUrl?: string | null; website?: string | null; description?: string | null
     economicSector?: { name: string } | null; department?: { name: string } | null; municipality?: { name: string } | null
   }
   professionalArea: { id: string; name: string }
   specialization: { id: string; name: string } | null
   department: { id: string; name: string } | null
   municipality: { id: string; name: string } | null
+}
+
+export type PublicCompany = {
+  id: string; name: string; logoUrl: string | null; description: string | null; website: string | null; contactEmail: string | null; phone: string | null
+  economicSector: { name: string } | null; department: { name: string } | null; municipality: { name: string } | null
+  jobs: Pick<PublicJob, 'id' | 'title' | 'workMode' | 'contractType' | 'publishedAt' | 'professionalArea' | 'department' | 'municipality'>[]
 }
 
 export type PublicJobOptions = {
@@ -31,12 +37,13 @@ export type JobFilters = {
 
 export type CandidateApplication = {
   id: string; status: string; appliedAt: string
-  job: { id: string; title: string; status: string; company: { name: string } }
+  job: { id: string; title: string; status: string; professionalArea: { name: string }; municipality: { name: string } | null; department: { name: string } | null; company: { name: string } }
   statusHistory: { previousStatus: string | null; newStatus: string; comment: string | null; createdAt: string }[]
 }
 
 export type CandidateSavedJob = {
   createdAt: string
+  available: boolean
   job: Pick<PublicJob, 'id' | 'title' | 'workMode' | 'contractType' | 'salaryMin' | 'salaryMax' | 'salaryCurrency' | 'salaryPeriod' | 'salaryNegotiable' | 'publishedAt' | 'company' | 'professionalArea' | 'municipality' | 'department'>
 }
 
@@ -48,13 +55,19 @@ export const jobsApi = {
     return apiRequest<{ jobs: PublicJob[]; page: number; pageSize: number; total: number; pages: number }>(`/api/jobs${params.size ? `?${params}` : ''}`)
   },
   get: (id: string) => apiRequest<{ job: PublicJob }>(`/api/jobs/${encodeURIComponent(id)}`),
-  candidateApplications: () => apiRequest<{ applications: CandidateApplication[] }>('/api/candidate/applications'),
+  company: (id: string) => apiRequest<{ company: PublicCompany }>(`/api/companies/${encodeURIComponent(id)}`),
+  candidateApplications: () => apiRequest<{ applications: CandidateApplication[]; withdrawnCount: number }>('/api/candidate/applications'),
   candidateSavedJobs: () => apiRequest<{ savedJobs: CandidateSavedJob[] }>('/api/candidate/saved-jobs'),
-  candidateJobState: (id: string) => apiRequest<{ application: { id: string; status: string } | null; saved: boolean }>(`/api/candidate/jobs/${encodeURIComponent(id)}/state`),
+  candidateJobState: (id: string) => apiRequest<{
+    application: { id: string; status: string; appliedAt: string; statusHistory: CandidateApplication['statusHistory'] } | null
+    saved: boolean; canApply: boolean; missingProfileFields: string[]
+    compatibility: { score: number; criteria: { key: string; label: string; candidateValue: string; jobValue: string; score: number; max: number }[] }
+  }>(`/api/candidate/jobs/${encodeURIComponent(id)}/state`),
   apply: (id: string) => apiRequest<{ application: { id: string; status: string; appliedAt: string } }>(`/api/candidate/jobs/${encodeURIComponent(id)}/applications`, { method: 'POST', body: '{}' }),
   save: (id: string) => apiRequest<{ saved: true }>(`/api/candidate/jobs/${encodeURIComponent(id)}/saved`, { method: 'PUT', body: '{}' }),
   unsave: (id: string) => apiRequest<{ saved: false }>(`/api/candidate/jobs/${encodeURIComponent(id)}/saved`, { method: 'DELETE' }),
   withdraw: (id: string) => apiRequest<{ application: { id: string; status: string } }>(`/api/candidate/applications/${encodeURIComponent(id)}/withdraw`, { method: 'PATCH', body: '{}' }),
+  removeApplication: (id: string) => apiRequest<{ removed: true }>(`/api/candidate/applications/${encodeURIComponent(id)}`, { method: 'DELETE' }),
 }
 
 export const jobLabels = {

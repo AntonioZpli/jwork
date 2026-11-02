@@ -10,7 +10,6 @@ export function useAuthPanel() {
   const authStore = useAuthStore()
   const { state, isRegister, setMode, setRole } = useAuthForm()
   const password = ref('')
-  const rememberedEmailKey = 'jinowork.rememberedEmail'
   const rememberDevice = ref(false)
   const confirmPassword = ref('')
   const firstName = ref('')
@@ -20,31 +19,28 @@ export function useAuthPanel() {
   const feedback = ref('')
   const feedbackVariant = ref<'info' | 'success' | 'error'>('info')
   const canResend = ref(false)
+  const verificationEmail = ref('')
+  const verificationStep = ref(false)
+  const verificationCode = ref('')
   const retryBusy = ref(false)
   const showPassword = ref(false)
   const showConfirmPassword = ref(false)
   const contentRef = ref<HTMLElement | null>(null)
   let contentResizeTimer: number | undefined
 
-  try {
-    const rememberedEmail = localStorage.getItem(rememberedEmailKey)
-    if (rememberedEmail) {
-      state.email = rememberedEmail
-      rememberDevice.value = true
-    }
-  } catch {
-    // The login form remains usable when browser storage is unavailable.
-  }
-
   const heading = computed(() =>
-    state.mode === 'register'
+    verificationStep.value
+      ? 'Verifica tu correo'
+      : state.mode === 'register'
       ? 'Crea tu cuenta en Jinowork'
       : state.mode === 'recover'
         ? 'Recupera tu cuenta'
         : 'Inicia sesión en tu cuenta',
   )
   const description = computed(() =>
-    state.mode === 'register'
+    verificationStep.value
+      ? `Ingresa el código de 6 caracteres que enviamos a ${verificationEmail.value}.`
+      : state.mode === 'register'
       ? 'Regístrate con tu correo y una contraseña segura.'
       : state.mode === 'recover'
         ? 'Te enviaremos instrucciones si existe una cuenta con ese correo.'
@@ -95,6 +91,10 @@ export function useAuthPanel() {
   function changeMode(mode: typeof state.mode) {
     void animateContentResize(() => {
       setMode(mode)
+      verificationStep.value = false
+      verificationCode.value = ''
+      if (mode === 'login') state.email = ''
+      else verificationEmail.value = ''
       password.value = ''
       confirmPassword.value = ''
       showPassword.value = false
@@ -117,6 +117,7 @@ export function useAuthPanel() {
 
   function onEmailInput() {
     delete state.errors.email
+    verificationEmail.value = ''
     canResend.value = false
     clearFeedback()
   }
@@ -135,13 +136,17 @@ export function useAuthPanel() {
 
   async function submit() {
     if (busy.value) return
+    if (verificationStep.value) return verifyCode()
     state.errors = {}
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.email.trim())) {
       state.errors.email = 'Ingresa un correo válido.'
     }
-    if (state.mode !== 'recover' && (password.value.length < 10 || password.value.length > 128)) {
-      state.errors.password = 'La contraseña debe tener entre 10 y 128 caracteres.'
+    if (isRegister.value && password.value.length < 10) {
+      state.errors.password = 'Usa una contraseña de al menos 10 caracteres.'
+    }
+    if (state.mode !== 'recover' && password.value.length > 128) {
+      state.errors.password = 'La contraseña no puede superar los 128 caracteres.'
     }
     if (isRegister.value && password.value !== confirmPassword.value) {
       state.errors.passwordConfirmation = 'Las contraseñas no coinciden.'
@@ -180,10 +185,11 @@ export function useAuthPanel() {
             : { companyName: companyName.value.trim() }),
         })
 
+        verificationEmail.value = state.email.trim()
+        verificationCode.value = ''
+        verificationStep.value = true
         feedback.value = result.message
         feedbackVariant.value = 'success'
-        canResend.value = true
-        void animateContentResize(() => setMode('login'))
         password.value = ''
         confirmPassword.value = ''
         showPassword.value = false
@@ -196,12 +202,6 @@ export function useAuthPanel() {
       } else {
         const email = state.email.trim()
         const result = await authApi.login(email, password.value, rememberDevice.value)
-        try {
-          if (rememberDevice.value) localStorage.setItem(rememberedEmailKey, email)
-          else localStorage.removeItem(rememberedEmailKey)
-        } catch {
-          // Remembering the email is optional; authentication already succeeded.
-        }
         authStore.user = result.user
         password.value = ''
         const requestedRedirect = typeof route.query.redirect === 'string' && route.query.redirect.startsWith('/') && !route.query.redirect.startsWith('//')
@@ -219,13 +219,44 @@ export function useAuthPanel() {
         apiError.code === 'VERIFICATION_EMAIL_FAILED' ||
         (apiError.status === 403 && feedback.value.toLowerCase().includes('verifica'))
       if (state.mode === 'register' && apiError.code === 'VERIFICATION_EMAIL_FAILED') {
-        void animateContentResize(() => setMode('login'))
+        verificationEmail.value = state.email.trim()
+        verificationStep.value = true
         password.value = ''
         confirmPassword.value = ''
         showPassword.value = false
         showConfirmPassword.value = false
         clearProfileFields()
       }
+      if (state.mode === 'login' && apiError.code === 'EMAIL_NOT_VERIFIED') {
+        verificationEmail.value = state.email.trim()
+        verificationStep.value = true
+        verificationCode.value = ''
+      }
+    } finally {
+      busy.value = false
+    }
+  }
+
+  async function verifyCode() {
+    if (busy.value) return
+    const code = verificationCode.value.trim().toUpperCase()
+    if (!/^[A-Z0-9]{6}$/.test(code)) {
+      feedback.value = 'Escribe los 6 caracteres del código.'
+      feedbackVariant.value = 'error'
+      return
+    }
+    busy.value = true
+    clearFeedback()
+    try {
+      const result = await authApi.verifyEmailCode(verificationEmail.value, code)
+      authStore.user = result.user
+      const requestedRedirect = typeof route.query.redirect === 'string' && route.query.redirect.startsWith('/') && !route.query.redirect.startsWith('//')
+        ? route.query.redirect
+        : undefined
+      await router.replace({ path: '/onboarding', query: requestedRedirect ? { redirect: requestedRedirect } : {} })
+    } catch (error) {
+      feedback.value = error instanceof Error ? error.message : 'No se pudo verificar el correo.'
+      feedbackVariant.value = 'error'
     } finally {
       busy.value = false
     }
@@ -236,7 +267,7 @@ export function useAuthPanel() {
     retryBusy.value = true
     clearFeedback()
     try {
-      const result = await authApi.resendVerification(state.email.trim())
+      const result = await authApi.resendVerification(verificationEmail.value || state.email.trim())
       feedback.value = result.message
       feedbackVariant.value = 'success'
       canResend.value = false
@@ -251,6 +282,9 @@ export function useAuthPanel() {
 
   return {
     state,
+    verificationStep,
+    verificationEmail,
+    verificationCode,
     isRegister,
     password,
     rememberDevice,

@@ -23,6 +23,13 @@ const router = createRouter({
     return { top: 0 }
   },
   routes: [
+    { path: '/oobs', redirect: '/jobs' },
+    { path: '/oobs/:id', redirect: to => ({ path: `/jobs/${String(to.params.id)}` }) },
+    { path: '/candidate/saved-oobs', redirect: '/candidate/saved-jobs' },
+    { path: '/company/oobs', redirect: '/company/jobs' },
+    { path: '/company/oobs/new', redirect: '/company/jobs/new' },
+    { path: '/company/oobs/:id/edit', redirect: to => ({ path: `/company/jobs/${String(to.params.id)}/edit` }) },
+    { path: '/company/oobs/:id/applicants', redirect: to => ({ path: `/company/jobs/${String(to.params.id)}/applicants` }) },
     {
       path: '/',
       name: 'home',
@@ -61,11 +68,13 @@ const router = createRouter({
     { path: '/company/jobs', name: 'company-jobs', component: () => import('../views/CompanyJobsView.vue'), meta: { requiresAuth: true, workspaceRole: 'COMPANY' } },
     { path: '/company/jobs/new', name: 'company-job-create', component: () => import('../views/CompanyJobFormView.vue'), meta: { requiresAuth: true, workspaceRole: 'COMPANY' } },
     { path: '/company/jobs/:id/edit', name: 'company-job-edit', component: () => import('../views/CompanyJobFormView.vue'), meta: { requiresAuth: true, workspaceRole: 'COMPANY' } },
+    { path: '/company/jobs/:id/applicants', name: 'company-job-applicants', component: () => import('../views/CompanyJobApplicantsView.vue'), meta: { requiresAuth: true, workspaceRole: 'COMPANY' } },
     { path: '/company/applications', name: 'company-applications', component: () => import('../views/CompanyApplicationsView.vue'), meta: { requiresAuth: true, workspaceRole: 'COMPANY' } },
-    { path: '/company/profile', name: 'company-profile', component: () => import('../views/CompanyProfileView.vue'), meta: { requiresAuth: true, workspaceRole: 'COMPANY' } },
-    { path: '/company/profile/preview', name: 'company-profile-preview', component: () => import('../views/CompanyProfilePreviewView.vue'), meta: { requiresAuth: true, workspaceRole: 'COMPANY' } },
+    { path: '/company/profile', name: 'company-profile', component: () => import('../views/CompanyProfilePresentationView.vue'), meta: { requiresAuth: true, workspaceRole: 'COMPANY' } },
+    { path: '/company/profile/edit', name: 'company-profile-edit', component: () => import('../views/CompanyProfileView.vue'), meta: { requiresAuth: true, workspaceRole: 'COMPANY' } },
     { path: '/jobs', name: 'jobs', component: () => import('../views/JobsView.vue') },
     { path: '/jobs/:id', name: 'job-detail', component: () => import('../views/PublicJobDetailView.vue') },
+    { path: '/companies/:id', name: 'public-company-profile', component: () => import('../views/PublicCompanyProfileView.vue') },
     {
       path: '/admin',
       name: 'admin',
@@ -81,7 +90,14 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach(async (to) => {
+router.beforeEach(async (to, from) => {
+  if (to.name === 'job-detail') {
+    if (from.matched.length) {
+      window.dispatchEvent(new CustomEvent('jinowork:open-job', { detail: String(to.params.id) }))
+      return false
+    }
+    return { name: 'jobs', query: { vacante: String(to.params.id) } }
+  }
   if (!to.meta.requiresAuth) return true
   const authStore = useAuthStore()
   if (!authStore.user) await authStore.hydrateSession()

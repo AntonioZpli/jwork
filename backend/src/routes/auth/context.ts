@@ -30,7 +30,8 @@ export function createAuthRouteContext(dependencies: AuthRouteDependencies) {
     const task = (async () => {
       const sentAt = verificationSentAt.get(email)
       if (sentAt && Date.now() - sentAt < 60_000) return true
-      const token = crypto.randomBytes(32).toString('hex')
+      const codeAlphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+      const token = Array.from({ length: 6 }, () => codeAlphabet[crypto.randomInt(0, codeAlphabet.length)]).join('')
       const tokenRecord = await db.$transaction(async tx => {
         await tx.$queryRaw`SELECT "id" FROM "User" WHERE "id" = ${user.id}::uuid FOR UPDATE`
         const currentUser = await tx.user.findUnique({ where: { id: user.id }, select: { emailVerifiedAt: true, status: true } })
@@ -41,7 +42,7 @@ export function createAuthRouteContext(dependencies: AuthRouteDependencies) {
         })
         if (recentlyIssued) return { id: null as string | null }
         const record = await tx.verificationToken.create({ data: {
-          userId: user.id, tokenHash: hashToken(token), type: 'EMAIL_VERIFICATION',
+          userId: user.id, tokenHash: hashToken(`${email}:${token}`), type: 'EMAIL_VERIFICATION',
           expiresAt: new Date(Date.now() + 15 * 60_000),
         }, select: { id: true } })
         return record
@@ -50,11 +51,7 @@ export function createAuthRouteContext(dependencies: AuthRouteDependencies) {
       // A recent unused token is either already being sent by another instance or was accepted less than a minute ago.
       if (!tokenRecord.id) return true
       try {
-        let url: URL
-        try { url = new URL('/auth/verify', config.frontendUrl) }
-        catch { throw new EmailDeliveryError('configuration') }
-        url.searchParams.set('token', token)
-        await deliverVerificationEmail(user.email, url.toString())
+        await deliverVerificationEmail(user.email, token)
       } catch (error) {
         try {
           await db.verificationToken.updateMany({ where: { id: tokenRecord.id, usedAt: null }, data: { usedAt: new Date() } })

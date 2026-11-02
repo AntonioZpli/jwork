@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { authApi } from '@/services/auth'
+import AppMessage from '@/components/ui/AppMessage.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -40,10 +41,8 @@ async function reportUnrecognizedAccess() {
   <main class="security-alert-page">
     <section class="security-alert-card" :aria-busy="status === 'submitting'">
       <h1>{{ status === 'success' ? 'Sesiones cerradas' : status === 'error' ? 'No se pudo validar el enlace' : '¿No reconoces este acceso?' }}</h1>
-      <p v-if="status === 'ready'">
-        Al confirmar, Jinowork cerrará todas las sesiones activas de tu cuenta. Luego podrás cambiar tu contraseña desde «¿Olvidaste tu contraseña?» en la pantalla de acceso.
-      </p>
-      <p v-else :role="status === 'error' ? 'alert' : 'status'">{{ status === 'submitting' ? 'Protegiendo tu cuenta…' : message }}</p>
+      <AppMessage v-if="status === 'ready'" variant="warning" message="Al confirmar, cerraremos todas las sesiones activas. Después podrás cambiar tu contraseña desde «¿Olvidaste tu contraseña?» en la pantalla de acceso." />
+      <AppMessage v-else :variant="status === 'submitting' ? 'loading' : status === 'success' ? 'success' : 'error'" :message="status === 'submitting' ? 'Protegiendo tu cuenta…' : message" />
       <button v-if="status === 'ready' || status === 'submitting'" :disabled="status === 'submitting'" @click="reportUnrecognizedAccess">
         {{ status === 'submitting' ? 'Cerrando sesiones…' : 'No fui yo: cerrar todas las sesiones' }}
       </button>

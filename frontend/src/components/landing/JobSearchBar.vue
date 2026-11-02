@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Search, MapPin, Briefcase, FileText } from '@lucide/vue'
+import { RouterLink } from 'vue-router'
 </script>
 
 <template>
@@ -25,7 +26,7 @@ import { Search, MapPin, Briefcase, FileText } from '@lucide/vue'
         <label for="search-contract" class="job-search__label"><FileText :size="14" aria-hidden="true" />Contrato</label>
         <select id="search-contract" class="job-search__input" disabled><option>Todos los tipos</option><option>Permanente</option><option>Temporal</option><option>Por contrato</option></select>
       </div>
-      <button type="button" class="job-search__btn" disabled aria-disabled="true" title="Ejemplo visual; búsqueda no conectada"><Search :size="16" aria-hidden="true" /><span>Buscar empleos</span></button>
+      <RouterLink to="/auth" class="job-search__btn"><Search :size="16" aria-hidden="true" /><span>Buscar empleos</span></RouterLink>
     </div>
   </section>
 </template>
@@ -41,7 +42,7 @@ import { Search, MapPin, Briefcase, FileText } from '@lucide/vue'
 .job-search__input { width: 100%; height: 42px; padding: 0 .75rem; border: 0; border-bottom: 2px solid var(--border); border-radius: 0; background: transparent; color: var(--foreground); font: inherit; font-size: .9rem; }
 .job-search__input:disabled { cursor: not-allowed; opacity: .8; }
 .job-search__btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; height: 42px; padding: 0 1.25rem; background: var(--primary); color: white; border: 0; border-radius: 6px; font: inherit; font-size: .88rem; font-weight: 700; white-space: nowrap; }
-.job-search__btn:disabled { cursor: not-allowed; opacity: .5; }
+.job-search__btn { text-decoration: none; cursor: pointer; }
 @media (max-width: 1100px) { .job-search__fields { grid-template-columns: repeat(3, minmax(0, 1fr)); } .job-search__btn { grid-column: 1 / -1; width: 100%; } }
 @media (max-width: 560px) { .job-search { padding: 1.25rem; } .job-search__fields { grid-template-columns: 1fr; } .job-search__btn { grid-column: 1; } }
 </style>

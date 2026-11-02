@@ -1,12 +1,19 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter, RouterLink } from 'vue-router'
-import { BriefcaseBusiness } from 'lucide-vue-next'
 import WorkspaceFrame from '@/components/workspace/WorkspaceFrame.vue'
+import AppMessage from '@/components/ui/AppMessage.vue'
+import AppConfirmDialog from '@/components/ui/AppConfirmDialog.vue'
+import { useConfirmDialog } from '@/composables/useConfirmDialog'
+import { useToast } from '@/composables/useToast'
 import { workspaceApi, type CompanyJob, type JobFormOptions } from '@/services/workspace'
+import { jobAreaStyle } from '@/utils/jobAreaStyle'
+import { vacancyInitials } from '@/utils/vacancyInitials'
 
 const route = useRoute()
 const router = useRouter()
+const { notify } = useToast()
+const { confirmation, askConfirmation, finishConfirmation } = useConfirmDialog()
 const jobId = computed(() => typeof route.params.id === 'string' ? route.params.id : '')
 const editing = computed(() => Boolean(jobId.value))
 const options = ref<JobFormOptions | null>(null)
@@ -85,6 +92,7 @@ function validate() {
 
 async function save() {
   if (saving.value || !validate()) return
+  if (editing.value && !await askConfirmation({ title: 'Guardar cambios de la vacante', message: `¿Confirmas que quieres actualizar “${form.title}”?` })) return
   saving.value = true
   error.value = ''
   const payload = {
@@ -105,8 +113,8 @@ async function save() {
   try {
     if (editing.value) await workspaceApi.updateCompanyJob(jobId.value, payload)
     else await workspaceApi.createCompanyJob(payload)
-    await router.replace('/company/jobs')
-  } catch (e) { error.value = e instanceof Error ? e.message : 'No se pudo guardar la vacante.' }
+    await router.replace({ path: '/company/jobs', query: { saved: editing.value ? 'updated' : 'created' } })
+  } catch (e) { notify('No se pudo guardar la vacante', e instanceof Error ? e.message : 'Inténtalo de nuevo.', 'error') }
   finally { saving.value = false }
 }
 </script>
@@ -114,10 +122,10 @@ async function save() {
 <template>
   <WorkspaceFrame eyebrow="Gestión de vacantes" :title="editing ? 'Editar vacante' : 'Crear vacante'" subtitle="Completa la información que verán los candidatos." initials="JW">
     <template #heading-action><RouterLink class="company-form__back" to="/company/jobs">Volver a mis vacantes</RouterLink></template>
-    <p v-if="loading" role="status" class="workspace__empty">Cargando formulario…</p>
-    <p v-if="error" role="alert" class="workspace__error">{{ error }}</p>
+    <AppMessage v-if="loading" variant="loading" message="Cargando formulario…" />
+    <AppMessage v-if="error" variant="error" title="No se pudo cargar el formulario de vacante" :message="error" />
     <form v-if="!loading && options && !error" class="workspace__card company-form" @submit.prevent="save">
-      <aside class="company-form__preview" aria-live="polite"><div class="company-form__preview-mark"><BriefcaseBusiness :size="19" /></div><div class="company-form__preview-copy"><span>Vista rápida para candidatos</span><h2>{{ form.title.trim() || 'El título de la vacante aparecerá aquí' }}</h2><p>{{ previewArea }} <span aria-hidden="true">·</span> {{ previewLocation }}</p><p class="company-form__preview-description">{{ form.description.trim() || 'Añade una descripción para mostrar los detalles del puesto.' }}</p><div class="company-form__preview-tags"><span>{{ form.workMode === 'REMOTE' ? 'Remoto' : form.workMode === 'HYBRID' ? 'Híbrido' : 'Presencial' }}</span><span>{{ form.contractType === 'PERMANENT' ? 'Permanente' : form.contractType === 'TEMPORARY' ? 'Temporal' : form.contractType === 'CONTRACT' ? 'Por contrato' : 'Pasantía' }}</span><span>{{ previewSalary }}</span></div></div></aside>
+      <aside class="company-form__preview" :style="jobAreaStyle(previewArea, jobId)" aria-live="polite"><div class="company-form__preview-mark vacancy-mark" aria-hidden="true">{{ vacancyInitials(form.title) }}</div><div class="company-form__preview-copy"><span>Vista rápida para candidatos</span><h2>{{ form.title.trim() || 'El título de la vacante aparecerá aquí' }}</h2><p>{{ previewArea }} <span aria-hidden="true">·</span> {{ previewLocation }}</p><p class="company-form__preview-description">{{ form.description.trim() || 'Añade una descripción para mostrar los detalles del puesto.' }}</p><div class="company-form__preview-tags"><span>{{ form.workMode === 'REMOTE' ? 'Remoto' : form.workMode === 'HYBRID' ? 'Híbrido' : 'Presencial' }}</span><span>{{ form.contractType === 'PERMANENT' ? 'Permanente' : form.contractType === 'TEMPORARY' ? 'Temporal' : form.contractType === 'CONTRACT' ? 'Por contrato' : 'Pasantía' }}</span><span>{{ previewSalary }}</span></div></div></aside>
       <fieldset :disabled="saving">
         <legend>Información de la vacante</legend>
         <label>Título <input v-model="form.title" maxlength="160" placeholder="Ej. Diseñador/a gráfico/a" required><small v-if="fieldErrors.title">{{ fieldErrors.title }}</small></label>
@@ -153,6 +161,7 @@ async function save() {
       </fieldset>
       <div class="company-form__actions"><RouterLink class="company-form__back" to="/company/jobs">Cancelar</RouterLink><button class="workspace__cta" type="submit" :disabled="saving">{{ saving ? 'Guardando…' : editing ? 'Guardar cambios' : 'Guardar borrador' }}</button></div>
     </form>
+    <AppConfirmDialog v-if="confirmation" :title="confirmation.title" :message="confirmation.message" :confirm-label="confirmation.confirmLabel" :danger="confirmation.danger" @confirm="finishConfirmation(true)" @cancel="finishConfirmation(false)" />
   </WorkspaceFrame>
 </template>
 
@@ -175,15 +184,15 @@ async function save() {
 .company-form{padding:1.25rem 1.5rem}.company-form fieldset{gap:.65rem}.company-form legend{margin:1.1rem 0 .4rem;padding:.75rem 0 .45rem;border-bottom:1px solid var(--border);color:var(--palette-ink);font-size:.88rem;letter-spacing:.01em}.company-form legend:first-child{margin-top:0;padding-top:0}.dark .company-form legend{color:var(--palette-blue)}.company-form__grid{gap:.75rem;padding:.8rem;border:1px solid color-mix(in srgb,var(--border) 78%,transparent);border-radius:.75rem;background:color-mix(in srgb,var(--panel) 52%,var(--surface))}.company-form label{gap:.3rem;font-size:.76rem}.company-form input:not([type=checkbox]),.company-form select,.company-form textarea{min-height:2.5rem;padding:.55rem .65rem;border-radius:.55rem;font-size:.83rem}.company-form textarea{min-height:6rem}.company-form__check{gap:.55rem!important;margin-top:.35rem!important;color:var(--muted-foreground);font-size:.75rem!important}.company-form__check input{accent-color:var(--palette-violet)}.company-form__actions{padding-top:.9rem;border-top:1px solid var(--border)}.company-form__back{font-size:.8rem}
 @media(max-width:640px){.company-form{padding:1rem}.company-form__grid{gap:.6rem;padding:.65rem}}
 
-.company-form__preview{display:flex;align-items:flex-start;gap:.85rem;margin:0 0 1rem;padding:1rem;border:1px solid rgb(126 168 226 / 24%);border-radius:.85rem;background:linear-gradient(120deg,#102747,#1a3c67);color:#fff}
-.company-form__preview-mark{display:grid;width:2.4rem;height:2.4rem;flex:none;place-items:center;border:1px solid rgb(255 255 255 / 20%);border-radius:.7rem;background:rgb(255 255 255 / 10%);color:#a9c8ff}
+.company-form__preview{display:flex;align-items:flex-start;gap:.85rem;margin:0 0 1rem;padding:1rem;border:0;border-radius:0;background:linear-gradient(115deg,color-mix(in srgb,var(--job-accent) 52%,#0b161e),color-mix(in srgb,var(--job-accent) 62%,#172431));color:#fff}
+.company-form__preview-mark{display:grid;width:2.4rem;height:2.4rem;flex:none;place-items:center;border:0;border-radius:0;background:linear-gradient(145deg,color-mix(in srgb,var(--job-accent) 80%,white),var(--job-accent));color:#fff;font:850 1rem Manrope,sans-serif}
 .company-form__preview-copy{min-width:0;flex:1}
-.company-form__preview-copy>span{color:#a9c8f0;font-size:.6rem;font-weight:850;letter-spacing:.12em;text-transform:uppercase}
+.company-form__preview-copy>span{color:color-mix(in srgb,var(--job-accent) 42%,white);font-size:.6rem;font-weight:850;letter-spacing:.12em;text-transform:uppercase}
 .company-form__preview-copy h2{margin:.3rem 0;color:#fff;font:800 1rem/1.3 Manrope,sans-serif;letter-spacing:-.025em}
 .company-form__preview-copy>p{margin:.25rem 0;color:#cbd9eb;font-size:.72rem}
-.company-form__preview-copy>p>span{padding-inline:.2rem;color:#81a9dd}
+.company-form__preview-copy>p>span{padding-inline:.2rem;color:color-mix(in srgb,var(--job-accent) 48%,white)}
 .company-form__preview-description{display:-webkit-box!important;overflow:hidden;max-width:55rem;-webkit-box-orient:vertical;-webkit-line-clamp:2;color:rgb(235 243 253 / 74%)!important;line-height:1.5}
 .company-form__preview-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}
-.company-form__preview-tags span{padding:.3rem .5rem;border:1px solid rgb(255 255 255 / 18%);border-radius:999px;background:rgb(255 255 255 / 7%);color:#f1f6ff;font-size:.63rem;font-weight:700}
+.company-form__preview-tags span{padding:.3rem .5rem;border:0;border-radius:0;background:rgb(255 255 255 / 12%);color:#fff;font-size:.63rem;font-weight:700}
 @media(max-width:600px){.company-form__preview{padding:.8rem}.company-form__preview-mark{width:2rem;height:2rem}}
 </style>

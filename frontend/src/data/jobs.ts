@@ -12,6 +12,7 @@ export const FEATURED_JOBS: Job[] = [
     location: 'Jinotega',
     modality: 'Híbrido',
     contract: 'Tiempo completo',
+    salaryLabel: 'NIO 18,000 – 25,000 / mes',
   },
   {
     id: 'orbita-design',
@@ -23,6 +24,7 @@ export const FEATURED_JOBS: Job[] = [
     location: 'Jinotega',
     modality: 'Remoto',
     contract: 'Tiempo completo',
+    salaryLabel: 'NIO 35,000 – 50,000 / mes',
   },
   {
     id: 'casa-norte-admin',
@@ -34,6 +36,7 @@ export const FEATURED_JOBS: Job[] = [
     location: 'Estelí',
     modality: 'Presencial',
     contract: 'Tiempo completo',
+    salaryLabel: 'NIO 15,000 – 22,000 / mes',
   },
   {
     id: 'punto-analitico-data',
@@ -45,5 +48,6 @@ export const FEATURED_JOBS: Job[] = [
     location: 'Managua',
     modality: 'Híbrido',
     contract: 'Tiempo completo',
+    salaryLabel: 'NIO 28,000 – 40,000 / mes',
   },
 ]

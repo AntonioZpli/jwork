@@ -17,7 +17,8 @@ function chooseTheme(value: 'light' | 'dark') {
 }
 
 onMounted(() => {
-  if (!authViewRef.value) return
+  const root = authViewRef.value
+  if (!root) return
   authContext = gsap.context(() => {
     authMotion = gsap.matchMedia()
     authMotion.add('(prefers-reduced-motion: no-preference)', () => {
@@ -47,8 +48,8 @@ onMounted(() => {
         { autoAlpha: 1, y: 0, duration: 0.4 },
         0.28,
       )
-    }, authViewRef.value)
-  }, authViewRef.value)
+    }, root)
+  }, root)
 })
 
 onBeforeUnmount(() => {

@@ -1,16 +1,16 @@
 import { ApplicationStatus } from '../generated/prisma/enums'
 
 const transitions: Record<string, ApplicationStatus[]> = {
-  RECEIVED: ['IN_REVIEW', 'SHORTLISTED', 'REJECTED'],
-  IN_REVIEW: ['SHORTLISTED', 'INTERVIEW', 'REJECTED'],
-  SHORTLISTED: ['INTERVIEW', 'SELECTED', 'REJECTED'],
+  RECEIVED: ['IN_REVIEW'],
+  IN_REVIEW: ['INTERVIEW', 'REJECTED'],
+  SHORTLISTED: ['INTERVIEW', 'REJECTED'],
   INTERVIEW: ['SELECTED', 'REJECTED'],
 }
 
 export class ApplicationValidationError extends Error {}
 
 export function parseCompanyApplicationStatus(next: unknown): ApplicationStatus {
-  if (typeof next !== 'string' || !['IN_REVIEW', 'SHORTLISTED', 'INTERVIEW', 'SELECTED', 'REJECTED'].includes(next)) {
+  if (typeof next !== 'string' || !['IN_REVIEW', 'INTERVIEW', 'SELECTED', 'REJECTED'].includes(next)) {
     throw new ApplicationValidationError('El estado solicitado no es válido.')
   }
   return next as ApplicationStatus

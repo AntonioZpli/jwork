@@ -38,6 +38,7 @@ export type CandidateProfileMinAggregateOutputType = {
   specializationId: string | null
   description: string | null
   cvUrl: string | null
+  cvFileName: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -56,6 +57,7 @@ export type CandidateProfileMaxAggregateOutputType = {
   specializationId: string | null
   description: string | null
   cvUrl: string | null
+  cvFileName: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -74,6 +76,7 @@ export type CandidateProfileCountAggregateOutputType = {
   specializationId: number
   description: number
   cvUrl: number
+  cvFileName: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -94,6 +97,7 @@ export type CandidateProfileMinAggregateInputType = {
   specializationId?: true
   description?: true
   cvUrl?: true
+  cvFileName?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -112,6 +116,7 @@ export type CandidateProfileMaxAggregateInputType = {
   specializationId?: true
   description?: true
   cvUrl?: true
+  cvFileName?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -130,6 +135,7 @@ export type CandidateProfileCountAggregateInputType = {
   specializationId?: true
   description?: true
   cvUrl?: true
+  cvFileName?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -221,6 +227,7 @@ export type CandidateProfileGroupByOutputType = {
   specializationId: string | null
   description: string | null
   cvUrl: string | null
+  cvFileName: string | null
   createdAt: Date
   updatedAt: Date
   _count: CandidateProfileCountAggregateOutputType | null
@@ -260,6 +267,7 @@ export type CandidateProfileWhereInput = {
   specializationId?: Prisma.UuidNullableFilter<"CandidateProfile"> | string | null
   description?: Prisma.StringNullableFilter<"CandidateProfile"> | string | null
   cvUrl?: Prisma.StringNullableFilter<"CandidateProfile"> | string | null
+  cvFileName?: Prisma.StringNullableFilter<"CandidateProfile"> | string | null
   createdAt?: Prisma.DateTimeFilter<"CandidateProfile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CandidateProfile"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -289,6 +297,7 @@ export type CandidateProfileOrderByWithRelationInput = {
   specializationId?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   cvUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  cvFileName?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -321,6 +330,7 @@ export type CandidateProfileWhereUniqueInput = Prisma.AtLeast<{
   specializationId?: Prisma.UuidNullableFilter<"CandidateProfile"> | string | null
   description?: Prisma.StringNullableFilter<"CandidateProfile"> | string | null
   cvUrl?: Prisma.StringNullableFilter<"CandidateProfile"> | string | null
+  cvFileName?: Prisma.StringNullableFilter<"CandidateProfile"> | string | null
   createdAt?: Prisma.DateTimeFilter<"CandidateProfile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CandidateProfile"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -350,6 +360,7 @@ export type CandidateProfileOrderByWithAggregationInput = {
   specializationId?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   cvUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  cvFileName?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.CandidateProfileCountOrderByAggregateInput
@@ -374,6 +385,7 @@ export type CandidateProfileScalarWhereWithAggregatesInput = {
   specializationId?: Prisma.UuidNullableWithAggregatesFilter<"CandidateProfile"> | string | null
   description?: Prisma.StringNullableWithAggregatesFilter<"CandidateProfile"> | string | null
   cvUrl?: Prisma.StringNullableWithAggregatesFilter<"CandidateProfile"> | string | null
+  cvFileName?: Prisma.StringNullableWithAggregatesFilter<"CandidateProfile"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"CandidateProfile"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"CandidateProfile"> | Date | string
 }
@@ -387,6 +399,7 @@ export type CandidateProfileCreateInput = {
   photoUrl?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutCandidateProfileInput
@@ -416,6 +429,7 @@ export type CandidateProfileUncheckedCreateInput = {
   specializationId?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   experiences?: Prisma.ExperienceUncheckedCreateNestedManyWithoutCandidateProfileInput
@@ -435,6 +449,7 @@ export type CandidateProfileUpdateInput = {
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutCandidateProfileNestedInput
@@ -464,6 +479,7 @@ export type CandidateProfileUncheckedUpdateInput = {
   specializationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   experiences?: Prisma.ExperienceUncheckedUpdateManyWithoutCandidateProfileNestedInput
@@ -488,6 +504,7 @@ export type CandidateProfileCreateManyInput = {
   specializationId?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -501,6 +518,7 @@ export type CandidateProfileUpdateManyMutationInput = {
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -519,6 +537,7 @@ export type CandidateProfileUncheckedUpdateManyInput = {
   specializationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -542,6 +561,7 @@ export type CandidateProfileCountOrderByAggregateInput = {
   specializationId?: Prisma.SortOrder
   description?: Prisma.SortOrder
   cvUrl?: Prisma.SortOrder
+  cvFileName?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -560,6 +580,7 @@ export type CandidateProfileMaxOrderByAggregateInput = {
   specializationId?: Prisma.SortOrder
   description?: Prisma.SortOrder
   cvUrl?: Prisma.SortOrder
+  cvFileName?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -578,6 +599,7 @@ export type CandidateProfileMinOrderByAggregateInput = {
   specializationId?: Prisma.SortOrder
   description?: Prisma.SortOrder
   cvUrl?: Prisma.SortOrder
+  cvFileName?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -892,6 +914,7 @@ export type CandidateProfileCreateWithoutUserInput = {
   photoUrl?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   department?: Prisma.DepartmentCreateNestedOneWithoutCandidatesInput
@@ -919,6 +942,7 @@ export type CandidateProfileUncheckedCreateWithoutUserInput = {
   specializationId?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   experiences?: Prisma.ExperienceUncheckedCreateNestedManyWithoutCandidateProfileInput
@@ -954,6 +978,7 @@ export type CandidateProfileUpdateWithoutUserInput = {
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   department?: Prisma.DepartmentUpdateOneWithoutCandidatesNestedInput
@@ -981,6 +1006,7 @@ export type CandidateProfileUncheckedUpdateWithoutUserInput = {
   specializationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   experiences?: Prisma.ExperienceUncheckedUpdateManyWithoutCandidateProfileNestedInput
@@ -1000,6 +1026,7 @@ export type CandidateProfileCreateWithoutExperiencesInput = {
   photoUrl?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutCandidateProfileInput
@@ -1028,6 +1055,7 @@ export type CandidateProfileUncheckedCreateWithoutExperiencesInput = {
   specializationId?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   education?: Prisma.EducationUncheckedCreateNestedManyWithoutCandidateProfileInput
@@ -1062,6 +1090,7 @@ export type CandidateProfileUpdateWithoutExperiencesInput = {
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutCandidateProfileNestedInput
@@ -1090,6 +1119,7 @@ export type CandidateProfileUncheckedUpdateWithoutExperiencesInput = {
   specializationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   education?: Prisma.EducationUncheckedUpdateManyWithoutCandidateProfileNestedInput
@@ -1108,6 +1138,7 @@ export type CandidateProfileCreateWithoutEducationInput = {
   photoUrl?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutCandidateProfileInput
@@ -1136,6 +1167,7 @@ export type CandidateProfileUncheckedCreateWithoutEducationInput = {
   specializationId?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   experiences?: Prisma.ExperienceUncheckedCreateNestedManyWithoutCandidateProfileInput
@@ -1170,6 +1202,7 @@ export type CandidateProfileUpdateWithoutEducationInput = {
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutCandidateProfileNestedInput
@@ -1198,6 +1231,7 @@ export type CandidateProfileUncheckedUpdateWithoutEducationInput = {
   specializationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   experiences?: Prisma.ExperienceUncheckedUpdateManyWithoutCandidateProfileNestedInput
@@ -1216,6 +1250,7 @@ export type CandidateProfileCreateWithoutLanguagesInput = {
   photoUrl?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutCandidateProfileInput
@@ -1244,6 +1279,7 @@ export type CandidateProfileUncheckedCreateWithoutLanguagesInput = {
   specializationId?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   experiences?: Prisma.ExperienceUncheckedCreateNestedManyWithoutCandidateProfileInput
@@ -1278,6 +1314,7 @@ export type CandidateProfileUpdateWithoutLanguagesInput = {
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutCandidateProfileNestedInput
@@ -1306,6 +1343,7 @@ export type CandidateProfileUncheckedUpdateWithoutLanguagesInput = {
   specializationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   experiences?: Prisma.ExperienceUncheckedUpdateManyWithoutCandidateProfileNestedInput
@@ -1324,6 +1362,7 @@ export type CandidateProfileCreateWithoutProfessionalAreaInput = {
   photoUrl?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutCandidateProfileInput
@@ -1351,6 +1390,7 @@ export type CandidateProfileUncheckedCreateWithoutProfessionalAreaInput = {
   specializationId?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   experiences?: Prisma.ExperienceUncheckedCreateNestedManyWithoutCandidateProfileInput
@@ -1404,6 +1444,7 @@ export type CandidateProfileScalarWhereInput = {
   specializationId?: Prisma.UuidNullableFilter<"CandidateProfile"> | string | null
   description?: Prisma.StringNullableFilter<"CandidateProfile"> | string | null
   cvUrl?: Prisma.StringNullableFilter<"CandidateProfile"> | string | null
+  cvFileName?: Prisma.StringNullableFilter<"CandidateProfile"> | string | null
   createdAt?: Prisma.DateTimeFilter<"CandidateProfile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CandidateProfile"> | Date | string
 }
@@ -1417,6 +1458,7 @@ export type CandidateProfileCreateWithoutSpecializationInput = {
   photoUrl?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutCandidateProfileInput
@@ -1444,6 +1486,7 @@ export type CandidateProfileUncheckedCreateWithoutSpecializationInput = {
   professionalAreaId?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   experiences?: Prisma.ExperienceUncheckedCreateNestedManyWithoutCandidateProfileInput
@@ -1489,6 +1532,7 @@ export type CandidateProfileCreateWithoutDepartmentInput = {
   photoUrl?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutCandidateProfileInput
@@ -1516,6 +1560,7 @@ export type CandidateProfileUncheckedCreateWithoutDepartmentInput = {
   specializationId?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   experiences?: Prisma.ExperienceUncheckedCreateNestedManyWithoutCandidateProfileInput
@@ -1561,6 +1606,7 @@ export type CandidateProfileCreateWithoutMunicipalityInput = {
   photoUrl?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutCandidateProfileInput
@@ -1588,6 +1634,7 @@ export type CandidateProfileUncheckedCreateWithoutMunicipalityInput = {
   specializationId?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   experiences?: Prisma.ExperienceUncheckedCreateNestedManyWithoutCandidateProfileInput
@@ -1633,6 +1680,7 @@ export type CandidateProfileCreateWithoutJobViewsInput = {
   photoUrl?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutCandidateProfileInput
@@ -1661,6 +1709,7 @@ export type CandidateProfileUncheckedCreateWithoutJobViewsInput = {
   specializationId?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   experiences?: Prisma.ExperienceUncheckedCreateNestedManyWithoutCandidateProfileInput
@@ -1695,6 +1744,7 @@ export type CandidateProfileUpdateWithoutJobViewsInput = {
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutCandidateProfileNestedInput
@@ -1723,6 +1773,7 @@ export type CandidateProfileUncheckedUpdateWithoutJobViewsInput = {
   specializationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   experiences?: Prisma.ExperienceUncheckedUpdateManyWithoutCandidateProfileNestedInput
@@ -1741,6 +1792,7 @@ export type CandidateProfileCreateWithoutSavedJobsInput = {
   photoUrl?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutCandidateProfileInput
@@ -1769,6 +1821,7 @@ export type CandidateProfileUncheckedCreateWithoutSavedJobsInput = {
   specializationId?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   experiences?: Prisma.ExperienceUncheckedCreateNestedManyWithoutCandidateProfileInput
@@ -1803,6 +1856,7 @@ export type CandidateProfileUpdateWithoutSavedJobsInput = {
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutCandidateProfileNestedInput
@@ -1831,6 +1885,7 @@ export type CandidateProfileUncheckedUpdateWithoutSavedJobsInput = {
   specializationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   experiences?: Prisma.ExperienceUncheckedUpdateManyWithoutCandidateProfileNestedInput
@@ -1849,6 +1904,7 @@ export type CandidateProfileCreateWithoutApplicationsInput = {
   photoUrl?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutCandidateProfileInput
@@ -1877,6 +1933,7 @@ export type CandidateProfileUncheckedCreateWithoutApplicationsInput = {
   specializationId?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   experiences?: Prisma.ExperienceUncheckedCreateNestedManyWithoutCandidateProfileInput
@@ -1911,6 +1968,7 @@ export type CandidateProfileUpdateWithoutApplicationsInput = {
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutCandidateProfileNestedInput
@@ -1939,6 +1997,7 @@ export type CandidateProfileUncheckedUpdateWithoutApplicationsInput = {
   specializationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   experiences?: Prisma.ExperienceUncheckedUpdateManyWithoutCandidateProfileNestedInput
@@ -1961,6 +2020,7 @@ export type CandidateProfileCreateManyProfessionalAreaInput = {
   specializationId?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1974,6 +2034,7 @@ export type CandidateProfileUpdateWithoutProfessionalAreaInput = {
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutCandidateProfileNestedInput
@@ -2001,6 +2062,7 @@ export type CandidateProfileUncheckedUpdateWithoutProfessionalAreaInput = {
   specializationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   experiences?: Prisma.ExperienceUncheckedUpdateManyWithoutCandidateProfileNestedInput
@@ -2024,6 +2086,7 @@ export type CandidateProfileUncheckedUpdateManyWithoutProfessionalAreaInput = {
   specializationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -2041,6 +2104,7 @@ export type CandidateProfileCreateManySpecializationInput = {
   professionalAreaId?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -2054,6 +2118,7 @@ export type CandidateProfileUpdateWithoutSpecializationInput = {
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutCandidateProfileNestedInput
@@ -2081,6 +2146,7 @@ export type CandidateProfileUncheckedUpdateWithoutSpecializationInput = {
   professionalAreaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   experiences?: Prisma.ExperienceUncheckedUpdateManyWithoutCandidateProfileNestedInput
@@ -2104,6 +2170,7 @@ export type CandidateProfileUncheckedUpdateManyWithoutSpecializationInput = {
   professionalAreaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -2121,6 +2188,7 @@ export type CandidateProfileCreateManyDepartmentInput = {
   specializationId?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -2134,6 +2202,7 @@ export type CandidateProfileUpdateWithoutDepartmentInput = {
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutCandidateProfileNestedInput
@@ -2161,6 +2230,7 @@ export type CandidateProfileUncheckedUpdateWithoutDepartmentInput = {
   specializationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   experiences?: Prisma.ExperienceUncheckedUpdateManyWithoutCandidateProfileNestedInput
@@ -2184,6 +2254,7 @@ export type CandidateProfileUncheckedUpdateManyWithoutDepartmentInput = {
   specializationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -2201,6 +2272,7 @@ export type CandidateProfileCreateManyMunicipalityInput = {
   specializationId?: string | null
   description?: string | null
   cvUrl?: string | null
+  cvFileName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -2214,6 +2286,7 @@ export type CandidateProfileUpdateWithoutMunicipalityInput = {
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutCandidateProfileNestedInput
@@ -2241,6 +2314,7 @@ export type CandidateProfileUncheckedUpdateWithoutMunicipalityInput = {
   specializationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   experiences?: Prisma.ExperienceUncheckedUpdateManyWithoutCandidateProfileNestedInput
@@ -2264,6 +2338,7 @@ export type CandidateProfileUncheckedUpdateManyWithoutMunicipalityInput = {
   specializationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cvUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cvFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -2358,6 +2433,7 @@ export type CandidateProfileSelect<ExtArgs extends runtime.Types.Extensions.Inte
   specializationId?: boolean
   description?: boolean
   cvUrl?: boolean
+  cvFileName?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -2388,6 +2464,7 @@ export type CandidateProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   specializationId?: boolean
   description?: boolean
   cvUrl?: boolean
+  cvFileName?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -2411,6 +2488,7 @@ export type CandidateProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   specializationId?: boolean
   description?: boolean
   cvUrl?: boolean
+  cvFileName?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -2434,11 +2512,12 @@ export type CandidateProfileSelectScalar = {
   specializationId?: boolean
   description?: boolean
   cvUrl?: boolean
+  cvFileName?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type CandidateProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "firstName" | "lastName" | "contactEmail" | "phone" | "photoUrl" | "departmentId" | "municipalityId" | "professionalAreaId" | "specializationId" | "description" | "cvUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["candidateProfile"]>
+export type CandidateProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "firstName" | "lastName" | "contactEmail" | "phone" | "photoUrl" | "departmentId" | "municipalityId" | "professionalAreaId" | "specializationId" | "description" | "cvUrl" | "cvFileName" | "createdAt" | "updatedAt", ExtArgs["result"]["candidateProfile"]>
 export type CandidateProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   department?: boolean | Prisma.CandidateProfile$departmentArgs<ExtArgs>
@@ -2497,6 +2576,7 @@ export type $CandidateProfilePayload<ExtArgs extends runtime.Types.Extensions.In
     specializationId: string | null
     description: string | null
     cvUrl: string | null
+    cvFileName: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["candidateProfile"]>
@@ -2946,6 +3026,7 @@ export interface CandidateProfileFieldRefs {
   readonly specializationId: Prisma.FieldRef<"CandidateProfile", 'String'>
   readonly description: Prisma.FieldRef<"CandidateProfile", 'String'>
   readonly cvUrl: Prisma.FieldRef<"CandidateProfile", 'String'>
+  readonly cvFileName: Prisma.FieldRef<"CandidateProfile", 'String'>
   readonly createdAt: Prisma.FieldRef<"CandidateProfile", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"CandidateProfile", 'DateTime'>
 }

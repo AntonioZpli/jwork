@@ -27,4 +27,6 @@ export interface Job {
   modality: Modality
   /** Contract type */
   contract: ContractType
+  /** Illustrative salary shown on sample cards */
+  salaryLabel?: string
 }

@@ -17,6 +17,23 @@ function isUniqueConstraint(error: unknown) {
   return typeof error === 'object' && error !== null && 'code' in error && error.code === 'P2002'
 }
 
+function getTotalExperienceYears(experiences: { startDate: Date; endDate: Date | null }[]) {
+  const now = Date.now()
+  const periods = experiences
+    .map(({ startDate, endDate }) => ({ start: startDate.getTime(), end: Math.min(endDate?.getTime() ?? now, now) }))
+    .filter(period => period.end > period.start)
+    .sort((a, b) => a.start - b.start)
+  let totalMilliseconds = 0
+  let current: { start: number; end: number } | null = null
+  for (const period of periods) {
+    if (!current) current = { ...period }
+    else if (period.start <= current.end) current.end = Math.max(current.end, period.end)
+    else { totalMilliseconds += current.end - current.start; current = { ...period } }
+  }
+  if (current) totalMilliseconds += current.end - current.start
+  return totalMilliseconds / (365.25 * 24 * 60 * 60 * 1000)
+}
+
 async function activePublicJob(db: typeof prisma, id: string) {
   const now = new Date()
   return db.job.findFirst({
@@ -29,15 +46,18 @@ export async function registerCandidateJobRoutes(app: FastifyInstance, db: typeo
   app.get('/api/candidate/applications', async (request, reply) => {
     const context = await requireCandidate(request, reply, db)
     if (!context) return
-    const applications = await db.application.findMany({
-      where: { candidateProfileId: context.profile.id }, orderBy: { appliedAt: 'desc' },
-      select: {
-        id: true, status: true, appliedAt: true,
-        job: { select: { id: true, title: true, status: true, company: { select: { name: true } } } },
-        statusHistory: { orderBy: { createdAt: 'asc' }, select: { previousStatus: true, newStatus: true, comment: true, createdAt: true } },
-      },
-    })
-    return { applications }
+    const [applications, withdrawnCount] = await Promise.all([
+      db.application.findMany({
+        where: { candidateProfileId: context.profile.id, candidateHiddenAt: null, status: { not: 'WITHDRAWN' } }, orderBy: { appliedAt: 'desc' },
+        select: {
+          id: true, status: true, appliedAt: true,
+          job: { select: { id: true, title: true, status: true, professionalArea: { select: { name: true } }, municipality: { select: { name: true } }, department: { select: { name: true } }, company: { select: { name: true } } } },
+          statusHistory: { orderBy: { createdAt: 'asc' }, select: { previousStatus: true, newStatus: true, comment: true, createdAt: true } },
+        },
+      }),
+      db.application.count({ where: { candidateProfileId: context.profile.id, status: 'WITHDRAWN' } }),
+    ])
+    return { applications, withdrawnCount }
   })
 
   app.get('/api/candidate/saved-jobs', async (request, reply) => {
@@ -45,16 +65,20 @@ export async function registerCandidateJobRoutes(app: FastifyInstance, db: typeo
     if (!context) return
     const now = new Date()
     const savedJobs = await db.savedJob.findMany({
-      where: { candidateProfileId: context.profile.id, job: { status: 'PUBLISHED', OR: [{ expiresAt: null }, { expiresAt: { gt: now } }], company: { verificationStatus: 'VERIFIED' } } },
+      where: { candidateProfileId: context.profile.id },
       orderBy: { createdAt: 'desc' },
       select: { createdAt: true, job: { select: {
-        id: true, title: true, workMode: true, contractType: true, salaryMin: true, salaryMax: true,
+        id: true, title: true, status: true, expiresAt: true, workMode: true, contractType: true, salaryMin: true, salaryMax: true,
         salaryCurrency: true, salaryPeriod: true, salaryNegotiable: true, publishedAt: true,
-        company: { select: { name: true } }, professionalArea: { select: { name: true } },
+        company: { select: { name: true, verificationStatus: true } }, professionalArea: { select: { name: true } },
         municipality: { select: { name: true } }, department: { select: { name: true } },
       } } },
     })
-    return { savedJobs }
+    return { savedJobs: savedJobs.map(saved => ({
+      createdAt: saved.createdAt,
+      available: saved.job.status === 'PUBLISHED' && (!saved.job.expiresAt || saved.job.expiresAt > now) && saved.job.company.verificationStatus === 'VERIFIED',
+      job: saved.job,
+    })) }
   })
 
   app.get('/api/candidate/jobs/:jobId/state', async (request, reply) => {
@@ -62,11 +86,59 @@ export async function registerCandidateJobRoutes(app: FastifyInstance, db: typeo
     if (!context) return
     const { jobId } = request.params as { jobId: string }
     if (!UUID_PATTERN.test(jobId)) return reply.code(400).send({ message: 'El identificador de vacante no es válido.' })
-    const [application, saved] = await Promise.all([
-      db.application.findUnique({ where: { jobId_candidateProfileId: { jobId, candidateProfileId: context.profile.id } }, select: { id: true, status: true } }),
+    const [application, saved, job, profile] = await Promise.all([
+      db.application.findUnique({
+        where: { jobId_candidateProfileId: { jobId, candidateProfileId: context.profile.id } },
+        select: {
+          id: true, status: true, appliedAt: true,
+          statusHistory: { orderBy: { createdAt: 'asc' }, select: { previousStatus: true, newStatus: true, comment: true, createdAt: true } },
+        },
+      }),
       db.savedJob.findUnique({ where: { candidateProfileId_jobId: { jobId, candidateProfileId: context.profile.id } }, select: { jobId: true } }),
+      db.job.findUnique({ where: { id: jobId }, select: {
+        professionalAreaId: true, specializationId: true, departmentId: true, municipalityId: true, experienceYearsMin: true,
+        professionalArea: { select: { name: true } }, specialization: { select: { name: true } },
+        department: { select: { name: true } }, municipality: { select: { name: true } },
+      } }),
+      db.candidateProfile.findUnique({ where: { id: context.profile.id }, select: {
+        professionalAreaId: true, specializationId: true, departmentId: true, municipalityId: true,
+        professionalArea: { select: { name: true } }, specialization: { select: { name: true } },
+        department: { select: { name: true } }, municipality: { select: { name: true } },
+        experiences: { select: { startDate: true, endDate: true } },
+      } }),
     ])
-    return { application, saved: Boolean(saved) }
+    if (!job || !profile) return reply.code(404).send({ message: 'No se encontró la vacante o el perfil.' })
+    const missingProfileFields = [
+      !context.profile.firstName.trim() ? 'firstName' : null,
+      !context.profile.lastName.trim() ? 'lastName' : null,
+      !context.profile.phone ? 'phone' : null,
+      !context.profile.departmentId ? 'department' : null,
+      !context.profile.municipalityId ? 'municipality' : null,
+      !context.profile.professionalAreaId ? 'professionalArea' : null,
+    ].filter((field): field is string => field !== null)
+    const experienceYears = getTotalExperienceYears(profile.experiences)
+    const areaPoints = profile.professionalAreaId === job.professionalAreaId ? 40 : 0
+    const specializationPoints = !job.specializationId || profile.specializationId === job.specializationId ? 20 : 0
+    const locationPoints = !job.departmentId && !job.municipalityId
+      ? 20
+      : job.municipalityId && profile.municipalityId === job.municipalityId
+        ? 20
+        : job.departmentId && profile.departmentId === job.departmentId ? 12 : 0
+    const experiencePoints = job.experienceYearsMin === null
+      ? 20
+      : Math.min(experienceYears / Math.max(job.experienceYearsMin, 1), 1) * 20
+    const candidateLocation = [profile.municipality?.name, profile.department?.name].filter(Boolean).join(', ') || 'Sin ubicación en el perfil'
+    const jobLocation = [job.municipality?.name, job.department?.name].filter(Boolean).join(', ') || 'Sin restricción de ubicación'
+    const compatibility = {
+      score: Math.round(areaPoints + specializationPoints + locationPoints + experiencePoints),
+      criteria: [
+        { key: 'area', label: 'Área', candidateValue: profile.professionalArea?.name ?? 'Sin definir', jobValue: job.professionalArea.name, score: areaPoints, max: 40 },
+        { key: 'specialization', label: 'Especialidad', candidateValue: profile.specialization?.name ?? 'Sin especialidad', jobValue: job.specialization?.name ?? 'No requerida', score: specializationPoints, max: 20 },
+        { key: 'location', label: 'Ubicación', candidateValue: candidateLocation, jobValue: jobLocation, score: locationPoints, max: 20 },
+        { key: 'experience', label: 'Experiencia', candidateValue: `${Number(experienceYears.toFixed(1))} años registrados`, jobValue: job.experienceYearsMin === null ? 'No especificada' : `${job.experienceYearsMin} años mínimo`, score: Math.round(experiencePoints), max: 20 },
+      ],
+    }
+    return { application: application?.status === 'WITHDRAWN' ? null : application, saved: Boolean(saved), canApply: missingProfileFields.length === 0, missingProfileFields, compatibility }
   })
 
   app.post('/api/candidate/jobs/:jobId/applications', async (request, reply) => {
@@ -80,15 +152,20 @@ export async function registerCandidateJobRoutes(app: FastifyInstance, db: typeo
     const job = await activePublicJob(db, jobId)
     if (!job) return reply.code(404).send({ message: 'La vacante ya no está disponible.' })
     try {
-      const application = await db.$transaction(async tx => {
+      const result = await db.$transaction(async tx => {
         const stillOpen = await tx.job.findFirst({ where: { id: jobId, status: 'PUBLISHED', OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }], company: { verificationStatus: 'VERIFIED' } }, select: { id: true } })
-        if (!stillOpen) return null
-        const created = await tx.application.create({ data: { jobId, candidateProfileId: context.profile.id, status: 'RECEIVED' }, select: { id: true, status: true, appliedAt: true } })
-        await tx.applicationStatusHistory.create({ data: { applicationId: created.id, previousStatus: null, newStatus: 'RECEIVED', changedByUserId: context.user.id, comment: 'Postulación enviada.' } })
-        return created
+        if (!stillOpen) return { kind: 'closed' as const }
+        const existing = await tx.application.findUnique({ where: { jobId_candidateProfileId: { jobId, candidateProfileId: context.profile.id } }, select: { id: true, status: true } })
+        if (existing && existing.status !== 'WITHDRAWN') return { kind: 'exists' as const }
+        const application = existing
+          ? await tx.application.update({ where: { id: existing.id }, data: { status: 'RECEIVED', appliedAt: new Date(), candidateHiddenAt: null }, select: { id: true, status: true, appliedAt: true } })
+          : await tx.application.create({ data: { jobId, candidateProfileId: context.profile.id, status: 'RECEIVED' }, select: { id: true, status: true, appliedAt: true } })
+        await tx.applicationStatusHistory.create({ data: { applicationId: application.id, previousStatus: existing?.status ?? null, newStatus: 'RECEIVED', changedByUserId: context.user.id, comment: existing ? 'El candidato volvió a postularse después de retirar su postulación.' : 'Postulación enviada.' } })
+        return { kind: 'ok' as const, application }
       }, { isolationLevel: 'Serializable' })
-      if (!application) return reply.code(404).send({ message: 'La vacante ya no está disponible.' })
-      return reply.code(201).send({ application })
+      if (result.kind === 'closed') return reply.code(404).send({ message: 'La vacante ya no está disponible.' })
+      if (result.kind === 'exists') return reply.code(409).send({ message: 'Ya te postulaste a esta vacante.' })
+      return reply.code(201).send({ application: result.application })
     } catch (error) {
       if (isUniqueConstraint(error)) return reply.code(409).send({ message: 'Ya te postulaste a esta vacante.' })
       if (typeof error === 'object' && error !== null && 'code' in error && error.code === 'P2034') {
@@ -137,5 +214,18 @@ export async function registerCandidateJobRoutes(app: FastifyInstance, db: typeo
     }, { isolationLevel: 'Serializable' })
     if ('message' in result) return reply.code(result.code).send({ message: result.message })
     return { application: { id, status: result.status } }
+  })
+
+  app.delete('/api/candidate/applications/:id', async (request, reply) => {
+    const context = await requireCandidate(request, reply, db)
+    if (!context) return
+    const { id } = request.params as { id: string }
+    if (!UUID_PATTERN.test(id)) return reply.code(400).send({ message: 'El identificador de postulación no es válido.' })
+    const result = await db.application.updateMany({
+      where: { id, candidateProfileId: context.profile.id, candidateHiddenAt: null, status: { in: ['WITHDRAWN', 'SELECTED', 'REJECTED'] } },
+      data: { candidateHiddenAt: new Date() },
+    })
+    if (!result.count) return reply.code(404).send({ message: 'Solo puedes quitar postulaciones retiradas, aceptadas o rechazadas.' })
+    return { removed: true }
   })
 }

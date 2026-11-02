@@ -3,13 +3,58 @@ import { useAuthPanel } from '@/composables/useAuthPanel'
 import AuthModeTabs from './AuthModeTabs.vue'
 import AuthRoleSelector from './AuthRoleSelector.vue'
 import AuthFeedback from './AuthFeedback.vue'
+import { nextTick, ref } from 'vue'
 
 const {
-  state, isRegister, password, rememberDevice, confirmPassword, firstName, lastName, companyName,
+  state, verificationStep, verificationEmail, verificationCode, isRegister, password, rememberDevice, confirmPassword, firstName, lastName, companyName,
   busy, feedback, feedbackVariant, canResend, retryBusy, showPassword, showConfirmPassword,
   contentRef, heading, description, changeMode, changeRole, clearFeedback, onEmailInput,
   onPasswordInput, onConfirmationInput, onProfileInput, submit, resend,
 } = useAuthPanel()
+
+const codeInputs = ref<HTMLInputElement[]>([])
+const codeCharacters = 6
+
+function cleanCode(value: string) {
+  return value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, codeCharacters)
+}
+
+async function focusCodeInput(index: number) {
+  await nextTick()
+  codeInputs.value[Math.max(0, Math.min(index, codeCharacters - 1))]?.focus()
+}
+
+function updateCodeInput(index: number, event: Event) {
+  const input = event.target as HTMLInputElement
+  const characters = cleanCode(input.value)
+  const code = Array.from({ length: codeCharacters }, (_, position) => verificationCode.value[position] ?? '')
+  if (characters.length > 1) {
+    characters.split('').forEach((character, offset) => { if (index + offset < codeCharacters) code[index + offset] = character })
+  } else if (characters) {
+    code[index] = characters
+  } else {
+    code[index] = ''
+  }
+  verificationCode.value = code.join('').slice(0, codeCharacters)
+  input.value = code[index] ?? ''
+  if (characters) void focusCodeInput(Math.min(index + characters.length, codeCharacters - 1))
+}
+
+function pasteVerificationCode(event: ClipboardEvent, index: number) {
+  const pasted = cleanCode(event.clipboardData?.getData('text') ?? '')
+  if (!pasted) return
+  event.preventDefault()
+  const code = Array.from({ length: codeCharacters }, (_, position) => verificationCode.value[position] ?? '')
+  pasted.split('').forEach((character, offset) => { if (index + offset < codeCharacters) code[index + offset] = character })
+  verificationCode.value = code.join('').slice(0, codeCharacters)
+  void focusCodeInput(Math.min(index + pasted.length, codeCharacters - 1))
+}
+
+function navigateCodeInput(event: KeyboardEvent, index: number) {
+  if (event.key === 'ArrowLeft') { event.preventDefault(); void focusCodeInput(index - 1) }
+  if (event.key === 'ArrowRight') { event.preventDefault(); void focusCodeInput(index + 1) }
+  if (event.key === 'Backspace' && !verificationCode.value[index] && index > 0) { event.preventDefault(); void focusCodeInput(index - 1) }
+}
 </script>
 
 <template>
@@ -17,7 +62,7 @@ const {
     <div ref="contentRef" class="auth-form-panel__content">
       <div class="auth-kicker">
         <span class="auth-kicker__line" aria-hidden="true" />
-        <span>{{ state.mode === 'login' ? 'Bienvenido/a de nuevo' : 'Acceso seguro' }}</span>
+        <span>{{ verificationStep ? 'Confirma tu identidad' : state.mode === 'login' ? 'Bienvenido/a de nuevo' : 'Acceso seguro' }}</span>
       </div>
 
       <div class="auth-heading-group">
@@ -29,10 +74,10 @@ const {
         </Transition>
       </div>
 
-      <AuthModeTabs :model-value="state.mode" @update:model-value="changeMode" />
-      <AuthRoleSelector v-if="isRegister" :model-value="state.role" @update:model-value="changeRole" />
+      <AuthModeTabs v-if="!verificationStep" :model-value="state.mode" @update:model-value="changeMode" />
+      <AuthRoleSelector v-if="!verificationStep && isRegister" :model-value="state.role" @update:model-value="changeRole" />
 
-      <form class="auth-form" novalidate @submit.prevent="submit">
+      <form v-if="!verificationStep" class="auth-form" novalidate @submit.prevent="submit">
         <template v-if="isRegister && state.role === 'candidate'">
           <div class="auth-profile-fields">
             <label class="auth-field" for="auth-first-name">
@@ -76,10 +121,10 @@ const {
               v-model="password"
               :type="showPassword ? 'text' : 'password'"
               :autocomplete="isRegister ? 'new-password' : 'current-password'"
-              minlength="10"
+              :minlength="10"
               maxlength="128"
               required
-              :placeholder="isRegister ? 'Al menos 10 caracteres' : 'Tu contraseña'"
+              :placeholder="isRegister ? '10 caracteres o más' : 'Tu contraseña'"
               :aria-invalid="Boolean(state.errors.password)"
               :aria-describedby="state.errors.password ? 'password-error' : undefined"
               @input="onPasswordInput"
@@ -139,11 +184,23 @@ const {
           <span v-else aria-hidden="true">→</span>
         </button>
 
-        <button v-if="state.mode === 'login'" type="button" class="auth-link" @click="changeMode('recover')">
-          ¿Olvidaste tu contraseña?
-        </button>
         <button v-if="state.mode === 'recover'" type="button" class="auth-link auth-link--back" @click="changeMode('login')">
           Volver a iniciar sesión
+        </button>
+      </form>
+
+      <form v-else class="auth-form" novalidate @submit.prevent="submit">
+        <label class="auth-field">
+          <span>Código de verificación</span>
+          <div class="auth-code-inputs" role="group" aria-label="Código de verificación" aria-describedby="verification-code-hint">
+            <input v-for="(_, index) in codeCharacters" :key="index" ref="codeInputs" :value="verificationCode[index] ?? ''" type="text" inputmode="text" :autocomplete="index === 0 ? 'one-time-code' : 'off'" :aria-label="`Carácter ${index + 1} de ${codeCharacters}`" maxlength="1" autocapitalize="characters" spellcheck="false" @input="updateCodeInput(index, $event)" @paste="pasteVerificationCode($event, index)" @keydown="navigateCodeInput($event, index)" />
+          </div>
+          <small id="verification-code-hint" class="auth-code-hint">Revisa tu bandeja de entrada y spam. El código vence en 15 minutos.</small>
+        </label>
+        <button class="auth-submit-btn" type="submit" :disabled="busy" :aria-busy="busy">
+          <span>{{ busy ? 'Verificando…' : 'Verificar y continuar' }}</span>
+          <span v-if="busy" class="auth-spinner" aria-hidden="true" />
+          <span v-else aria-hidden="true">→</span>
         </button>
       </form>
 
@@ -154,9 +211,10 @@ const {
         @dismiss="clearFeedback"
       />
 
-      <button v-if="canResend && state.mode === 'login'" type="button" class="auth-resend-btn" :disabled="retryBusy" @click="resend">
+      <button v-if="verificationStep || (canResend && state.mode === 'login')" type="button" class="auth-resend-btn" :disabled="retryBusy" @click="resend">
         <span>{{ retryBusy ? 'Enviando verificación…' : '¿No recibiste el correo? Reenviar verificación' }}</span>
       </button>
+      <button v-if="verificationStep" type="button" class="auth-link auth-link--back" @click="changeMode('login')">Volver al inicio de sesión</button>
 
       <footer class="auth-footer">© 2026 Jinowork</footer>
     </div>
@@ -252,6 +310,10 @@ const {
 .auth-password-toggle:focus-visible, .auth-submit-btn:focus-visible, .auth-link:focus-visible, .auth-resend-btn:focus-visible { outline: 3px solid color-mix(in srgb, var(--primary) 55%, transparent); outline-offset: 3px; }
 
 .auth-field__error { color: #b42318; font-size: 0.8rem; font-weight: 550; line-height: 1.4; }
+.auth-code-hint { color: var(--muted-foreground); font-size: 0.8rem; font-weight: 450; line-height: 1.5; }
+.auth-code-inputs { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.65rem; width: min(100%, 24rem); }
+.auth-code-inputs input { box-sizing: border-box; width: 100%; min-width: 0; height: 3.7rem; border: 1px solid var(--border); border-radius: 0.75rem; background: var(--surface); color: var(--foreground); font: 800 1.45rem/1 Manrope, sans-serif; text-align: center; text-transform: uppercase; transition: border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease; }
+.auth-code-inputs input:focus { border-color: var(--primary); outline: none; background: color-mix(in srgb, var(--primary) 5%, var(--surface)); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent); }
 .auth-submit-btn { display: flex; min-height: 3.35rem; align-items: center; justify-content: space-between; gap: 1rem; width: 100%; margin-top: 0.25rem; padding: 0 1.1rem; border: 0; border-radius: 0.8rem; background: var(--primary); color: #fff; font: inherit; font-weight: 750; cursor: pointer; transition: transform 0.16s ease, filter 0.16s ease, opacity 0.16s ease; }
 .auth-submit-btn:hover:not(:disabled) { filter: brightness(1.06); transform: translateY(-1px); }
 .auth-submit-btn:disabled { opacity: 0.75; cursor: wait; }

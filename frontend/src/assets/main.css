@@ -27,28 +27,7 @@
   --accent-soft: var(--secondary);
 }
 
-html.dark {
-  color-scheme: dark;
-  --background: #071525;
-  --surface: #10233a;
-  --foreground: #f2f7ff;
-  --primary: var(--palette-blue);
-  --palette-platinum: #51625c;
-  --secondary: #1d3856;
-  --muted-foreground: #b8cbe1;
-  --border: #294562;
-  --panel: #162d47;
-  --surface-strong: var(--panel);
-  --accent-strong: var(--secondary);
-  --shadow: rgb(0 0 0 / 28%);
-  --bg: var(--background);
-  --surface-soft: var(--panel);
-  --surface-elevated: var(--surface);
-  --text: var(--foreground);
-  --text-soft: var(--muted-foreground);
-  --accent: var(--primary);
-  --accent-soft: var(--secondary);
-}
+
 
 html {
   scroll-behavior: smooth;

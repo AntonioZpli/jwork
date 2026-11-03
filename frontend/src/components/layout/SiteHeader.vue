@@ -2,13 +2,10 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import AppBrand from '@/components/ui/AppBrand.vue'
-import AppIconButton from '@/components/ui/AppIconButton.vue'
 import SiteMobileMenu from './SiteMobileMenu.vue'
-import { useTheme } from '@/composables/useTheme'
 import { useEscapeKey } from '@/composables/useEscapeKey'
-import { Sun, Moon, Menu, X } from '@lucide/vue'
+import { Menu, X } from '@lucide/vue'
 
-const { theme, toggleTheme } = useTheme()
 const router = useRouter()
 
 const menuOpen = ref(false)
@@ -56,13 +53,6 @@ router.afterEach(() => {
 
         <!-- Desktop actions -->
         <div class="site-nav__actions">
-          <AppIconButton
-            :label="theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
-            @click="toggleTheme"
-          >
-            <Sun v-if="theme === 'dark'" :size="17" />
-            <Moon v-else :size="17" />
-          </AppIconButton>
           <a href="/auth" class="site-nav__account-link">Iniciar sesión</a>
           <a href="/auth" class="site-nav__register-btn">Regístrate ↗</a>
         </div>
@@ -84,9 +74,7 @@ router.afterEach(() => {
       <SiteMobileMenu
         :items="navItems"
         :open="menuOpen"
-        :theme="theme"
         @close="closeMenu"
-        @toggle-theme="toggleTheme"
       />
     </div>
   </header>

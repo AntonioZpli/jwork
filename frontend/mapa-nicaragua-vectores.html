@@ -51,15 +51,6 @@
     .nodo,.edge,.l3,.aro{animation:none}
     .eco{display:none}
   }
-  .auth-dark #mapa-nodos{
-    --c1:#75c4fb;
-    --c2:#69a8dc;
-    --c3:#4d7fae;
-    --c4:#dbeafe;
-    --land:rgba(37,99,235,.2);
-  }
-  .auth-dark .dep{stroke-opacity:.58}
-  .auth-dark .cruz{stroke-opacity:.24}
   /* Compact rendering when this standalone map is embedded in the auth panel. */
   @media (max-height:420px){
     body{overflow:hidden;padding:0}
@@ -152,7 +143,6 @@
 
 <script>
 (() => {
-  if (new URLSearchParams(location.search).get('theme') === 'dark') document.documentElement.classList.add('auth-dark');
   const NS = 'http://www.w3.org/2000/svg', W = 594.9704, H = 529.08319;
   const raiz = document.getElementById('mapa-nodos');
   const svg = raiz.querySelector('svg');

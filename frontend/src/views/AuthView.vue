@@ -4,17 +4,11 @@ import { gsap } from 'gsap'
 import AuthStoryPanel from '@/components/auth/AuthStoryPanel.vue'
 import AuthFormPanel from '@/components/auth/AuthFormPanel.vue'
 import AppBrand from '@/components/ui/AppBrand.vue'
-import { useTheme } from '@/composables/useTheme'
-import { ArrowLeft, Sun, Moon } from '@lucide/vue'
+import { ArrowLeft } from '@lucide/vue'
 
-const { theme, toggleTheme } = useTheme()
 const authViewRef = ref<HTMLElement | null>(null)
 let authMotion: gsap.MatchMedia | undefined
 let authContext: gsap.Context | undefined
-
-function chooseTheme(value: 'light' | 'dark') {
-  if (theme.value !== value) toggleTheme()
-}
 
 onMounted(() => {
   const root = authViewRef.value
@@ -43,11 +37,6 @@ onMounted(() => {
         { autoAlpha: 1, y: 0, duration: 0.55, stagger: 0.075 },
         0.18,
       )
-      intro.fromTo('.auth-theme-toggle',
-        { autoAlpha: 0, y: -6 },
-        { autoAlpha: 1, y: 0, duration: 0.4 },
-        0.28,
-      )
     }, root)
   }, root)
 })
@@ -67,25 +56,9 @@ onBeforeUnmount(() => {
         <AppBrand variant="mark" />
         <span class="auth-mobile-brand__name">Volver a Jinowork</span>
       </a>
-      <div class="theme-switch" role="group" aria-label="Tema de color">
-        <button type="button" :aria-pressed="theme === 'dark'" aria-label="Modo oscuro" @click="chooseTheme('dark')">
-          <Moon :size="18" aria-hidden="true" />
-        </button>
-        <button type="button" :aria-pressed="theme === 'light'" aria-label="Modo claro" @click="chooseTheme('light')">
-          <Sun :size="18" aria-hidden="true" />
-        </button>
-      </div>
     </header>
 
     <div class="auth-layout">
-      <div class="theme-switch auth-theme-toggle" role="group" aria-label="Tema de color">
-        <button type="button" :aria-pressed="theme === 'dark'" aria-label="Modo oscuro" @click="chooseTheme('dark')">
-          <Moon :size="18" aria-hidden="true" />
-        </button>
-        <button type="button" :aria-pressed="theme === 'light'" aria-label="Modo claro" @click="chooseTheme('light')">
-          <Sun :size="18" aria-hidden="true" />
-        </button>
-      </div>
 
       <!-- Story panel (desktop only) -->
       <AuthStoryPanel class="auth-story" />
@@ -111,37 +84,6 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: space-between;
   padding: 0.25rem 0;
-}
-
-.theme-switch {
-  display: inline-flex;
-  align-items: center;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--surface);
-}
-
-.theme-switch button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 3.25rem;
-  height: 2.7rem;
-  padding: 0;
-  color: var(--muted-foreground);
-  background: transparent;
-  border: 0;
-  cursor: pointer;
-  transition: color 0.18s ease, background-color 0.18s ease;
-}
-
-.theme-switch button + button { border-left: 1px solid var(--border); }
-.theme-switch button[aria-pressed='true'] { color: var(--primary); background: var(--secondary); }
-.theme-switch button:focus-visible { outline: 2px solid var(--primary); outline-offset: -3px; }
-
-.auth-theme-toggle {
-  display: none;
 }
 
 .auth-mobile-brand {
@@ -189,16 +131,6 @@ onBeforeUnmount(() => {
   min-width: 0;
 }
 
-@media (min-width: 761px) {
-  .auth-theme-toggle {
-    display: inline-flex;
-    position: absolute;
-    top: 1.25rem;
-    right: 1.5rem;
-    z-index: 4;
-  }
-}
-
 /* Responsive */
 @media (max-width: 760px) {
   .auth-view {
@@ -212,10 +144,6 @@ onBeforeUnmount(() => {
     padding: 0.5rem 1rem;
     background: var(--background);
   }
-
-  .auth-mobile-header .theme-switch button { width: 2.6rem; height: 2.3rem; }
-
-  .auth-theme-toggle { display: none; }
 
   .auth-story :deep(.story-panel__back),
   .auth-story :deep(.story-panel__brand),

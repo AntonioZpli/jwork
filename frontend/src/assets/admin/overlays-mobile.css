@@ -56,8 +56,8 @@
 .admin-dialog-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 22px; }
 .admin-dialog-actions button { min-height: 40px; }
 .admin-dialog-actions button:disabled { opacity: .5; cursor: not-allowed; }
-.dark .admin-dialog { background: var(--ctl-surface); }
-.dark .admin-dialog-field input { color: var(--ctl-text); background: var(--ctl-bg); }
+
+
 
 @media (max-width: 900px) {
   .control-shell { overflow-x: hidden; }

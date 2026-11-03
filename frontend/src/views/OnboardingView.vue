@@ -147,13 +147,13 @@ const {
 
 <style scoped>
 .onboarding-page{min-height:100dvh;align-items:center;overflow-x:hidden;overflow-y:auto;padding:5rem 1.5rem 2rem;background:radial-gradient(ellipse at 18% 12%,color-mix(in srgb,var(--palette-ice) 75%,transparent),transparent 35%),var(--background)}
-.dark .onboarding-page{background:radial-gradient(ellipse at 18% 12%,color-mix(in srgb,var(--primary) 9%,transparent),transparent 35%),var(--background)}
+
 .onboarding-glow{display:none}
 .onboarding-brand{top:1.15rem;left:max(1.5rem,calc((100vw - 72rem)/2));color:var(--palette-ink)}
-.dark .onboarding-brand{color:var(--foreground)}
+
 .onboarding-brand__mark{border-radius:.65rem!important;background:linear-gradient(145deg,var(--palette-ink),var(--primary));box-shadow:0 5px 14px color-mix(in srgb,var(--palette-ink) 20%,transparent)}
 .onboarding-workspace{width:min(72rem,100%);min-height:min(47rem,calc(100dvh - 7rem));margin:auto;grid-template-columns:minmax(16rem,.78fr) minmax(0,1.42fr);overflow:hidden;border:1px solid color-mix(in srgb,var(--palette-ink) 10%,var(--border));border-radius:1.25rem!important;background:var(--surface);box-shadow:0 24px 70px color-mix(in srgb,var(--palette-ink) 10%,transparent)}
-.dark .onboarding-workspace{border-color:var(--border);box-shadow:0 24px 70px rgb(0 0 0 / 24%)}
+
 .onboarding-aside{min-height:100%;padding:2.4rem 2rem;background:linear-gradient(155deg,#102b4d 0%,#163f70 55%,#1769a8 100%)}
 .onboarding-aside__icon{width:3rem;height:3rem;margin-bottom:2rem;border-radius:.85rem!important;background:rgb(255 255 255 / 10%)}
 .onboarding-aside .onboarding-eyebrow{margin-bottom:.75rem;color:#9acaff}
@@ -186,7 +186,7 @@ const {
 .onboarding-phone__prefix{font-size:.74rem}
 .onboarding-phone__prefix b{font-size:.74rem}
 .onboarding-tip{border-color:color-mix(in srgb,var(--primary) 17%,var(--border));border-radius:.7rem!important;background:color-mix(in srgb,var(--palette-ice) 48%,var(--surface))}
-.dark .onboarding-tip{background:color-mix(in srgb,var(--primary) 7%,var(--surface))}
+
 .onboarding-panel :deep(.app-message){margin-bottom:1rem;border-radius:.7rem!important}
 .onboarding-review{gap:.4rem}
 .onboarding-review>div:not(.onboarding-review__identity){grid-template-columns:minmax(8rem,.55fr) minmax(0,1fr);padding:.75rem .85rem;border:1px solid var(--border);border-radius:.65rem!important;background:var(--surface)}

@@ -47,5 +47,5 @@ const emit = defineEmits<{ advance: []; reject: []; undo: []; open: [] }>()
 .application-status__links button{min-height:2rem!important;padding:.25rem 0!important;color:var(--primary)!important}
 .application-status__links .application-status__undo{color:var(--muted-foreground)!important}
 .application-status__actions button:disabled{opacity:.55;cursor:wait}
-:global(html.dark) .application-status{--status-neutral-ink:#d4e2f3;--status-neutral-soft:#27384d;--status-progress-ink:#a4d8bc;--status-progress-soft:#203d31;--status-success-ink:#a5dfba;--status-success-soft:#1c3b2a;--status-danger-ink:#f0b3b6;--status-danger-soft:#48292d}
+
 </style>

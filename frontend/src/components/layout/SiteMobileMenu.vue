@@ -1,16 +1,12 @@
 <script setup lang="ts">
-import AppIconButton from '@/components/ui/AppIconButton.vue'
-import { Moon, Sun } from '@lucide/vue'
 
 defineProps<{
   items: { label: string; href: string }[]
   open: boolean
-  theme: 'light' | 'dark'
 }>()
 
 const emit = defineEmits<{
   close: []
-  toggleTheme: []
 }>()
 </script>
 
@@ -33,15 +29,6 @@ const emit = defineEmits<{
         <a href="/auth" class="mobile-menu__link mobile-menu__link--accent" @click="emit('close')">Regístrate ↗</a>
       </li>
     </ul>
-    <div class="mobile-menu__footer">
-      <AppIconButton
-        :label="theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
-        @click="emit('toggleTheme')"
-      >
-        <Sun v-if="theme === 'dark'" :size="17" />
-        <Moon v-else :size="17" />
-      </AppIconButton>
-    </div>
   </div>
 </template>
 

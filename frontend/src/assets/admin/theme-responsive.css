@@ -1,111 +1,25 @@
 /* Administrative surfaces follow the app theme instead of staying white. */
-.dark .control-shell {
-  --ctl-bg: #071525;
-  --ctl-surface: #10233a;
-  --ctl-text: #f2f7ff;
-  --ctl-muted: #b8cbe1;
-  --ctl-border: #294562;
-  --ctl-accent: #aed2ff;
-  --ctl-accent-soft: #1d3856;
-  --ctl-shadow: 0 8px 24px #0005;
-  color: var(--ctl-text);
-  background: var(--ctl-bg);
-  color-scheme: dark;
-}
-.dark .control-shell :where(
-  .control-sidebar, .control-topbar, .surface-block, .metric-card, .quick-strip,
-  .sidebar-help, .attention-list > button, .attention-foot, .quick-strip > button,
-  .global-results, .global-results button, .top-search, .search-box, .icon-action,
-  .btn-secondary, .records-toolbar select, .records-toolbar button,
-  .column-picker summary, .column-picker > label, .user-extra-filters select,
-  .saved-views button, .table-footer button, .period-picker, .period-picker input,
-  .stats-summary > div, .record-inspector, .inspector-actions button,
-  .record-fields > div, .schema-chip, .schema-info, .record-id,
-  .control-shell input, .control-shell select
-) {
-  color: var(--ctl-text);
-  background-color: var(--ctl-surface);
-  border-color: var(--ctl-border);
-}
-.dark .control-shell :where(.control-content, .control-main, .control-nav) {
-  color: var(--ctl-text);
-}
-.dark .control-shell :where(
-  .page-heading h1, .metric-card > b, .block-heading h2, .attention-list b,
-  .empty-inline b, .activity-row b, .quick-strip > div > b, .stats-summary b,
-  .record-inspector h2, .record-fields b, .global-results b, .control-shell td
-) {
-  color: var(--ctl-text);
-}
-.dark .control-shell :where(
-  .crumb, .crumb b, .page-heading p, .eyebrow, .metric-card > span,
-  .metric-card > small, .attention-list small, .attention-foot small,
-  .empty-inline, .activity-row small, .activity-row time, .data-note,
-  .stats-summary span, .schema-info small, .table-footer, .record-id,
-  .record-fields small, .inspector-note, .nav-group, .user-meta small
-) {
-  color: var(--ctl-muted);
-}
-.dark .control-shell :where(.sidebar-help p, .sidebar-help small, .sidebar-help > span) {
-  color: var(--ctl-muted);
-}
-.dark .control-shell td { color: var(--ctl-text); }
-.dark .control-shell :where(
-  .control-sidebar, .control-topbar, .surface-block, .metric-card, .quick-strip,
-  .records-toolbar, .block-heading, .control-shell th, .control-shell td,
-  .activity-row, .attention-list > button, .attention-foot, .table-footer,
-  .schema-info, .record-fields
-) {
-  border-color: var(--ctl-border);
-}
-.dark .control-shell :where(
-  .control-sidebar, .sidebar-help, .surface-block, .metric-card, .quick-strip,
-  .quick-strip > button, .attention-list > button, .attention-foot, .global-results,
-  .global-results button, .top-search, .search-box, .icon-action, .btn-secondary,
-  .records-toolbar select, .records-toolbar button, .column-picker summary,
-  .column-picker > label, .user-extra-filters select, .saved-views button,
-  .table-footer button, .period-picker, .stats-summary > div, .record-inspector,
-  .inspector-actions button, .record-fields > div, .schema-chip
-) {
-  border-color: var(--ctl-border);
-}
-.dark .control-shell .control-brand img {
-  filter: invert(1);
-}
-.dark .control-shell :where(
-  .nav-item:hover, .global-results button:hover, .attention-list > button:hover,
-  .control-shell tbody tr:hover
-) {
-  background-color: #302b36;
-}
-.dark .control-shell .nav-item.active,
-.dark .control-shell tbody tr.selected-row {
-  color: #e8dcf7;
-  background-color: #382e46;
-}
-.dark .control-shell .control-topbar {
-  background-color: #211e26ed;
-}
-.dark .control-shell .control-shell th,
-.dark .control-shell th {
-  background-color: #29252f;
-}
-.dark .control-shell .record-id,
-.dark .control-shell .schema-info,
-.dark .control-shell .attention-foot,
-.dark .control-shell .column-picker > label {
-  background-color: #29252f;
-}
-.dark .control-shell .nav-item { color: var(--ctl-muted); }
-.dark .control-shell .nav-item.active,
-.dark .control-shell .nav-item.active .nav-icon { color: #ddc8f7; }
-.dark .control-shell .btn-primary { color: #21192b; }
-.dark .control-shell .invite-admin-block > p,
-.dark .control-shell .invite-admin-form label,
-.dark .control-shell .invite-admin-block > small,
-.dark .control-shell .invite-admin-badge { color: var(--ctl-muted); }
-.dark .control-shell .invite-admin-form input { color: var(--ctl-text); background: var(--ctl-bg); }
-.dark .control-shell :where(input, select) { color-scheme: dark; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @media (max-width: 1050px) {
   .control-sidebar {

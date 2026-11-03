@@ -11,7 +11,7 @@ import { ArrowLeft } from '@lucide/vue'
 
     <div class="story-panel__map" aria-label="Mapa animado de Nicaragua que representa la conexión de oportunidades en el país">
       <iframe
-        src="/mapa-nicaragua-vectores.html?theme=dark"
+        src="/mapa-nicaragua-vectores.html"
         title="Red de oportunidades en Nicaragua"
         loading="eager"
         tabindex="-1"

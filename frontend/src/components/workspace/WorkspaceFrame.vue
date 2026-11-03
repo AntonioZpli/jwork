@@ -1,9 +1,8 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
-import { Moon, Search, Sun } from 'lucide-vue-next'
+import { Search } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
-import { useTheme } from '@/composables/useTheme'
 import WorkspaceNavigation from './WorkspaceNavigation.vue'
 import { companyLogoUrl, loadCandidatePhoto, profilesApi } from '@/services/profiles'
 import { profileAvatarStyle, profileInitials } from '@/utils/profileAvatar'
@@ -12,7 +11,6 @@ const props = defineProps<{ eyebrow: string; title: string; subtitle: string; in
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
-const { theme, toggleTheme } = useTheme()
 const isCompany = computed(() => route.path.startsWith('/company'))
 const candidateSearch = ref(typeof route.query.q === 'string' ? route.query.q : '')
 const companySearch = ref(typeof route.query.q === 'string' ? route.query.q : '')
@@ -98,7 +96,7 @@ async function signOut() {
         <WorkspaceNavigation role="COMPANY" />
         <div class="company-topbar__actions">
           <RouterLink class="company-topbar__avatar" :style="avatarStyle" to="/company/profile" aria-label="Ver perfil completo de la empresa" title="Ver perfil completo"><img v-if="companyLogo" :src="companyLogo" alt=""><span v-else>{{ avatarInitials }}</span></RouterLink>
-          <button class="workspace__icon-button" type="button" :aria-label="theme === 'dark' ? 'Activar tema claro' : 'Activar tema oscuro'" @click="toggleTheme"><Sun v-if="theme === 'dark'" :size="18" /><Moon v-else :size="18" /></button>
+          
           <button class="company-topbar__logout" type="button" @click="signOut">Salir</button>
         </div>
       </header>
@@ -111,7 +109,7 @@ async function signOut() {
             <img v-if="candidatePhoto" :src="candidatePhoto" alt="">
             <span v-else :style="avatarStyle">{{ avatarInitials }}</span>
           </RouterLink>
-          <button class="workspace__icon-button" type="button" :aria-label="theme === 'dark' ? 'Activar tema claro' : 'Activar tema oscuro'" @click="toggleTheme"><Sun v-if="theme === 'dark'" :size="18" /><Moon v-else :size="18" /></button>
+          
           <button class="candidate-topbar__logout" type="button" @click="signOut">Salir</button>
         </div>
       </header>
@@ -127,7 +125,7 @@ async function signOut() {
 <style>
 .workspace{min-height:100vh;background:radial-gradient(ellipse at 90% 0%,color-mix(in srgb,var(--palette-blue) 23%,transparent),transparent 32%),var(--background);color:var(--foreground)}
 .workspace__topbar{position:sticky;z-index:10;top:0;display:flex;height:4.6rem;align-items:center;justify-content:space-between;padding-inline:max(1.25rem,calc((100% - 82rem)/2));border-bottom:1px solid color-mix(in srgb,var(--palette-ink) 10%,var(--border));background:color-mix(in srgb,var(--surface) 90%,transparent);backdrop-filter:blur(16px)}
-.workspace__brand{display:inline-flex;align-items:center;gap:.65rem;color:var(--palette-ink);font:800 1.16rem Manrope,sans-serif;letter-spacing:-.045em}.dark .workspace__brand{color:var(--palette-blue)}.workspace__brand-mark{display:grid;width:2rem;height:2rem;place-items:center;border-radius:.7rem .7rem .7rem .2rem;background:var(--palette-ink);color:#fff;font:800 1.15rem Georgia,serif;box-shadow:0 6px 15px rgb(39 0 93 / 17%)}.dark .workspace__brand-mark{background:var(--palette-blue);color:#071525}
+.workspace__brand{display:inline-flex;align-items:center;gap:.65rem;color:var(--palette-ink);font:800 1.16rem Manrope,sans-serif;letter-spacing:-.045em}.workspace__brand-mark{display:grid;width:2rem;height:2rem;place-items:center;border-radius:.7rem .7rem .7rem .2rem;background:var(--palette-ink);color:#fff;font:800 1.15rem Georgia,serif;box-shadow:0 6px 15px rgb(39 0 93 / 17%)}
 .workspace__topbar-right{display:flex;align-items:center;gap:.75rem}.workspace__account-type{margin-right:.35rem;color:var(--muted-foreground);font-size:.8rem;font-weight:700}.workspace__icon-button{display:grid;width:2.3rem;height:2.3rem;place-items:center;border:1px solid var(--border);border-radius:.75rem;background:var(--surface);color:var(--muted-foreground);cursor:pointer;transition:border-color .18s,color .18s}.workspace__icon-button:hover{border-color:var(--primary);color:var(--primary)}.workspace__avatar{display:grid;width:2.35rem;height:2.35rem;place-items:center;border-radius:50%;background:var(--secondary);color:var(--primary);font-size:.78rem;font-weight:850;box-shadow:0 0 0 3px var(--surface),0 0 0 4px var(--border)}.workspace__logout{display:inline-flex;align-items:center;gap:.4rem;margin-left:.15rem;padding:.5rem .7rem;border:0;border-radius:.6rem;background:transparent;color:var(--muted-foreground);font:inherit;font-size:.8rem;font-weight:700;cursor:pointer}.workspace__logout:hover{background:var(--panel);color:var(--foreground)}
 .workspace__main{width:min(82rem,100%);margin-inline:auto;padding:clamp(2rem,5vw,3.6rem) clamp(1rem,3.5vw,2.5rem) 2.5rem}.workspace__heading{display:flex;align-items:flex-end;justify-content:space-between;gap:1.2rem;margin-bottom:1.8rem}.workspace__eyebrow{margin:0 0 .5rem;color:var(--primary);font-size:.7rem;font-weight:850;letter-spacing:.13em;text-transform:uppercase}.workspace__heading h1{max-width:48rem;margin:0;font:800 clamp(2rem,4vw,3.35rem)/.99 Manrope,sans-serif;letter-spacing:-.07em}.workspace__subtitle{max-width:49rem;margin:.75rem 0 0;color:var(--muted-foreground);font-size:.94rem;line-height:1.6}.workspace__footer{width:min(82rem,100%);margin-inline:auto;padding:1.2rem 1.25rem 1.5rem;border-top:1px solid var(--border);color:var(--muted-foreground);font-size:.77rem;text-align:center}
 .workspace__card{border:1px solid color-mix(in srgb,var(--palette-ink) 10%,var(--border));border-radius:1rem;background:var(--surface);box-shadow:0 16px 42px color-mix(in srgb,var(--palette-ink) 6%,transparent)}.workspace__stat{position:relative;overflow:hidden;padding:1.35rem}.workspace__stat::after{position:absolute;right:-2.1rem;bottom:-3.2rem;width:7.5rem;height:7.5rem;border-radius:50%;background:color-mix(in srgb,var(--primary) 10%,transparent);content:""}.workspace__stat-label{position:relative;z-index:1;color:var(--muted-foreground);font-size:.83rem;font-weight:650}.workspace__stat-value{position:relative;z-index:1;margin-top:.65rem;font:800 clamp(1.7rem,3vw,2.35rem)/1 Manrope,sans-serif;letter-spacing:-.06em}.workspace__section{margin-top:1.35rem;padding:1.4rem}.workspace__section h2{margin:0 0 1rem;font:750 1.16rem Manrope,sans-serif;letter-spacing:-.035em}.workspace__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}.workspace__list{display:grid;gap:.25rem}.workspace__row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 0;border-top:1px solid var(--border)}.workspace__row:first-child{padding-top:0;border-top:0}.workspace__row strong{display:block}.workspace__meta,.workspace__empty{color:var(--muted-foreground);font-size:.84rem;line-height:1.55}.workspace__pill{display:inline-flex;align-items:center;border:1px solid color-mix(in srgb,var(--primary) 14%,transparent);border-radius:999px;padding:.35rem .72rem;background:var(--secondary);color:var(--primary);font-size:.74rem;font-weight:750;white-space:nowrap}.workspace__cta{display:inline-flex;min-height:2.75rem;align-items:center;justify-content:center;border:1px solid transparent;border-radius:.75rem;padding:0 1.05rem;background:var(--primary);color:#fff;font-size:.85rem;font-weight:750;box-shadow:0 8px 20px color-mix(in srgb,var(--primary) 20%,transparent);transition:transform .18s,box-shadow .18s}.workspace__cta:hover{transform:translateY(-1px);box-shadow:0 11px 25px color-mix(in srgb,var(--primary) 27%,transparent)}.workspace__error{padding:1rem;border:1px solid #e3a5a5;border-radius:.8rem;background:#fff5f5;color:#8b1c1c}.workspace__notice{margin:0 0 1rem;padding:.9rem 1rem;border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);border-radius:.8rem;background:var(--secondary);color:var(--foreground)}.workspace-loading{display:grid;min-height:70vh;place-items:center;padding:1.5rem}.candidate-dashboard__links{display:flex;flex-wrap:wrap;gap:.65rem;margin:0 0 1.2rem}.candidate-dashboard__links a{border:1px solid var(--border);border-radius:.7rem;padding:.55rem .8rem;background:var(--surface);color:var(--primary);font-size:.82rem;font-weight:700;transition:border-color .18s,background .18s}.candidate-dashboard__links a:hover{border-color:var(--primary);background:var(--secondary)}.candidate-job__title{display:block;font-weight:800}.candidate-job__title:hover{color:var(--primary)}.company-actions{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}.company-actions__link{color:var(--primary);font-size:.85rem;font-weight:700}
@@ -157,14 +155,14 @@ async function signOut() {
 .workspace-nav--candidate .workspace-nav__label,.workspace-nav--candidate .workspace-nav__link svg{display:none}
 .workspace-nav--candidate .workspace-nav__link{min-height:2.5rem;justify-content:center;gap:0;padding:0 .8rem;border:1px solid transparent;border-radius:.65rem;color:#58677e;font-size:.8rem;font-weight:700;white-space:nowrap}
 .workspace-nav--candidate .workspace-nav__link:hover{background:#f4f7fb;color:#175ee8}
-.workspace-nav--candidate .workspace-nav__link--active,.dark .workspace-nav--candidate .workspace-nav__link--active{border-color:#d7e9ff;background:#edf7ff;color:var(--primary);box-shadow:none}
+.workspace-nav--candidate .workspace-nav__link--active{border-color:#d7e9ff;background:#edf7ff;color:var(--primary);box-shadow:none}
 .workspace-nav--candidate .workspace-nav__link:after{display:none}
-.dark .candidate-topbar{border-color:var(--border);background:color-mix(in srgb,var(--surface) 96%,transparent)}
-.dark .candidate-topbar__search{border-color:var(--border);background:var(--panel);color:var(--muted-foreground)}
-.dark .candidate-topbar__search input{color:var(--foreground)}
-.dark .candidate-topbar__actions .workspace__icon-button:hover,.dark .workspace-nav--candidate .workspace-nav__link:hover{background:var(--panel)}
-.dark .workspace-nav--candidate .workspace-nav__link{color:var(--muted-foreground)}
-.dark .workspace-nav--candidate .workspace-nav__link--active{border-color:color-mix(in srgb,var(--primary) 35%,var(--border));background:color-mix(in srgb,var(--primary) 12%,var(--surface));color:var(--primary)}
+
+
+
+
+
+
 @media(max-width:1100px){.candidate-topbar{gap:1rem}.candidate-topbar__search{max-width:25rem}.workspace-nav--candidate .workspace-nav__link{padding-inline:.55rem;font-size:.75rem}.candidate-topbar__actions{gap:.55rem}}
 @media(max-width:900px){.candidate-topbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.55rem 1rem;padding:.65rem 1rem}.candidate-topbar__brand{grid-column:1;grid-row:1}.candidate-topbar__search{display:none}.candidate-topbar__actions{grid-column:2;grid-row:1}.workspace-nav.workspace-nav--candidate{grid-column:1/-1;grid-row:2;width:100%;overflow:hidden}.workspace-nav--candidate .workspace-nav__inner{width:100%;justify-content:flex-start;gap:.25rem;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}.workspace-nav--candidate .workspace-nav__inner::-webkit-scrollbar{display:none}}
 @media(max-width:480px){.candidate-topbar{padding-inline:.75rem}.workspace-nav--candidate .workspace-nav__link{min-height:2.35rem;padding-inline:.5rem;font-size:.7rem}.candidate-topbar__actions{gap:.35rem}.candidate-topbar__avatar{width:2.2rem;height:2.2rem}}
@@ -174,8 +172,8 @@ async function signOut() {
 .workspace{display:grid;grid-template-columns:15.75rem minmax(0,1fr);min-height:100vh;background:var(--background)}
 .workspace__sidebar{position:sticky;top:0;display:flex;height:100vh;min-height:35rem;flex-direction:column;overflow:hidden;background:#102747;color:#fff;box-shadow:8px 0 28px rgb(12 36 68 / 9%)}
 .workspace__brand{min-height:5.1rem;padding:0 1.45rem;border-bottom:1px solid rgb(255 255 255 / 10%);color:#fff;font-size:1.22rem}
-.dark .workspace__brand{color:#fff}
-.workspace__brand-mark,.dark .workspace__brand-mark{background:#d8eaff;color:#102747;box-shadow:none}
+
+.workspace__brand-mark{background:#d8eaff;color:#102747;box-shadow:none}
 .workspace__sidebar-label{padding:1rem 1.5rem .2rem;color:rgb(218 230 248 / 64%);font-size:.7rem;font-weight:700}
 .workspace__sidebar-bottom{display:flex;align-items:center;gap:.7rem;margin-top:auto;padding:1rem .9rem;border-top:1px solid rgb(255 255 255 / 11%)}
 .workspace__sidebar-avatar{display:grid;width:2.2rem;height:2.2rem;flex:none;place-items:center;border-radius:.7rem;background:rgb(255 255 255 / 13%);color:#fff;font-size:.72rem;font-weight:850}
@@ -215,7 +213,7 @@ async function signOut() {
 </style>
 
 <style>
-.workspace :is(input:not([type=checkbox]):not([type=file]),select,textarea){border:1px solid var(--border);border-radius:.7rem;background:var(--surface);color:var(--foreground);transition:border-color .18s,box-shadow .18s,background .18s}.workspace :is(input:not([type=checkbox]):not([type=file]),select,textarea):focus{border-color:var(--palette-violet);outline:0;box-shadow:0 0 0 3px color-mix(in srgb,var(--palette-violet) 15%,transparent)}.workspace :is(input,select,textarea)::placeholder{color:var(--muted-foreground);opacity:.75}.workspace :is(button,a):focus-visible{outline:3px solid color-mix(in srgb,var(--palette-violet) 42%,transparent);outline-offset:2px}.workspace :is(.profile-section,.company-profile,.company-form){border:1px solid color-mix(in srgb,var(--palette-ink) 10%,var(--border));border-radius:1rem;background:var(--surface);box-shadow:0 14px 36px color-mix(in srgb,var(--palette-ink) 6%,transparent)}.workspace :is(.profile-section,.company-profile,.company-form)>h2,.workspace .company-form legend{color:var(--palette-ink);letter-spacing:-.035em}.dark .workspace :is(.profile-section,.company-profile,.company-form)>h2,.dark .workspace .company-form legend{color:var(--palette-blue)}.workspace :is(.profile-actions button,.language-record button,.company-job-row__actions button,.company-application__form button,.saved-job__remove){transition:transform .16s,border-color .16s,background .16s,color .16s}.workspace :is(.profile-actions button,.language-record button,.company-job-row__actions button,.company-application__form button,.saved-job__remove):hover:not(:disabled){transform:translateY(-1px);border-color:var(--primary)}.workspace__empty{padding:1.25rem 0}.workspace__pill{letter-spacing:.005em}
+.workspace :is(input:not([type=checkbox]):not([type=file]),select,textarea){border:1px solid var(--border);border-radius:.7rem;background:var(--surface);color:var(--foreground);transition:border-color .18s,box-shadow .18s,background .18s}.workspace :is(input:not([type=checkbox]):not([type=file]),select,textarea):focus{border-color:var(--palette-violet);outline:0;box-shadow:0 0 0 3px color-mix(in srgb,var(--palette-violet) 15%,transparent)}.workspace :is(input,select,textarea)::placeholder{color:var(--muted-foreground);opacity:.75}.workspace :is(button,a):focus-visible{outline:3px solid color-mix(in srgb,var(--palette-violet) 42%,transparent);outline-offset:2px}.workspace :is(.profile-section,.company-profile,.company-form){border:1px solid color-mix(in srgb,var(--palette-ink) 10%,var(--border));border-radius:1rem;background:var(--surface);box-shadow:0 14px 36px color-mix(in srgb,var(--palette-ink) 6%,transparent)}.workspace :is(.profile-section,.company-profile,.company-form)>h2,.workspace .company-form legend{color:var(--palette-ink);letter-spacing:-.035em}.workspace :is(.profile-actions button,.language-record button,.company-job-row__actions button,.company-application__form button,.saved-job__remove){transition:transform .16s,border-color .16s,background .16s,color .16s}.workspace :is(.profile-actions button,.language-record button,.company-job-row__actions button,.company-application__form button,.saved-job__remove):hover:not(:disabled){transform:translateY(-1px);border-color:var(--primary)}.workspace__empty{padding:1.25rem 0}.workspace__pill{letter-spacing:.005em}
 </style>
 
 <style>
@@ -233,7 +231,7 @@ async function signOut() {
 <style>
 /* Common surface and spacing rules for candidate and company workspaces. */
 .workspace{background:#f3f6fb;color:#142542}
-.dark .workspace{background:var(--background);color:var(--foreground)}
+
 .workspace__content{min-width:0}
 .workspace__topbar{background:color-mix(in srgb,var(--surface) 96%,transparent);border-color:#e5eaf2}
 .workspace__main{width:min(92rem,100%);padding-top:1.65rem}
@@ -264,7 +262,7 @@ async function signOut() {
 .workspace :is(.candidate-application,.saved-job,.company-application,.company-job-row,.job-card){border-color:#e1e8f2;border-radius:.85rem;background:var(--surface);box-shadow:0 5px 18px rgb(26 47 79 / 4%)}
 .workspace :is(.candidate-application,.saved-job,.company-application,.company-job-row,.job-card):hover{border-color:color-mix(in srgb,var(--primary) 35%,var(--border));box-shadow:0 9px 24px rgb(26 47 79 / 8%);transform:translateY(-1px)}
 .workspace :is(a,button){-webkit-tap-highlight-color:transparent}
-.dark .workspace__topbar{border-color:var(--border)}
+
 @media(max-width:900px){.workspace__main{padding-top:1.35rem}}
 @media(max-width:760px){.workspace .company-profile__groups{grid-template-columns:1fr}.workspace .company-profile__group:nth-child(3){grid-column:auto}}
 .workspace__main :where(p,small,label,li,dt,dd,legend){font-size:max(.82rem,.9em)!important}
@@ -304,7 +302,7 @@ async function signOut() {
 .company-topbar .workspace-nav--company .workspace-nav__label,.company-topbar .workspace-nav--company .workspace-nav__link svg{display:none}
 .company-topbar .workspace-nav--company .workspace-nav__link{min-height:2.5rem;justify-content:center;gap:0;padding:0 .8rem;border:1px solid transparent;border-radius:.65rem;color:#58677e;font-size:.8rem;font-weight:700;white-space:nowrap}
 .company-topbar .workspace-nav--company .workspace-nav__link:hover{background:#f4f7fb;color:#175ee8}
-.company-topbar .workspace-nav--company .workspace-nav__link--active,.dark .company-topbar .workspace-nav--company .workspace-nav__link--active{border-color:#d7e9ff;background:#edf7ff;color:var(--primary);box-shadow:none!important}
+.company-topbar .workspace-nav--company .workspace-nav__link--active{border-color:#d7e9ff;background:#edf7ff;color:var(--primary);box-shadow:none!important}
 .company-topbar .workspace-nav--company .workspace-nav__link:after{display:none}
 .company-topbar .workspace__icon-button{width:2.35rem;height:2.35rem;border:0;background:transparent;color:#63738b}
 .company-topbar .workspace__icon-button:hover{background:#f0f5fb;color:var(--primary)}
@@ -312,12 +310,12 @@ async function signOut() {
 .company-topbar__avatar img{width:100%;height:100%;object-fit:cover}
 .company-topbar__avatar span{display:grid;width:100%;height:100%;place-items:center;color:#fff;font-size:.74rem;font-weight:850;letter-spacing:.02em}
 .company-topbar__avatar:hover,.company-topbar__avatar:focus-visible{border-color:#4c8aff;box-shadow:0 0 0 3px rgb(52 115 245 / 13%);outline:0}
-.dark .company-topbar{border-color:var(--border);background:color-mix(in srgb,var(--surface) 96%,transparent)}
-.dark .company-topbar__search{border-color:var(--border);background:var(--panel);color:var(--muted-foreground)}
-.dark .company-topbar__search input{color:var(--foreground)}
-.dark .company-topbar .workspace__icon-button:hover,.dark .company-topbar .workspace-nav--company .workspace-nav__link:hover{background:var(--panel)}
-.dark .company-topbar .workspace-nav--company .workspace-nav__link{color:var(--muted-foreground)}
-.dark .company-topbar .workspace-nav--company .workspace-nav__link--active{border-color:color-mix(in srgb,var(--primary) 35%,var(--border));background:color-mix(in srgb,var(--primary) 12%,var(--surface));color:var(--primary)}
+
+
+
+
+
+
 @media(max-width:1100px){.company-topbar{gap:1rem}.company-topbar__search{max-width:25rem}.company-topbar .workspace-nav--company .workspace-nav__link{padding-inline:.55rem;font-size:.75rem}.company-topbar__actions{gap:.55rem}}
 @media(max-width:900px){.workspace.workspace--company>.workspace__content{padding-top:7.1rem}.company-topbar{display:grid;min-height:7.1rem;grid-template-columns:minmax(0,1fr) auto;gap:.55rem 1rem;padding:.65rem 1rem}.company-topbar__brand{grid-column:1;grid-row:1}.company-topbar__search{display:none}.company-topbar__actions{grid-column:2;grid-row:1}.company-topbar .workspace-nav.workspace-nav--company{grid-column:1/-1;grid-row:2;width:100%;overflow:hidden}.company-topbar .workspace-nav--company .workspace-nav__inner{width:100%;justify-content:flex-start;gap:.25rem;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}.company-topbar .workspace-nav--company .workspace-nav__inner::-webkit-scrollbar{display:none}}
 @media(max-width:480px){.company-topbar{padding-inline:.75rem}.company-topbar .workspace-nav--company .workspace-nav__link{min-height:2.35rem;padding-inline:.5rem;font-size:.7rem}.company-topbar__actions{gap:.35rem}.company-topbar__avatar{width:2.5rem;height:2.5rem}}

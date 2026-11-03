@@ -10,9 +10,6 @@ import FeaturedJobs from '@/components/landing/FeaturedJobs.vue'
 import HowItWorksSection from '@/components/landing/HowItWorksSection.vue'
 import CompaniesSection from '@/components/landing/CompaniesSection.vue'
 import FinalCallToAction from '@/components/landing/FinalCallToAction.vue'
-import { useTheme } from '@/composables/useTheme'
-
-useTheme()
 
 gsap.registerPlugin(ScrollTrigger)
 

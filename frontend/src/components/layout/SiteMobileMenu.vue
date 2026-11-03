@@ -84,15 +84,6 @@ const emit = defineEmits<{
   margin: 0.5rem 0;
 }
 
-.mobile-menu__footer {
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .mobile-menu__link {
     transition: none;

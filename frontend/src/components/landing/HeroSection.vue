@@ -366,6 +366,7 @@ import { HERO_IMAGE } from '@/config/assets'
   .hero__visual { display: flex; order: initial; width: 100%; max-height: none; opacity: 1; }
   .hero__visual-fade { display: block; background: linear-gradient(180deg, rgb(7 21 37 / 8%) 0%, rgb(7 21 37 / 36%) 35%, #071525 78%); }
   .hero__image-wrap { min-height: 100%; }
+  .hero__img { object-position: 80% center; }
   .hero__float-tag { display: none; }
 }
 </style>

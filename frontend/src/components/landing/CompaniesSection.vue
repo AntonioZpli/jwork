@@ -155,17 +155,6 @@ const benefits = [
   }
 }
 
-@media (max-width: 800px) {
-  .companies__grid {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-
-  .companies__img {
-    height: 280px;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .companies__cta {
     transition: none;
@@ -198,5 +187,10 @@ const benefits = [
 @media (max-width: 560px) {
   .companies { padding-inline: 20px; }
   .companies { padding-block: 3.5rem; }
+}
+
+@media (max-width: 900px) {
+  .companies__grid { grid-template-columns: 1fr; gap: 2rem; }
+  .companies__img { height: clamp(12rem, 48vw, 18rem); object-position: center 42%; }
 }
 </style>

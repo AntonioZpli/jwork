@@ -3,7 +3,6 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
 import AuthStoryPanel from '@/components/auth/AuthStoryPanel.vue'
 import AuthFormPanel from '@/components/auth/AuthFormPanel.vue'
-import AppBrand from '@/components/ui/AppBrand.vue'
 import { ArrowLeft } from '@lucide/vue'
 
 const authViewRef = ref<HTMLElement | null>(null)
@@ -53,7 +52,6 @@ onBeforeUnmount(() => {
     <header class="auth-mobile-header">
       <a href="/" class="auth-mobile-brand" aria-label="Jinowork — volver al inicio">
         <ArrowLeft :size="16" aria-hidden="true" />
-        <AppBrand variant="mark" />
         <span class="auth-mobile-brand__name">Volver a Jinowork</span>
       </a>
     </header>
@@ -137,6 +135,10 @@ onBeforeUnmount(() => {
     overflow: auto;
   }
 
+  .auth-story {
+    display: none;
+  }
+
   .auth-mobile-header {
     display: flex;
     position: relative;
@@ -158,7 +160,7 @@ onBeforeUnmount(() => {
   .auth-layout :deep(.auth-form-panel) {
     flex: 1;
     padding: 1rem clamp(1rem, 6vw, 2rem);
-    background: color-mix(in srgb, var(--background) 93%, transparent);
+    background: var(--background);
   }
 }
 

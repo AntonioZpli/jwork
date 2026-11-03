@@ -216,9 +216,22 @@
   .block-heading {
     padding: 13px;
   }
-  .activity-row time,
+  .activity-row {
+    align-items: flex-start;
+  }
+  .activity-row time {
+    flex: 0 0 auto;
+    max-width: 40%;
+    overflow-wrap: anywhere;
+    text-align: right;
+  }
+  .activity-row small {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
   .data-note {
-    display: none;
+    display: block;
+    overflow-wrap: anywhere;
   }
   .crumb {
     font-size: 13px;

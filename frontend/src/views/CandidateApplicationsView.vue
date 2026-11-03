@@ -170,5 +170,28 @@ onMounted(load)
 .candidate-application__actions a{display:inline-flex;align-items:center;gap:.35rem;padding:.72rem 1.2rem;border:1px solid #1b7ae8;border-radius:.75rem;background:#fff;color:#0c6fd8;font-size:.9rem;font-weight:800;text-decoration:none;box-shadow:0 0 0 1px rgba(27,122,232,.12)}
 .candidate-application__actions a:hover{background:#f1f8ff}
 @media(max-width:760px){.candidate-application__process{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:1rem}.candidate-application__footer{flex-direction:column;align-items:flex-start}.candidate-application__actions{width:100%;justify-content:space-between}.candidate-application__actions a{flex:1;justify-content:center}}
-@media(max-width:520px){.candidate-application__header{align-items:flex-start}.candidate-application__company-mark{width:3.4rem;height:3.4rem;border-radius:.75rem}.candidate-application__company{font-size:.78rem}.candidate-application__company-name,.candidate-application__location{display:flex}.candidate-application__process{grid-template-columns:1fr}.candidate-application__actions{flex-direction:column;align-items:flex-start}.candidate-application__actions a{width:100%}}
+@media(max-width:520px){
+  .candidate-application{gap:.9rem;padding:.9rem}
+  .candidate-application__header{align-items:flex-start;gap:.75rem}
+  .candidate-application__company-mark{width:3.25rem;height:3.25rem;border-radius:.65rem}
+  .candidate-application__identity{gap:.4rem}
+  .candidate-application__title{font-size:1rem;line-height:1.35;white-space:normal;overflow-wrap:anywhere}
+  .candidate-application__company{align-items:flex-start;flex-direction:column;gap:.35rem;font-size:.78rem}
+  .candidate-application__company-name,.candidate-application__location{display:inline-flex;min-width:0;overflow-wrap:anywhere}
+  .candidate-application__location:before{display:none}
+  .candidate-application__process{grid-template-columns:minmax(0,1fr);gap:.1rem;padding:.2rem 0}
+  .candidate-application__process:before{top:1.65rem;right:auto;bottom:1.65rem;left:1.25rem;width:3px;height:auto;background:#1675d1}
+  .candidate-application__process li{grid-template-columns:2.7rem minmax(0,1fr);align-items:start;justify-items:stretch;gap:.65rem;padding:.35rem 0;text-align:left}
+  .candidate-application__step-icon{width:2.7rem;height:2.7rem}
+  .candidate-application__process small{align-self:center;gap:.2rem;padding:.25rem 0;font-size:.8rem;line-height:1.4}
+  .candidate-application__process small em{overflow-wrap:anywhere}
+  .candidate-application--selected .candidate-application__process:before{background:linear-gradient(180deg,#1675d1 0%,#1675d1 74%,#16804f 76%,#16804f 100%)}
+  .candidate-application--rejected .candidate-application__process:before{background:linear-gradient(180deg,#1675d1 0%,#1675d1 74%,#cf3345 76%,#cf3345 100%)}
+  .candidate-application__note{margin:0;font-size:.84rem}
+  .candidate-application__footer{gap:.65rem;padding-top:.8rem}
+  .candidate-application__applied{align-items:flex-start;font-size:.82rem}
+  .candidate-application__actions{flex-direction:column;align-items:stretch;gap:.5rem}
+  .candidate-application__actions button{min-height:2.75rem;justify-content:flex-start;gap:.55rem;text-align:left}
+  .candidate-application__actions a{width:100%;min-height:2.85rem;justify-content:center;padding:.65rem 1rem}
+}
 </style>

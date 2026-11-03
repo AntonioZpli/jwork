@@ -1,7 +1,7 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
-import { Search } from 'lucide-vue-next'
+import { LogOut, Search } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
 import WorkspaceNavigation from './WorkspaceNavigation.vue'
 import { companyLogoUrl, loadCandidatePhoto, profilesApi } from '@/services/profiles'
@@ -23,8 +23,14 @@ const candidateArea = ref('')
 const avatarInitials = computed(() => profileInitials(isCompany.value ? companyName.value || props.initials : candidateName.value || props.initials))
 const avatarStyle = computed(() => profileAvatarStyle(isCompany.value ? companyName.value : candidateName.value, isCompany.value ? companySector.value : candidateArea.value))
 const companyLogo = computed(() => companyLogoId.value ? companyLogoUrl(companyLogoId.value) : '')
+const isCompactViewport = ref(false)
+let compactViewportQuery: MediaQueryList | undefined
+function updateCompactViewport(event: MediaQueryList | MediaQueryListEvent) {
+  isCompactViewport.value = event.matches
+}
 let candidatePhotoRequest = 0
 onBeforeUnmount(() => {
+  compactViewportQuery?.removeEventListener('change', updateCompactViewport)
   window.removeEventListener('jinowork:candidate-photo-updated', onCandidatePhotoUpdated)
   window.removeEventListener('jinowork:company-logo-updated', onCompanyLogoUpdated)
   candidatePhotoRequest += 1
@@ -76,6 +82,9 @@ async function refreshCompanyLogo() {
 }
 function onCompanyLogoUpdated() { void refreshCompanyLogo() }
 onMounted(() => {
+  compactViewportQuery = window.matchMedia('(max-width: 1024px)')
+  updateCompactViewport(compactViewportQuery)
+  compactViewportQuery.addEventListener('change', updateCompactViewport)
   window.addEventListener('jinowork:candidate-photo-updated', onCandidatePhotoUpdated)
   window.addEventListener('jinowork:company-logo-updated', onCompanyLogoUpdated)
   if (isCompany.value) void refreshCompanyLogo()
@@ -93,24 +102,28 @@ async function signOut() {
       <header v-if="isCompany" class="company-topbar">
         <RouterLink class="company-topbar__brand" to="/company" aria-label="Jinowork, panel de empresa">jinowork</RouterLink>
         <form class="company-topbar__search" role="search" @submit.prevent="searchCompanyJobs"><Search :size="18" aria-hidden="true" /><input v-model="companySearch" type="search" aria-label="Buscar en mis vacantes" placeholder="Buscar vacantes…"></form>
-        <WorkspaceNavigation role="COMPANY" />
+        <Teleport to="body" :disabled="!isCompactViewport">
+          <WorkspaceNavigation role="COMPANY" />
+        </Teleport>
         <div class="company-topbar__actions">
           <RouterLink class="company-topbar__avatar" :style="avatarStyle" to="/company/profile" aria-label="Ver perfil completo de la empresa" title="Ver perfil completo"><img v-if="companyLogo" :src="companyLogo" alt=""><span v-else>{{ avatarInitials }}</span></RouterLink>
           
-          <button class="company-topbar__logout" type="button" @click="signOut">Salir</button>
+          <button class="company-topbar__logout" type="button" aria-label="Cerrar sesión" title="Cerrar sesión" @click="signOut"><LogOut :size="18" aria-hidden="true" /></button>
         </div>
       </header>
       <header v-else class="candidate-topbar">
         <RouterLink class="candidate-topbar__brand" to="/candidate" aria-label="Jinowork, inicio">jinowork</RouterLink>
         <form class="candidate-topbar__search" role="search" @submit.prevent="searchJobs"><Search :size="18" aria-hidden="true" /><input v-model="candidateSearch" type="search" aria-label="Buscar empleos o empresas" placeholder="Buscar empleos, empresas…"></form>
-        <WorkspaceNavigation role="CANDIDATE" />
+        <Teleport to="body" :disabled="!isCompactViewport">
+          <WorkspaceNavigation role="CANDIDATE" />
+        </Teleport>
         <div class="candidate-topbar__actions">
           <RouterLink class="candidate-topbar__avatar" to="/candidate/profile/preview" aria-label="Vista previa de mi perfil" title="Vista previa del perfil">
             <img v-if="candidatePhoto" :src="candidatePhoto" alt="">
             <span v-else :style="avatarStyle">{{ avatarInitials }}</span>
           </RouterLink>
           
-          <button class="candidate-topbar__logout" type="button" @click="signOut">Salir</button>
+          <button class="candidate-topbar__logout" type="button" aria-label="Cerrar sesión" title="Cerrar sesión" @click="signOut"><LogOut :size="18" aria-hidden="true" /></button>
         </div>
       </header>
       <main class="workspace__main">
@@ -162,7 +175,7 @@ async function signOut() {
 
 
 @media(max-width:1100px){.candidate-topbar{gap:1rem}.candidate-topbar__search{max-width:25rem}.workspace-nav--candidate .workspace-nav__link{padding-inline:.55rem;font-size:.75rem}.candidate-topbar__actions{gap:.55rem}}
-@media(max-width:900px){.candidate-topbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.55rem 1rem;padding:.65rem 1rem}.candidate-topbar__brand{grid-column:1;grid-row:1}.candidate-topbar__search{display:none}.candidate-topbar__actions{grid-column:2;grid-row:1}.workspace-nav.workspace-nav--candidate{grid-column:1/-1;grid-row:2;width:100%;overflow:hidden}.workspace-nav--candidate .workspace-nav__inner{width:100%;justify-content:flex-start;gap:.25rem;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}.workspace-nav--candidate .workspace-nav__inner::-webkit-scrollbar{display:none}}
+@media(max-width:1024px){.candidate-topbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.55rem 1rem;padding:.65rem 1rem}.candidate-topbar__brand{grid-column:1;grid-row:1}.candidate-topbar__search{display:none}.candidate-topbar__actions{grid-column:2;grid-row:1}.workspace.workspace--candidate>.workspace__content{padding-bottom:calc(5.15rem + env(safe-area-inset-bottom,0px))}}
 @media(max-width:480px){.candidate-topbar{padding-inline:.75rem}.workspace-nav--candidate .workspace-nav__link{min-height:2.35rem;padding-inline:.5rem;font-size:.7rem}.candidate-topbar__actions{gap:.35rem}.candidate-topbar__avatar{width:2.2rem;height:2.2rem}}
 </style>
 
@@ -276,12 +289,14 @@ async function signOut() {
 </style>
 
 <style>
-.workspace.workspace--candidate{display:block;min-height:100vh}
+.workspace.workspace--candidate{display:block!important;width:100%;min-width:0;max-width:100%;min-height:100vh;min-height:100dvh}
+.workspace.workspace--candidate>.workspace__content{width:100%;min-width:0;max-width:100%}
+.workspace.workspace--candidate .workspace__main,.workspace.workspace--candidate .workspace__footer{box-sizing:border-box;width:100%;max-width:92rem;min-width:0;margin-inline:auto}
 .workspace.workspace--candidate .candidate-topbar__brand{font-size:1.3rem!important}
 </style>
 
 <style>
-.workspace.workspace--company{display:block!important;width:100%;min-width:0;min-height:100vh;grid-template-columns:none!important}
+.workspace.workspace--company{display:block!important;width:100%;min-width:0;min-height:100vh;min-height:100dvh;grid-template-columns:none!important}
 .workspace.workspace--company>.workspace__content{display:block;width:100%;min-width:0;max-width:none}
 .workspace.workspace--company>.workspace__content{padding-top:5.1rem}
 .workspace.workspace--company .workspace__main{display:block;width:min(92rem,100%);min-width:0;box-sizing:border-box;margin-inline:auto;padding-inline:clamp(1.25rem,3.5vw,3rem)}
@@ -313,7 +328,20 @@ async function signOut() {
 
 
 @media(max-width:1100px){.company-topbar{gap:1rem}.company-topbar__search{max-width:25rem}.company-topbar .workspace-nav--company .workspace-nav__link{padding-inline:.55rem;font-size:.75rem}.company-topbar__actions{gap:.55rem}}
-@media(max-width:900px){.workspace.workspace--company>.workspace__content{padding-top:7.1rem}.company-topbar{display:grid;min-height:7.1rem;grid-template-columns:minmax(0,1fr) auto;gap:.55rem 1rem;padding:.65rem 1rem}.company-topbar__brand{grid-column:1;grid-row:1}.company-topbar__search{display:none}.company-topbar__actions{grid-column:2;grid-row:1}.company-topbar .workspace-nav.workspace-nav--company{grid-column:1/-1;grid-row:2;width:100%;overflow:hidden}.company-topbar .workspace-nav--company .workspace-nav__inner{width:100%;justify-content:flex-start;gap:.25rem;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}.company-topbar .workspace-nav--company .workspace-nav__inner::-webkit-scrollbar{display:none}}
+@media(max-width:1024px){.workspace.workspace--company>.workspace__content{padding-top:4.1rem;padding-bottom:calc(5.15rem + env(safe-area-inset-bottom,0px))}.company-topbar{display:grid;min-height:4.1rem;grid-template-columns:minmax(0,1fr) auto;gap:.55rem 1rem;padding:.55rem 1rem}.company-topbar__brand{grid-column:1;grid-row:1}.company-topbar__search{display:none}.company-topbar__actions{grid-column:2;grid-row:1}}
 @media(max-width:480px){.company-topbar{padding-inline:.75rem}.company-topbar .workspace-nav--company .workspace-nav__link{min-height:2.35rem;padding-inline:.5rem;font-size:.7rem}.company-topbar__actions{gap:.35rem}.company-topbar__avatar{width:2.5rem;height:2.5rem}}
 .candidate-topbar__avatar,.company-topbar__avatar{aspect-ratio:1;border-radius:50%!important}
+</style>
+
+<style>
+@media(max-width:1024px){
+  .candidate-topbar,.company-topbar{background:#fff!important;backdrop-filter:none!important}
+  .candidate-topbar__logout,.company-topbar__logout{display:inline-grid;width:2.75rem;height:2.75rem;place-items:center;padding:0;border:0;border-radius:0;background:transparent;color:#7c899d;cursor:pointer}
+  .candidate-topbar__logout:hover,.company-topbar__logout:hover{background:transparent;color:var(--primary)}
+  .company-topbar .workspace-nav--company .workspace-nav__link,
+  .company-topbar .workspace-nav--company .workspace-nav__link--active,
+  .company-topbar .workspace-nav--company .workspace-nav__link:hover{border:0!important;border-radius:0!important;background:transparent!important;color:var(--muted-foreground)!important;box-shadow:none!important}
+  .company-topbar .workspace-nav--company .workspace-nav__link--active svg,
+  .company-topbar .workspace-nav--company .workspace-nav__link:hover svg{color:var(--primary)!important}
+}
 </style>

@@ -76,7 +76,7 @@ textarea {
 @media (max-width: 600px) {
   .profile-save-button {
     right: 1rem;
-    bottom: max(.85rem, env(safe-area-inset-bottom));
+    bottom: calc(4.8rem + env(safe-area-inset-bottom, 0px));
     left: 1rem;
     width: calc(100% - 2rem);
     min-width: 0;

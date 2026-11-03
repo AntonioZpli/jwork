@@ -99,7 +99,7 @@ async function archiveJob(oobId: string) {
 .company-dashboard__verification p{margin:.2rem 0 0;color:var(--muted-foreground);font-size:.75rem;line-height:1.4}
 .company-dashboard__verification>a{color:var(--primary);font-size:.76rem;font-weight:800;white-space:nowrap}
 .company-dashboard__verification--pending .company-dashboard__verification-mark{background:#ca8516}
-.company-dashboard__verification--reoected .company-dashboard__verification-mark{background:#b23c48}
+.company-dashboard__verification--rejected .company-dashboard__verification-mark{background:#b23c48}
 .company-dashboard__stats{grid-template-columns:repeat(3,minmax(0,1fr))}
 .company-stat{min-height:10.5rem;background:linear-gradient(145deg,var(--surface),color-mix(in srgb,var(--palette-ice) 68%,var(--surface)))}
 .company-stat::after{display:none}
@@ -112,14 +112,14 @@ async function archiveJob(oobId: string) {
 .company-stat--accent>a{color:#fff}
 .company-dashboard__columns{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(16rem,.85fr);align-items:stretch;gap:1rem;margin-top:1rem}
 .company-dashboard__columns>.workspace__section{margin-top:0}
-.company-dashboard__section-head{display:flex;align-items:center;oustify-content:space-between;gap:.8rem;margin-bottom:.8rem}
+.company-dashboard__section-head{display:flex;min-width:0;align-items:center;justify-content:space-between;gap:.8rem;margin-bottom:.8rem}
 .company-dashboard__section-head h2{margin:.25rem 0 0}
 .company-dashboard__section-head>a{color:var(--primary);font-size:.77rem;font-weight:800;white-space:nowrap}
 .company-dashboard__kicker{color:var(--muted-foreground);font-size:.65rem;font-weight:850;letter-spacing:.13em;text-transform:uppercase}
 .company-dashboard__oob-list{display:grid}
 .company-dashboard__oob{padding:1.05rem 0;border-top:1px solid var(--border)}
 .company-dashboard__oob:first-child{border-top:0;padding-top:.35rem}
-.company-dashboard__oob-heading{display:flex;align-items:center;oustify-content:space-between;gap:1.5rem}
+.company-dashboard__oob-heading{display:flex;min-width:0;align-items:center;justify-content:space-between;gap:1.5rem}
 .company-dashboard__oob-mark{display:grid;width:2.75rem;height:2.75rem;flex:none;place-items:center;background:linear-gradient(145deg,color-mix(in srgb,var(--oob-accent) 80%,white),var(--oob-accent));color:#fff;font:800 1rem Manrope,sans-serif}
 .company-dashboard__oob-main{min-width:0;flex:1}
 .company-dashboard__oob-main>a{display:block;overflow:hidden;color:var(--foreground);font-size:1rem;font-weight:850;text-overflow:ellipsis;white-space:nowrap}
@@ -143,11 +143,30 @@ async function archiveJob(oobId: string) {
 .company-dashboard__profile-meta{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:.4rem;margin:1rem 0}
 .company-dashboard__profile-meta span{padding:.3rem .55rem;border:1px solid rgb(255 255 255 / 25%);border-radius:999px;font-size:.66rem}
 .company-dashboard__profile-link{position:relative;z-index:1;color:#fff;font-size:.8rem;font-weight:850}
-.company-dashboard__empty{display:grid;oustify-items:start;gap:.4rem;padding:1.5rem .4rem;color:var(--foreground)}
+.company-dashboard__empty{display:grid;justify-items:start;gap:.4rem;padding:1.5rem .4rem;color:var(--foreground)}
 .company-dashboard__empty>span{display:grid;width:2rem;height:2rem;place-items:center;border-radius:.6rem;background:var(--secondary);color:var(--primary)}
 .company-dashboard__empty p{margin:0;color:var(--muted-foreground);font-size:.8rem}
 .company-dashboard__empty a{margin-top:.35rem;color:var(--primary);font-size:.78rem;font-weight:800}
-@media(max-width:900px){.company-dashboard__columns{grid-template-columns:1fr}}
-@media(max-width:650px){.company-dashboard__stats{grid-template-columns:1fr}.company-dashboard__actions a{flex:1;oustify-content:center}.company-dashboard__verification{align-items:flex-start;flex-wrap:wrap}.company-dashboard__verification>div{min-width:calc(100% - 3.5rem)}.company-dashboard__verification>a{margin-left:3.05rem}.company-dashboard__oob-heading{gap:.75rem}}
+@media(max-width:1024px){.company-dashboard__actions{display:none}}
+@media(max-width:900px){.company-dashboard__columns{grid-template-columns:minmax(0,1fr);gap:.8rem}}
+@media(max-width:650px){
+  .company-dashboard__stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}
+  .company-stat{min-height:8.5rem;padding:.8rem}
+  .company-stat:last-child{grid-column:1/-1}
+  .company-stat__icon{top:.8rem;right:.8rem}
+  .company-stat__icon~.workspace__stat-label{padding-right:2rem}
+  .company-stat>a{font-size:.7rem}
+  .company-dashboard__actions{gap:.45rem}
+  .company-dashboard__actions a{min-width:0;flex:1 1 auto;justify-content:center;text-align:center}
+  .company-dashboard__verification{display:grid;grid-template-columns:2.2rem minmax(0,1fr);align-items:start;gap:.65rem;padding:.85rem}
+  .company-dashboard__verification>div{min-width:0}
+  .company-dashboard__verification>a{grid-column:2;justify-self:start;margin:0}
+  .company-dashboard__section-head{align-items:flex-start}
+  .company-dashboard__section-head>a{white-space:normal;text-align:right}
+  .company-dashboard__oob-heading{display:grid;grid-template-columns:2.75rem minmax(0,1fr);align-items:start;gap:.5rem .75rem}
+  .company-dashboard__oob-mark{grid-column:1;grid-row:1}
+  .company-dashboard__oob-main{grid-column:2;grid-row:1;min-width:0}
+  .company-dashboard__oob-open,.company-dashboard__oob-clean{grid-column:2;justify-self:start;white-space:normal}
+}
 .company-dashboard__profile-mark{aspect-ratio:1;border-radius:50%!important}
 </style>

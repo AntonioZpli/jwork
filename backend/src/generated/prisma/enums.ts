@@ -149,7 +149,7 @@ export const ReportStatus = {
   PENDING: 'PENDING',
   IN_REVIEW: 'IN_REVIEW',
   RESOLVED: 'RESOLVED',
-  DISMISSED: 'DISMISSED'
+  REJECTED: 'REJECTED'
 } as const
 
 export type ReportStatus = (typeof ReportStatus)[keyof typeof ReportStatus]
@@ -157,6 +157,7 @@ export type ReportStatus = (typeof ReportStatus)[keyof typeof ReportStatus]
 
 export const ReportTargetType = {
   USER: 'USER',
+  COMPANY: 'COMPANY',
   JOB: 'JOB'
 } as const
 

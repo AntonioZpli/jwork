@@ -3,6 +3,7 @@ import crypto from 'node:crypto'
 import type { PrismaClient } from './generated/prisma/client'
 import { config } from './config'
 import { EmailDeliveryError, sendAdminCredentialsEmail } from './lib/email'
+import { canManageUserRole } from './adminPolicy'
 import { hashPassword } from './lib/auth'
 
 type AdminUser = { id: string; email: string; role: string; status: string }
@@ -174,8 +175,8 @@ export async function registerAdminRoutes(
   app.get('/api/admin/companies', async (request, reply) => {
     if (!await requireAdmin(request, reply)) return
     const query = request.query as any; const q = cleanSearch(query?.q); const state = cleanSearch(query?.status); const p = paging(query); const sortOrder = orderBy(query, ['name', 'verificationStatus', 'createdAt'], 'createdAt')
-    const where: any = { ...(q ? { OR: [{ name: { contains: q, mode: 'insensitive' } }, { contactEmail: { contains: q, mode: 'insensitive' } }, { owner: { email: { contains: q, mode: 'insensitive' } } }] } : {}), ...(state && ['PENDING', 'VERIFIED', 'REJECTED'].includes(state) ? { verificationStatus: state } : {}) }
-    const [total, data] = await Promise.all([db.companyProfile.count({ where }), db.companyProfile.findMany({ where, skip: p.skip, take: p.take, orderBy: sortOrder as any, select: { id: true, name: true, contactEmail: true, website: true, verificationStatus: true, verifiedAt: true, createdAt: true, owner: { select: { id: true, email: true, status: true } }, economicSector: { select: { name: true } }, department: { select: { name: true } }, _count: { select: { jobs: true, members: true } } } })])
+    const where: any = { ...(q ? { OR: [{ name: { contains: q, mode: 'insensitive' } }, { contactEmail: { contains: q, mode: 'insensitive' } }, { owner: { email: { contains: q, mode: 'insensitive' } } }] } : {}), ...(state && ['PENDING', 'VERIFIED', 'REJECTED'].includes(state) ? { verificationStatus: state } : {}), ...(state && ['ACTIVE', 'SUSPENDED', 'BANNED'].includes(state) ? { owner: { status: state } } : {}) }
+    const [total, data] = await Promise.all([db.companyProfile.count({ where }), db.companyProfile.findMany({ where, skip: p.skip, take: p.take, orderBy: sortOrder as any, select: { id: true, name: true, taxId: true, contactEmail: true, website: true, verificationStatus: true, verifiedAt: true, createdAt: true, owner: { select: { id: true, email: true, status: true } }, economicSector: { select: { name: true } }, department: { select: { name: true } }, _count: { select: { jobs: true, members: true } } } })])
     return { data, page: p.page, pageSize: p.pageSize, total }
   })
 
@@ -198,9 +199,9 @@ export async function registerAdminRoutes(
   app.get('/api/admin/reports', async (request, reply) => {
     if (!await requireAdmin(request, reply)) return
     const query = request.query as any; const q = cleanSearch(query?.q); const state = cleanSearch(query?.status); const p = paging(query); const sortOrder = orderBy(query, ['status', 'createdAt', 'reason'], 'createdAt')
-    const where: any = { ...(q ? { OR: [{ description: { contains: q, mode: 'insensitive' } }, { reporter: { email: { contains: q, mode: 'insensitive' } } }, { targetUser: { email: { contains: q, mode: 'insensitive' } } }, { targetJob: { title: { contains: q, mode: 'insensitive' } } }] } : {}), ...(state && ['PENDING', 'IN_REVIEW', 'RESOLVED', 'DISMISSED'].includes(state) ? { status: state } : {}) }
-    const [total, data] = await Promise.all([db.report.count({ where }), db.report.findMany({ where, skip: p.skip, take: p.take, orderBy: sortOrder as any, select: { id: true, targetType: true, reason: true, description: true, status: true, resolution: true, createdAt: true, resolvedAt: true, reporter: { select: { id: true, email: true } }, targetUser: { select: { id: true, email: true, status: true, role: true } }, targetJob: { select: { id: true, title: true, status: true } }, assignedAdmin: { select: { email: true } }, evidence: { select: { id: true, fileUrl: true, originalName: true, mimeType: true, sizeBytes: true } }, actions: { select: { id: true, actionType: true, reason: true, createdAt: true, admin: { select: { email: true } } }, orderBy: { createdAt: 'desc' } } } })])
-    return { data, page: p.page, pageSize: p.pageSize, total }
+    const where: any = { ...(q ? { OR: [{ description: { contains: q, mode: 'insensitive' } }, { reporter: { email: { contains: q, mode: 'insensitive' } } }, { targetUser: { email: { contains: q, mode: 'insensitive' } } }, { targetCompany: { name: { contains: q, mode: 'insensitive' } } }, { targetJob: { title: { contains: q, mode: 'insensitive' } } }] } : {}), ...(state && ['PENDING', 'IN_REVIEW', 'RESOLVED', 'REJECTED'].includes(state) ? { status: state } : {}) }
+    const [total, data] = await Promise.all([db.report.count({ where }), db.report.findMany({ where, skip: p.skip, take: p.take, orderBy: sortOrder as any, select: { id: true, targetType: true, reason: true, description: true, status: true, resolution: true, createdAt: true, resolvedAt: true, reporter: { select: { id: true, email: true } }, targetUser: { select: { id: true, email: true, status: true, role: true } }, targetCompany: { select: { id: true, name: true } }, targetJob: { select: { id: true, title: true, status: true } }, assignedAdmin: { select: { email: true } }, evidence: { select: { id: true, fileUrl: true, originalName: true, mimeType: true, sizeBytes: true } }, actions: { select: { id: true, actionType: true, reason: true, createdAt: true, admin: { select: { email: true } } }, orderBy: { createdAt: 'desc' } } } })])
+    return { data: data.map(report => ({ ...report, target: report.targetCompany?.name ?? report.targetJob?.title ?? report.targetUser?.email ?? '—' })), page: p.page, pageSize: p.pageSize, total }
   })
 
   app.get('/api/admin/audit', async (request, reply) => {
@@ -302,7 +303,7 @@ export async function registerAdminRoutes(
   app.patch('/api/admin/reports/:id', async (request, reply) => {
     const admin = await requireAdmin(request, reply); if (!admin) return
     const { id } = request.params as { id: string }; const body = request.body as { status?: string; resolution?: string }
-    if (!['RESOLVED', 'DISMISSED', 'IN_REVIEW'].includes(body?.status ?? '') || typeof body.resolution !== 'string' || !body.resolution.trim() || body.resolution.trim().length > 2000) return reply.code(400).send({ message: 'Indica una decisión válida y una explicación de hasta 2000 caracteres.' })
+    if (!['RESOLVED', 'REJECTED', 'IN_REVIEW'].includes(body?.status ?? '') || typeof body.resolution !== 'string' || !body.resolution.trim() || body.resolution.trim().length > 2000) return reply.code(400).send({ message: 'Indica una decisión válida y una explicación de hasta 2000 caracteres.' })
     const report = await db.$transaction(async tx => {
       const current = await tx.report.findUnique({ where: { id }, select: { id: true, status: true } })
       if (!current) return null
@@ -325,7 +326,7 @@ export async function registerAdminRoutes(
     try { updated = await db.$transaction(async tx => {
       const target = await tx.user.findUnique({ where: { id }, select: { id: true, role: true, status: true } })
       if (!target) return null
-      if (target.role === 'SUPERADMIN' && admin.role !== 'SUPERADMIN') throw new Error('SUPERADMIN_PROTECTED')
+      if (!canManageUserRole(admin.role, target.role)) throw new Error(target.role === 'SUPERADMIN' ? 'SUPERADMIN_PROTECTED' : 'ADMIN_PROTECTED')
       if (target.role === 'SUPERADMIN' && target.status === 'ACTIVE' && body.status !== 'ACTIVE') {
         const count = await tx.user.count({ where: { role: 'SUPERADMIN', status: 'ACTIVE' } })
         if (count <= 1) throw new Error('LAST_SUPERADMIN')
@@ -341,6 +342,7 @@ export async function registerAdminRoutes(
       return saved
     }, { isolationLevel: 'Serializable' }) } catch (error) {
       if (error instanceof Error && error.message === 'SUPERADMIN_PROTECTED') return reply.code(403).send({ message: 'Solo un SUPERADMIN puede gestionar otra cuenta SUPERADMIN.' })
+      if (error instanceof Error && error.message === 'ADMIN_PROTECTED') return reply.code(403).send({ message: 'Un ADMIN no puede gestionar cuentas de otros ADMIN.' })
       if (error instanceof Error && error.message === 'LAST_SUPERADMIN') return reply.code(409).send({ message: 'No se puede desactivar al último SUPERADMIN activo.' })
       throw error
     }
@@ -364,6 +366,41 @@ export async function registerAdminRoutes(
     }
     if (!updated) return reply.code(404).send({ message: 'La empresa no existe.' })
     return { company: updated }
+  })
+
+  app.patch('/api/admin/companies/:id/status', async (request, reply) => {
+    const admin = await requireAdmin(request, reply); if (!admin) return
+    const { id } = request.params as { id: string }
+    const body = request.body as { status?: string; reason?: string }
+    if (!['ACTIVE', 'SUSPENDED', 'BANNED'].includes(body?.status ?? '')) return reply.code(400).send({ message: 'Estado de cuenta empresarial no válido.' })
+    const reason = typeof body.reason === 'string' ? body.reason.trim() : ''
+    if (body.status !== 'ACTIVE' && (!reason || reason.length > 2000)) return reply.code(400).send({ message: 'Explica el motivo de la suspensión o bloqueo (hasta 2000 caracteres).' })
+    try {
+      const company = await db.$transaction(async tx => {
+        const target = await tx.companyProfile.findUnique({ where: { id }, select: { id: true, name: true, owner: { select: { id: true, role: true, status: true } } } })
+        if (!target) return null
+        if (target.owner.id === admin.id) throw new Error('SELF_ACTION')
+        if (target.owner.role !== 'COMPANY' || !canManageUserRole(admin.role, target.owner.role)) throw new Error('ROLE_PROTECTED')
+        const saved = await tx.user.update({ where: { id: target.owner.id }, data: { status: body.status as any }, select: { id: true, status: true } })
+        if (saved.status !== target.owner.status) {
+          if (saved.status !== 'ACTIVE') await tx.session.updateMany({ where: { userId: target.owner.id, revokedAt: null }, data: { revokedAt: new Date() } })
+          await tx.moderationAction.create({ data: {
+            adminUserId: admin.id,
+            targetUserId: target.owner.id,
+            actionType: saved.status === 'BANNED' ? 'PERMANENT_BAN' : saved.status === 'SUSPENDED' ? 'TEMPORARY_SUSPENSION' : 'REACTIVATE_ACCOUNT',
+            reason: reason || 'Reactivación solicitada desde la consola administrativa.',
+          } })
+          await tx.auditLog.create({ data: { actorUserId: admin.id, actionType: 'USER_STATUS_CHANGED', entityType: 'CompanyProfile', entityId: id, metadata: { companyName: target.name, ownerUserId: target.owner.id, previousStatus: target.owner.status, status: saved.status, ...(reason ? { reason } : {}) } } })
+        }
+        return { id, name: target.name, status: saved.status }
+      }, { isolationLevel: 'Serializable' })
+      if (!company) return reply.code(404).send({ message: 'La empresa no existe.' })
+      return { company }
+    } catch (error) {
+      if (error instanceof Error && error.message === 'SELF_ACTION') return reply.code(409).send({ message: 'No puedes realizar acciones administrativas sobre tu propia cuenta.' })
+      if (error instanceof Error && error.message === 'ROLE_PROTECTED') return reply.code(403).send({ message: 'Esta cuenta no tiene un rol empresarial gestionable desde esta acción.' })
+      throw error
+    }
   })
 
   app.patch('/api/admin/jobs/:id/status', async (request, reply) => {
@@ -402,6 +439,36 @@ export async function registerAdminRoutes(
     }
     if (!updated) return reply.code(404).send({ message: 'El usuario no existe.' })
     return { user: updated }
+  })
+
+  app.delete('/api/admin/records/:type/:id', async (request, reply) => {
+    const admin = await requireAdmin(request, reply); if (!admin) return
+    const { type, id } = request.params as { type: string; id: string }
+    if (!['jobs', 'applications'].includes(type)) return reply.code(400).send({ message: 'Este tipo de registro se conserva por seguridad e historial.' })
+    try {
+      const result = await db.$transaction(async tx => {
+        if (type === 'applications') {
+          const application = await tx.application.findUnique({ where: { id }, select: { id: true, job: { select: { title: true } }, candidateProfile: { select: { firstName: true, lastName: true } } } })
+          if (!application) return null
+          await tx.application.delete({ where: { id } })
+          await tx.auditLog.create({ data: { actorUserId: admin.id, actionType: 'MODERATION_ACTION_APPLIED', entityType: 'Application', entityId: id, metadata: { operation: 'delete', jobTitle: application.job.title, candidate: `${application.candidateProfile.firstName} ${application.candidateProfile.lastName}` } } })
+          return { type, id }
+        }
+
+        const job = await tx.job.findUnique({ where: { id }, select: { id: true, title: true, _count: { select: { applications: true, reports: true, moderationActions: true } } } })
+        if (!job) return null
+        if (job._count.applications || job._count.reports || job._count.moderationActions) throw new Error('JOB_HAS_HISTORY')
+        await tx.job.delete({ where: { id } })
+        await tx.auditLog.create({ data: { actorUserId: admin.id, actionType: 'MODERATION_ACTION_APPLIED', entityType: 'Job', entityId: id, metadata: { operation: 'delete', title: job.title } } })
+        return { type, id }
+      })
+      if (!result) return reply.code(404).send({ message: 'El registro ya no existe.' })
+      return { ok: true, deleted: result }
+    } catch (error) {
+      if (error instanceof Error && error.message === 'JOB_HAS_HISTORY') return reply.code(409).send({ message: 'No se puede eliminar esta oferta porque tiene postulaciones o historial de moderación. Puedes retirarla para que deje de mostrarse.' })
+      if (typeof error === 'object' && error !== null && 'code' in error && error.code === 'P2003') return reply.code(409).send({ message: 'El registro tiene relaciones que impiden eliminarlo. Conserva el historial y usa la acción de retiro o cambio de estado.' })
+      throw error
+    }
   })
 }
 

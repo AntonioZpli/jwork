@@ -4,6 +4,7 @@ import { RouterLink, useRoute } from 'vue-router'
 import { ArrowRight, ArrowUpRight, Banknote, Bookmark, BriefcaseBusiness, CalendarDays, Clock3, Code2, Grid2X2, MapPin, Send, UsersRound, X } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
 import AppMessage from '@/components/ui/AppMessage.vue'
+import ReportDialog from '@/components/ReportDialog.vue'
 import { useToast } from '@/composables/useToast'
 import { useEscapeKey } from '@/composables/useEscapeKey'
 import { formatJobSalary, oobsApi, oobLabels, type PublicJob } from '@/services/oobs'
@@ -24,6 +25,7 @@ const saved = ref(false)
 const compatibility = ref<{ score: number; criteria: { key: string; label: string; candidateValue: string; oobValue: string; score: number; max: number }[] } | null>(null)
 const canApply = ref<boolean | null>(null)
 const busy = ref(false)
+const showReportDialog = ref(false)
 const dialog = ref<HTMLElement | null>(null)
 const closeButton = ref<HTMLButtonElement | null>(null)
 let previousFocus: HTMLElement | null = null
@@ -255,6 +257,8 @@ async function toggleSaved() {
                   </div>
                   <p class="public-oob-apply__footnote">Si tu perfil está incompleto, podrás actualizarlo antes de postularte.</p>
                 </section>
+                <button v-if="auth.user" class="public-oob-apply__report" type="button" @click="showReportDialog = true">Reportar esta oferta</button>
+                <RouterLink v-else class="public-oob-apply__report" :to="{ path: '/auth', query: { redirect: loginRedirect } }">Inicia sesión para reportar esta oferta</RouterLink>
               </aside>
             </div>
           </template>
@@ -262,6 +266,7 @@ async function toggleSaved() {
       </div>
     </Transition>
   </Teleport>
+  <ReportDialog v-if="showReportDialog && oob" target-type="JOB" :target-id="oob.id" @close="showReportDialog = false" @submitted="showReportDialog = false; notify('Reporte enviado', 'El equipo de Jinowork revisará la oferta.')" />
 </template>
 
 <style scoped>
@@ -324,6 +329,7 @@ async function toggleSaved() {
 .public-oob-apply__message{margin:.45rem 0;color:#245d42;font-size:.72rem;line-height:1.5}
 .public-oob-apply__message--error{color:#a12626}
 .public-oob-apply__footnote{margin:.75rem 0 0;color:#74869b;font-size:.65rem;line-height:1.45}
+.public-oob-apply__report{justify-self:start;padding:.2rem 0;border:0;background:transparent;color:#667b91;font:inherit;font-size:.68rem;text-decoration:underline;cursor:pointer}.public-oob-apply__report:hover{color:var(--primary)}
 .public-oob-apply__profile-warning,.public-oob-apply__role-note{display:grid;gap:.35rem;margin:.65rem 0;padding:.7rem;border-left:3px solid #d29a32;background:#fff8e9;color:#714d14}
 .public-oob-apply__profile-warning strong,.public-oob-apply__role-note strong{font-size:.73rem}
 .public-oob-apply__profile-warning span,.public-oob-apply__role-note span{font-size:.68rem;line-height:1.45}

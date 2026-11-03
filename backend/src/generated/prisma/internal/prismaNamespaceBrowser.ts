@@ -417,6 +417,7 @@ export const ReportScalarFieldEnum = {
   reporterUserId: 'reporterUserId',
   targetType: 'targetType',
   targetUserId: 'targetUserId',
+  targetCompanyId: 'targetCompanyId',
   targetJobId: 'targetJobId',
   assignedAdminId: 'assignedAdminId',
   assignedAt: 'assignedAt',

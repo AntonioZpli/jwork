@@ -6,12 +6,16 @@ import SiteHeader from '@/components/layout/SiteHeader.vue'
 import SiteFooter from '@/components/layout/SiteFooter.vue'
 import WorkspaceFrame from '@/components/workspace/WorkspaceFrame.vue'
 import CompanyPublicPresentation from '@/components/workspace/CompanyPublicPresentation.vue'
+import ReportDialog from '@/components/ReportDialog.vue'
 import { jobsApi, type PublicCompany } from '@/services/jobs'
 import { useAuthStore } from '@/stores/auth'
+import { useToast } from '@/composables/useToast'
 
 const route = useRoute()
 const auth = useAuthStore()
 const company = ref<PublicCompany | null>(null)
+const showReportDialog = ref(false)
+const { notify } = useToast()
 const loading = ref(true)
 const error = ref('')
 const isCandidateWorkspace = computed(() => auth.user?.role === 'CANDIDATE')
@@ -38,8 +42,10 @@ onMounted(async () => {
       <p v-if="loading" class="public-company-page__state" role="status">Cargando perfil de empresa…</p>
       <p v-else-if="error" class="public-company-page__state public-company-page__state--error" role="alert">{{ error }}</p>
       <CompanyPublicPresentation v-else-if="company" :profile="{ ...company, verificationStatus: 'VERIFIED' }" :jobs="company.jobs" />
+      <div v-if="company" class="public-company-report"><button v-if="auth.user" type="button" @click="showReportDialog = true">Reportar esta empresa</button><RouterLink v-else :to="{ path: '/auth', query: { redirect: route.fullPath } }">Inicia sesión para reportar esta empresa</RouterLink></div>
     </component>
     <SiteFooter v-if="!isCandidateWorkspace" />
+    <ReportDialog v-if="showReportDialog && company" target-type="COMPANY" :target-id="company.id" @close="showReportDialog = false" @submitted="showReportDialog = false; notify('Reporte enviado', 'El equipo de Jinowork revisará la empresa.')" />
   </component>
 </template>
 
@@ -48,6 +54,7 @@ onMounted(async () => {
 .public-company-page__main{width:min(1460px,100%);min-height:calc(100vh - 9rem);margin:auto;padding:2.6rem clamp(1.5rem,4vw,2.8rem) 5rem}
 .public-company-page__back{display:inline-flex;align-items:center;gap:.45rem;margin-bottom:1.2rem;color:var(--muted-foreground);font-size:.82rem;font-weight:750}
 .public-company-page__back:hover{color:var(--primary)}
+.public-company-report{display:flex;justify-content:flex-end;padding:0 1rem 1rem}.public-company-report button,.public-company-report a{border:0;background:transparent;color:var(--muted-foreground);font:inherit;font-size:.76rem;text-decoration:underline;cursor:pointer}.public-company-report button:hover,.public-company-report a:hover{color:var(--primary)}
 .public-company-page__state{display:grid;min-height:15rem;place-items:center;color:var(--muted-foreground)}
 .public-company-page__state--error{color:#a12626}
 .public-company-page__main :deep(.company-presentation__hero){min-height:13rem;padding:2.2rem 2.4rem}

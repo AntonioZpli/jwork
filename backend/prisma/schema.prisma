@@ -110,11 +110,12 @@ enum ReportStatus {
   PENDING
   IN_REVIEW
   RESOLVED
-  DISMISSED
+  REJECTED
 }
 
 enum ReportTargetType {
   USER
+  COMPANY
   JOB
 }
 
@@ -394,6 +395,7 @@ model CompanyProfile {
 
   members    CompanyMember[]
   jobs       Job[]
+  reports    Report[]
   dailyStats CompanyDailyStats[]
 
   @@index([economicSectorId])
@@ -632,6 +634,7 @@ model Report {
   reporterUserId  String           @db.Uuid
   targetType      ReportTargetType
   targetUserId    String?          @db.Uuid
+  targetCompanyId String?          @db.Uuid
   targetJobId     String?          @db.Uuid
   assignedAdminId String?          @db.Uuid
   assignedAt      DateTime?
@@ -646,6 +649,7 @@ model Report {
 
   reporter      User  @relation("ReportReporter", fields: [reporterUserId], references: [id], onDelete: Restrict)
   targetUser    User? @relation("ReportReportedUser", fields: [targetUserId], references: [id], onDelete: Restrict)
+  targetCompany CompanyProfile? @relation(fields: [targetCompanyId], references: [id], onDelete: Restrict)
   targetJob     Job?  @relation(fields: [targetJobId], references: [id], onDelete: Restrict)
   assignedAdmin User? @relation("ReportAssignedAdmin", fields: [assignedAdminId], references: [id], onDelete: SetNull)
 
@@ -655,6 +659,7 @@ model Report {
   @@index([status, createdAt])
   @@index([reporterUserId])
   @@index([targetUserId])
+  @@index([targetCompanyId, status])
   @@index([targetJobId, status])
   @@index([assignedAdminId, status])
   @@index([targetType, status])

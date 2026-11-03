@@ -17,6 +17,7 @@ import { registerCandidateJobRoutes } from './routes/candidateJobs'
 import { registerCompanyApplicationRoutes } from './routes/companyApplications'
 import { registerProfileRoutes } from './routes/profiles'
 import { registerCandidateFileRoutes } from './routes/candidateFiles'
+import { registerReportRoutes } from './routes/reports'
 
 export async function buildServer(dependencies: {
   prisma?: typeof prisma
@@ -54,5 +55,6 @@ export async function buildServer(dependencies: {
   await registerCompanyApplicationRoutes(app, db)
   await registerProfileRoutes(app, db)
   await registerCandidateFileRoutes(app, db)
+  await registerReportRoutes(app, db)
   return app
 }

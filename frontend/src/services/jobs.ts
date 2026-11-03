@@ -32,7 +32,8 @@ export type PublicJobOptions = {
 export type JobFilters = {
   q?: string; professionalAreaId?: string; specializationId?: string
   departmentId?: string; municipalityId?: string; workMode?: string
-  contractType?: string; workday?: string; page?: number
+  contractType?: string; workday?: string; salaryMin?: string; salaryMax?: string
+  currency?: string; salaryPeriod?: string; includeUnspecified?: string; page?: number
 }
 
 export type CandidateApplication = {

@@ -293,6 +293,7 @@ export type CompanyProfileWhereInput = {
   municipality?: Prisma.XOR<Prisma.MunicipalityNullableScalarRelationFilter, Prisma.MunicipalityWhereInput> | null
   members?: Prisma.CompanyMemberListRelationFilter
   jobs?: Prisma.JobListRelationFilter
+  reports?: Prisma.ReportListRelationFilter
   dailyStats?: Prisma.CompanyDailyStatsListRelationFilter
 }
 
@@ -322,6 +323,7 @@ export type CompanyProfileOrderByWithRelationInput = {
   municipality?: Prisma.MunicipalityOrderByWithRelationInput
   members?: Prisma.CompanyMemberOrderByRelationAggregateInput
   jobs?: Prisma.JobOrderByRelationAggregateInput
+  reports?: Prisma.ReportOrderByRelationAggregateInput
   dailyStats?: Prisma.CompanyDailyStatsOrderByRelationAggregateInput
 }
 
@@ -354,6 +356,7 @@ export type CompanyProfileWhereUniqueInput = Prisma.AtLeast<{
   municipality?: Prisma.XOR<Prisma.MunicipalityNullableScalarRelationFilter, Prisma.MunicipalityWhereInput> | null
   members?: Prisma.CompanyMemberListRelationFilter
   jobs?: Prisma.JobListRelationFilter
+  reports?: Prisma.ReportListRelationFilter
   dailyStats?: Prisma.CompanyDailyStatsListRelationFilter
 }, "id" | "ownerUserId">
 
@@ -426,6 +429,7 @@ export type CompanyProfileCreateInput = {
   municipality?: Prisma.MunicipalityCreateNestedOneWithoutCompaniesInput
   members?: Prisma.CompanyMemberCreateNestedManyWithoutCompanyInput
   jobs?: Prisma.JobCreateNestedManyWithoutCompanyInput
+  reports?: Prisma.ReportCreateNestedManyWithoutTargetCompanyInput
   dailyStats?: Prisma.CompanyDailyStatsCreateNestedManyWithoutCompanyInput
 }
 
@@ -450,6 +454,7 @@ export type CompanyProfileUncheckedCreateInput = {
   updatedAt?: Date | string
   members?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutCompanyInput
   jobs?: Prisma.JobUncheckedCreateNestedManyWithoutCompanyInput
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetCompanyInput
   dailyStats?: Prisma.CompanyDailyStatsUncheckedCreateNestedManyWithoutCompanyInput
 }
 
@@ -474,6 +479,7 @@ export type CompanyProfileUpdateInput = {
   municipality?: Prisma.MunicipalityUpdateOneWithoutCompaniesNestedInput
   members?: Prisma.CompanyMemberUpdateManyWithoutCompanyNestedInput
   jobs?: Prisma.JobUpdateManyWithoutCompanyNestedInput
+  reports?: Prisma.ReportUpdateManyWithoutTargetCompanyNestedInput
   dailyStats?: Prisma.CompanyDailyStatsUpdateManyWithoutCompanyNestedInput
 }
 
@@ -498,6 +504,7 @@ export type CompanyProfileUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.CompanyMemberUncheckedUpdateManyWithoutCompanyNestedInput
   jobs?: Prisma.JobUncheckedUpdateManyWithoutCompanyNestedInput
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutTargetCompanyNestedInput
   dailyStats?: Prisma.CompanyDailyStatsUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
@@ -874,6 +881,22 @@ export type CompanyProfileUpdateOneRequiredWithoutJobsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyProfileUpdateToOneWithWhereWithoutJobsInput, Prisma.CompanyProfileUpdateWithoutJobsInput>, Prisma.CompanyProfileUncheckedUpdateWithoutJobsInput>
 }
 
+export type CompanyProfileCreateNestedOneWithoutReportsInput = {
+  create?: Prisma.XOR<Prisma.CompanyProfileCreateWithoutReportsInput, Prisma.CompanyProfileUncheckedCreateWithoutReportsInput>
+  connectOrCreate?: Prisma.CompanyProfileCreateOrConnectWithoutReportsInput
+  connect?: Prisma.CompanyProfileWhereUniqueInput
+}
+
+export type CompanyProfileUpdateOneWithoutReportsNestedInput = {
+  create?: Prisma.XOR<Prisma.CompanyProfileCreateWithoutReportsInput, Prisma.CompanyProfileUncheckedCreateWithoutReportsInput>
+  connectOrCreate?: Prisma.CompanyProfileCreateOrConnectWithoutReportsInput
+  upsert?: Prisma.CompanyProfileUpsertWithoutReportsInput
+  disconnect?: Prisma.CompanyProfileWhereInput | boolean
+  delete?: Prisma.CompanyProfileWhereInput | boolean
+  connect?: Prisma.CompanyProfileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyProfileUpdateToOneWithWhereWithoutReportsInput, Prisma.CompanyProfileUpdateWithoutReportsInput>, Prisma.CompanyProfileUncheckedUpdateWithoutReportsInput>
+}
+
 export type CompanyProfileCreateNestedOneWithoutDailyStatsInput = {
   create?: Prisma.XOR<Prisma.CompanyProfileCreateWithoutDailyStatsInput, Prisma.CompanyProfileUncheckedCreateWithoutDailyStatsInput>
   connectOrCreate?: Prisma.CompanyProfileCreateOrConnectWithoutDailyStatsInput
@@ -908,6 +931,7 @@ export type CompanyProfileCreateWithoutOwnerInput = {
   municipality?: Prisma.MunicipalityCreateNestedOneWithoutCompaniesInput
   members?: Prisma.CompanyMemberCreateNestedManyWithoutCompanyInput
   jobs?: Prisma.JobCreateNestedManyWithoutCompanyInput
+  reports?: Prisma.ReportCreateNestedManyWithoutTargetCompanyInput
   dailyStats?: Prisma.CompanyDailyStatsCreateNestedManyWithoutCompanyInput
 }
 
@@ -931,6 +955,7 @@ export type CompanyProfileUncheckedCreateWithoutOwnerInput = {
   updatedAt?: Date | string
   members?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutCompanyInput
   jobs?: Prisma.JobUncheckedCreateNestedManyWithoutCompanyInput
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetCompanyInput
   dailyStats?: Prisma.CompanyDailyStatsUncheckedCreateNestedManyWithoutCompanyInput
 }
 
@@ -959,6 +984,7 @@ export type CompanyProfileCreateWithoutVerifiedByInput = {
   municipality?: Prisma.MunicipalityCreateNestedOneWithoutCompaniesInput
   members?: Prisma.CompanyMemberCreateNestedManyWithoutCompanyInput
   jobs?: Prisma.JobCreateNestedManyWithoutCompanyInput
+  reports?: Prisma.ReportCreateNestedManyWithoutTargetCompanyInput
   dailyStats?: Prisma.CompanyDailyStatsCreateNestedManyWithoutCompanyInput
 }
 
@@ -982,6 +1008,7 @@ export type CompanyProfileUncheckedCreateWithoutVerifiedByInput = {
   updatedAt?: Date | string
   members?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutCompanyInput
   jobs?: Prisma.JobUncheckedCreateNestedManyWithoutCompanyInput
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetCompanyInput
   dailyStats?: Prisma.CompanyDailyStatsUncheckedCreateNestedManyWithoutCompanyInput
 }
 
@@ -1026,6 +1053,7 @@ export type CompanyProfileUpdateWithoutOwnerInput = {
   municipality?: Prisma.MunicipalityUpdateOneWithoutCompaniesNestedInput
   members?: Prisma.CompanyMemberUpdateManyWithoutCompanyNestedInput
   jobs?: Prisma.JobUpdateManyWithoutCompanyNestedInput
+  reports?: Prisma.ReportUpdateManyWithoutTargetCompanyNestedInput
   dailyStats?: Prisma.CompanyDailyStatsUpdateManyWithoutCompanyNestedInput
 }
 
@@ -1049,6 +1077,7 @@ export type CompanyProfileUncheckedUpdateWithoutOwnerInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.CompanyMemberUncheckedUpdateManyWithoutCompanyNestedInput
   jobs?: Prisma.JobUncheckedUpdateManyWithoutCompanyNestedInput
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutTargetCompanyNestedInput
   dailyStats?: Prisma.CompanyDailyStatsUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
@@ -1112,6 +1141,7 @@ export type CompanyProfileCreateWithoutMembersInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutCompaniesInput
   municipality?: Prisma.MunicipalityCreateNestedOneWithoutCompaniesInput
   jobs?: Prisma.JobCreateNestedManyWithoutCompanyInput
+  reports?: Prisma.ReportCreateNestedManyWithoutTargetCompanyInput
   dailyStats?: Prisma.CompanyDailyStatsCreateNestedManyWithoutCompanyInput
 }
 
@@ -1135,6 +1165,7 @@ export type CompanyProfileUncheckedCreateWithoutMembersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   jobs?: Prisma.JobUncheckedCreateNestedManyWithoutCompanyInput
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetCompanyInput
   dailyStats?: Prisma.CompanyDailyStatsUncheckedCreateNestedManyWithoutCompanyInput
 }
 
@@ -1174,6 +1205,7 @@ export type CompanyProfileUpdateWithoutMembersInput = {
   department?: Prisma.DepartmentUpdateOneWithoutCompaniesNestedInput
   municipality?: Prisma.MunicipalityUpdateOneWithoutCompaniesNestedInput
   jobs?: Prisma.JobUpdateManyWithoutCompanyNestedInput
+  reports?: Prisma.ReportUpdateManyWithoutTargetCompanyNestedInput
   dailyStats?: Prisma.CompanyDailyStatsUpdateManyWithoutCompanyNestedInput
 }
 
@@ -1197,6 +1229,7 @@ export type CompanyProfileUncheckedUpdateWithoutMembersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   jobs?: Prisma.JobUncheckedUpdateManyWithoutCompanyNestedInput
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutTargetCompanyNestedInput
   dailyStats?: Prisma.CompanyDailyStatsUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
@@ -1220,6 +1253,7 @@ export type CompanyProfileCreateWithoutEconomicSectorInput = {
   municipality?: Prisma.MunicipalityCreateNestedOneWithoutCompaniesInput
   members?: Prisma.CompanyMemberCreateNestedManyWithoutCompanyInput
   jobs?: Prisma.JobCreateNestedManyWithoutCompanyInput
+  reports?: Prisma.ReportCreateNestedManyWithoutTargetCompanyInput
   dailyStats?: Prisma.CompanyDailyStatsCreateNestedManyWithoutCompanyInput
 }
 
@@ -1243,6 +1277,7 @@ export type CompanyProfileUncheckedCreateWithoutEconomicSectorInput = {
   updatedAt?: Date | string
   members?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutCompanyInput
   jobs?: Prisma.JobUncheckedCreateNestedManyWithoutCompanyInput
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetCompanyInput
   dailyStats?: Prisma.CompanyDailyStatsUncheckedCreateNestedManyWithoutCompanyInput
 }
 
@@ -1292,6 +1327,7 @@ export type CompanyProfileCreateWithoutDepartmentInput = {
   municipality?: Prisma.MunicipalityCreateNestedOneWithoutCompaniesInput
   members?: Prisma.CompanyMemberCreateNestedManyWithoutCompanyInput
   jobs?: Prisma.JobCreateNestedManyWithoutCompanyInput
+  reports?: Prisma.ReportCreateNestedManyWithoutTargetCompanyInput
   dailyStats?: Prisma.CompanyDailyStatsCreateNestedManyWithoutCompanyInput
 }
 
@@ -1315,6 +1351,7 @@ export type CompanyProfileUncheckedCreateWithoutDepartmentInput = {
   updatedAt?: Date | string
   members?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutCompanyInput
   jobs?: Prisma.JobUncheckedCreateNestedManyWithoutCompanyInput
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetCompanyInput
   dailyStats?: Prisma.CompanyDailyStatsUncheckedCreateNestedManyWithoutCompanyInput
 }
 
@@ -1364,6 +1401,7 @@ export type CompanyProfileCreateWithoutMunicipalityInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutCompaniesInput
   members?: Prisma.CompanyMemberCreateNestedManyWithoutCompanyInput
   jobs?: Prisma.JobCreateNestedManyWithoutCompanyInput
+  reports?: Prisma.ReportCreateNestedManyWithoutTargetCompanyInput
   dailyStats?: Prisma.CompanyDailyStatsCreateNestedManyWithoutCompanyInput
 }
 
@@ -1387,6 +1425,7 @@ export type CompanyProfileUncheckedCreateWithoutMunicipalityInput = {
   updatedAt?: Date | string
   members?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutCompanyInput
   jobs?: Prisma.JobUncheckedCreateNestedManyWithoutCompanyInput
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetCompanyInput
   dailyStats?: Prisma.CompanyDailyStatsUncheckedCreateNestedManyWithoutCompanyInput
 }
 
@@ -1436,6 +1475,7 @@ export type CompanyProfileCreateWithoutJobsInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutCompaniesInput
   municipality?: Prisma.MunicipalityCreateNestedOneWithoutCompaniesInput
   members?: Prisma.CompanyMemberCreateNestedManyWithoutCompanyInput
+  reports?: Prisma.ReportCreateNestedManyWithoutTargetCompanyInput
   dailyStats?: Prisma.CompanyDailyStatsCreateNestedManyWithoutCompanyInput
 }
 
@@ -1459,6 +1499,7 @@ export type CompanyProfileUncheckedCreateWithoutJobsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   members?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutCompanyInput
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetCompanyInput
   dailyStats?: Prisma.CompanyDailyStatsUncheckedCreateNestedManyWithoutCompanyInput
 }
 
@@ -1498,6 +1539,7 @@ export type CompanyProfileUpdateWithoutJobsInput = {
   department?: Prisma.DepartmentUpdateOneWithoutCompaniesNestedInput
   municipality?: Prisma.MunicipalityUpdateOneWithoutCompaniesNestedInput
   members?: Prisma.CompanyMemberUpdateManyWithoutCompanyNestedInput
+  reports?: Prisma.ReportUpdateManyWithoutTargetCompanyNestedInput
   dailyStats?: Prisma.CompanyDailyStatsUpdateManyWithoutCompanyNestedInput
 }
 
@@ -1521,6 +1563,119 @@ export type CompanyProfileUncheckedUpdateWithoutJobsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.CompanyMemberUncheckedUpdateManyWithoutCompanyNestedInput
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutTargetCompanyNestedInput
+  dailyStats?: Prisma.CompanyDailyStatsUncheckedUpdateManyWithoutCompanyNestedInput
+}
+
+export type CompanyProfileCreateWithoutReportsInput = {
+  id?: string
+  name: string
+  logoUrl?: string | null
+  description?: string | null
+  website?: string | null
+  address?: string | null
+  contactEmail?: string | null
+  phone?: string | null
+  taxId?: string | null
+  verificationStatus?: $Enums.VerificationStatus
+  verifiedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  owner: Prisma.UserCreateNestedOneWithoutCompanyProfileInput
+  verifiedBy?: Prisma.UserCreateNestedOneWithoutCompaniesVerifiedInput
+  economicSector?: Prisma.EconomicSectorCreateNestedOneWithoutCompaniesInput
+  department?: Prisma.DepartmentCreateNestedOneWithoutCompaniesInput
+  municipality?: Prisma.MunicipalityCreateNestedOneWithoutCompaniesInput
+  members?: Prisma.CompanyMemberCreateNestedManyWithoutCompanyInput
+  jobs?: Prisma.JobCreateNestedManyWithoutCompanyInput
+  dailyStats?: Prisma.CompanyDailyStatsCreateNestedManyWithoutCompanyInput
+}
+
+export type CompanyProfileUncheckedCreateWithoutReportsInput = {
+  id?: string
+  ownerUserId: string
+  name: string
+  logoUrl?: string | null
+  description?: string | null
+  website?: string | null
+  economicSectorId?: string | null
+  departmentId?: string | null
+  municipalityId?: string | null
+  address?: string | null
+  contactEmail?: string | null
+  phone?: string | null
+  taxId?: string | null
+  verificationStatus?: $Enums.VerificationStatus
+  verifiedAt?: Date | string | null
+  verifiedByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  members?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutCompanyInput
+  jobs?: Prisma.JobUncheckedCreateNestedManyWithoutCompanyInput
+  dailyStats?: Prisma.CompanyDailyStatsUncheckedCreateNestedManyWithoutCompanyInput
+}
+
+export type CompanyProfileCreateOrConnectWithoutReportsInput = {
+  where: Prisma.CompanyProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.CompanyProfileCreateWithoutReportsInput, Prisma.CompanyProfileUncheckedCreateWithoutReportsInput>
+}
+
+export type CompanyProfileUpsertWithoutReportsInput = {
+  update: Prisma.XOR<Prisma.CompanyProfileUpdateWithoutReportsInput, Prisma.CompanyProfileUncheckedUpdateWithoutReportsInput>
+  create: Prisma.XOR<Prisma.CompanyProfileCreateWithoutReportsInput, Prisma.CompanyProfileUncheckedCreateWithoutReportsInput>
+  where?: Prisma.CompanyProfileWhereInput
+}
+
+export type CompanyProfileUpdateToOneWithWhereWithoutReportsInput = {
+  where?: Prisma.CompanyProfileWhereInput
+  data: Prisma.XOR<Prisma.CompanyProfileUpdateWithoutReportsInput, Prisma.CompanyProfileUncheckedUpdateWithoutReportsInput>
+}
+
+export type CompanyProfileUpdateWithoutReportsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationStatus?: Prisma.EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
+  verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  owner?: Prisma.UserUpdateOneRequiredWithoutCompanyProfileNestedInput
+  verifiedBy?: Prisma.UserUpdateOneWithoutCompaniesVerifiedNestedInput
+  economicSector?: Prisma.EconomicSectorUpdateOneWithoutCompaniesNestedInput
+  department?: Prisma.DepartmentUpdateOneWithoutCompaniesNestedInput
+  municipality?: Prisma.MunicipalityUpdateOneWithoutCompaniesNestedInput
+  members?: Prisma.CompanyMemberUpdateManyWithoutCompanyNestedInput
+  jobs?: Prisma.JobUpdateManyWithoutCompanyNestedInput
+  dailyStats?: Prisma.CompanyDailyStatsUpdateManyWithoutCompanyNestedInput
+}
+
+export type CompanyProfileUncheckedUpdateWithoutReportsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  economicSectorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  municipalityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationStatus?: Prisma.EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
+  verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  verifiedByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  members?: Prisma.CompanyMemberUncheckedUpdateManyWithoutCompanyNestedInput
+  jobs?: Prisma.JobUncheckedUpdateManyWithoutCompanyNestedInput
   dailyStats?: Prisma.CompanyDailyStatsUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
@@ -1545,6 +1700,7 @@ export type CompanyProfileCreateWithoutDailyStatsInput = {
   municipality?: Prisma.MunicipalityCreateNestedOneWithoutCompaniesInput
   members?: Prisma.CompanyMemberCreateNestedManyWithoutCompanyInput
   jobs?: Prisma.JobCreateNestedManyWithoutCompanyInput
+  reports?: Prisma.ReportCreateNestedManyWithoutTargetCompanyInput
 }
 
 export type CompanyProfileUncheckedCreateWithoutDailyStatsInput = {
@@ -1568,6 +1724,7 @@ export type CompanyProfileUncheckedCreateWithoutDailyStatsInput = {
   updatedAt?: Date | string
   members?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutCompanyInput
   jobs?: Prisma.JobUncheckedCreateNestedManyWithoutCompanyInput
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutTargetCompanyInput
 }
 
 export type CompanyProfileCreateOrConnectWithoutDailyStatsInput = {
@@ -1607,6 +1764,7 @@ export type CompanyProfileUpdateWithoutDailyStatsInput = {
   municipality?: Prisma.MunicipalityUpdateOneWithoutCompaniesNestedInput
   members?: Prisma.CompanyMemberUpdateManyWithoutCompanyNestedInput
   jobs?: Prisma.JobUpdateManyWithoutCompanyNestedInput
+  reports?: Prisma.ReportUpdateManyWithoutTargetCompanyNestedInput
 }
 
 export type CompanyProfileUncheckedUpdateWithoutDailyStatsInput = {
@@ -1630,6 +1788,7 @@ export type CompanyProfileUncheckedUpdateWithoutDailyStatsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.CompanyMemberUncheckedUpdateManyWithoutCompanyNestedInput
   jobs?: Prisma.JobUncheckedUpdateManyWithoutCompanyNestedInput
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutTargetCompanyNestedInput
 }
 
 export type CompanyProfileCreateManyVerifiedByInput = {
@@ -1672,6 +1831,7 @@ export type CompanyProfileUpdateWithoutVerifiedByInput = {
   municipality?: Prisma.MunicipalityUpdateOneWithoutCompaniesNestedInput
   members?: Prisma.CompanyMemberUpdateManyWithoutCompanyNestedInput
   jobs?: Prisma.JobUpdateManyWithoutCompanyNestedInput
+  reports?: Prisma.ReportUpdateManyWithoutTargetCompanyNestedInput
   dailyStats?: Prisma.CompanyDailyStatsUpdateManyWithoutCompanyNestedInput
 }
 
@@ -1695,6 +1855,7 @@ export type CompanyProfileUncheckedUpdateWithoutVerifiedByInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.CompanyMemberUncheckedUpdateManyWithoutCompanyNestedInput
   jobs?: Prisma.JobUncheckedUpdateManyWithoutCompanyNestedInput
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutTargetCompanyNestedInput
   dailyStats?: Prisma.CompanyDailyStatsUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
@@ -1758,6 +1919,7 @@ export type CompanyProfileUpdateWithoutEconomicSectorInput = {
   municipality?: Prisma.MunicipalityUpdateOneWithoutCompaniesNestedInput
   members?: Prisma.CompanyMemberUpdateManyWithoutCompanyNestedInput
   jobs?: Prisma.JobUpdateManyWithoutCompanyNestedInput
+  reports?: Prisma.ReportUpdateManyWithoutTargetCompanyNestedInput
   dailyStats?: Prisma.CompanyDailyStatsUpdateManyWithoutCompanyNestedInput
 }
 
@@ -1781,6 +1943,7 @@ export type CompanyProfileUncheckedUpdateWithoutEconomicSectorInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.CompanyMemberUncheckedUpdateManyWithoutCompanyNestedInput
   jobs?: Prisma.JobUncheckedUpdateManyWithoutCompanyNestedInput
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutTargetCompanyNestedInput
   dailyStats?: Prisma.CompanyDailyStatsUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
@@ -1844,6 +2007,7 @@ export type CompanyProfileUpdateWithoutDepartmentInput = {
   municipality?: Prisma.MunicipalityUpdateOneWithoutCompaniesNestedInput
   members?: Prisma.CompanyMemberUpdateManyWithoutCompanyNestedInput
   jobs?: Prisma.JobUpdateManyWithoutCompanyNestedInput
+  reports?: Prisma.ReportUpdateManyWithoutTargetCompanyNestedInput
   dailyStats?: Prisma.CompanyDailyStatsUpdateManyWithoutCompanyNestedInput
 }
 
@@ -1867,6 +2031,7 @@ export type CompanyProfileUncheckedUpdateWithoutDepartmentInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.CompanyMemberUncheckedUpdateManyWithoutCompanyNestedInput
   jobs?: Prisma.JobUncheckedUpdateManyWithoutCompanyNestedInput
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutTargetCompanyNestedInput
   dailyStats?: Prisma.CompanyDailyStatsUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
@@ -1930,6 +2095,7 @@ export type CompanyProfileUpdateWithoutMunicipalityInput = {
   department?: Prisma.DepartmentUpdateOneWithoutCompaniesNestedInput
   members?: Prisma.CompanyMemberUpdateManyWithoutCompanyNestedInput
   jobs?: Prisma.JobUpdateManyWithoutCompanyNestedInput
+  reports?: Prisma.ReportUpdateManyWithoutTargetCompanyNestedInput
   dailyStats?: Prisma.CompanyDailyStatsUpdateManyWithoutCompanyNestedInput
 }
 
@@ -1953,6 +2119,7 @@ export type CompanyProfileUncheckedUpdateWithoutMunicipalityInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.CompanyMemberUncheckedUpdateManyWithoutCompanyNestedInput
   jobs?: Prisma.JobUncheckedUpdateManyWithoutCompanyNestedInput
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutTargetCompanyNestedInput
   dailyStats?: Prisma.CompanyDailyStatsUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
@@ -1984,12 +2151,14 @@ export type CompanyProfileUncheckedUpdateManyWithoutMunicipalityInput = {
 export type CompanyProfileCountOutputType = {
   members: number
   jobs: number
+  reports: number
   dailyStats: number
 }
 
 export type CompanyProfileCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   members?: boolean | CompanyProfileCountOutputTypeCountMembersArgs
   jobs?: boolean | CompanyProfileCountOutputTypeCountJobsArgs
+  reports?: boolean | CompanyProfileCountOutputTypeCountReportsArgs
   dailyStats?: boolean | CompanyProfileCountOutputTypeCountDailyStatsArgs
 }
 
@@ -2015,6 +2184,13 @@ export type CompanyProfileCountOutputTypeCountMembersArgs<ExtArgs extends runtim
  */
 export type CompanyProfileCountOutputTypeCountJobsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.JobWhereInput
+}
+
+/**
+ * CompanyProfileCountOutputType without action
+ */
+export type CompanyProfileCountOutputTypeCountReportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ReportWhereInput
 }
 
 /**
@@ -2051,6 +2227,7 @@ export type CompanyProfileSelect<ExtArgs extends runtime.Types.Extensions.Intern
   municipality?: boolean | Prisma.CompanyProfile$municipalityArgs<ExtArgs>
   members?: boolean | Prisma.CompanyProfile$membersArgs<ExtArgs>
   jobs?: boolean | Prisma.CompanyProfile$jobsArgs<ExtArgs>
+  reports?: boolean | Prisma.CompanyProfile$reportsArgs<ExtArgs>
   dailyStats?: boolean | Prisma.CompanyProfile$dailyStatsArgs<ExtArgs>
   _count?: boolean | Prisma.CompanyProfileCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["companyProfile"]>
@@ -2137,6 +2314,7 @@ export type CompanyProfileInclude<ExtArgs extends runtime.Types.Extensions.Inter
   municipality?: boolean | Prisma.CompanyProfile$municipalityArgs<ExtArgs>
   members?: boolean | Prisma.CompanyProfile$membersArgs<ExtArgs>
   jobs?: boolean | Prisma.CompanyProfile$jobsArgs<ExtArgs>
+  reports?: boolean | Prisma.CompanyProfile$reportsArgs<ExtArgs>
   dailyStats?: boolean | Prisma.CompanyProfile$dailyStatsArgs<ExtArgs>
   _count?: boolean | Prisma.CompanyProfileCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -2165,6 +2343,7 @@ export type $CompanyProfilePayload<ExtArgs extends runtime.Types.Extensions.Inte
     municipality: Prisma.$MunicipalityPayload<ExtArgs> | null
     members: Prisma.$CompanyMemberPayload<ExtArgs>[]
     jobs: Prisma.$JobPayload<ExtArgs>[]
+    reports: Prisma.$ReportPayload<ExtArgs>[]
     dailyStats: Prisma.$CompanyDailyStatsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -2587,6 +2766,7 @@ export interface Prisma__CompanyProfileClient<T, Null = never, ExtArgs extends r
   municipality<T extends Prisma.CompanyProfile$municipalityArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CompanyProfile$municipalityArgs<ExtArgs>>): Prisma.Prisma__MunicipalityClient<runtime.Types.Result.GetResult<Prisma.$MunicipalityPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   members<T extends Prisma.CompanyProfile$membersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CompanyProfile$membersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CompanyMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   jobs<T extends Prisma.CompanyProfile$jobsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CompanyProfile$jobsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$JobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reports<T extends Prisma.CompanyProfile$reportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CompanyProfile$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   dailyStats<T extends Prisma.CompanyProfile$dailyStatsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CompanyProfile$dailyStatsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CompanyDailyStatsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -3157,6 +3337,30 @@ export type CompanyProfile$jobsArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.JobScalarFieldEnum | Prisma.JobScalarFieldEnum[]
+}
+
+/**
+ * CompanyProfile.reports
+ */
+export type CompanyProfile$reportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Report
+   */
+  select?: Prisma.ReportSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Report
+   */
+  omit?: Prisma.ReportOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReportInclude<ExtArgs> | null
+  where?: Prisma.ReportWhereInput
+  orderBy?: Prisma.ReportOrderByWithRelationInput | Prisma.ReportOrderByWithRelationInput[]
+  cursor?: Prisma.ReportWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ReportScalarFieldEnum | Prisma.ReportScalarFieldEnum[]
 }
 
 /**

@@ -1,5 +1,5 @@
 ﻿<script setup lang="ts">
-import { computed, nextTick, onMounted, ref, watch, type Component } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch, type Component } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import AppMessage from '@/components/ui/AppMessage.vue'
@@ -52,6 +52,14 @@ let previousDialogFocus: HTMLElement | null = null
 let resolveDialog: ((value: string | null) => void) | null = null
 const invitationEmail = ref('')
 const invitationBusy = ref(false)
+const profileOpen = ref(false)
+const profileDisplayName = ref('')
+const profilePhoto = ref<string | null>(null)
+const profileFileInput = ref<HTMLInputElement | null>(null)
+const retroTheme = ref(false)
+const retroStartOpen = ref(false)
+const retroClock = ref('')
+let retroClockTimer: ReturnType<typeof setInterval> | undefined
 const density = ref(localStorage.getItem('jw-admin-density') ?? 'comfortable')
 const savedViews = ref<string[]>(JSON.parse(localStorage.getItem('jw-admin-views') ?? '[]'))
 const explorerModel = ref('users')
@@ -61,7 +69,13 @@ const allColumns = computed(() => visibleRows.value.length ? Object.keys(visible
 const configuredColumns = ref<Record<string, string[]>>(JSON.parse(localStorage.getItem('jw-admin-columns') ?? '{}'))
 const columns = computed(() => {
   const saved = configuredColumns.value[section.value]
-  return saved?.length ? allColumns.value.filter(column => saved.includes(column)) : allColumns.value.slice(0, 8)
+  if (saved?.length) return allColumns.value.filter(column => saved.includes(column))
+  if (section.value === 'reports') {
+    const preferred = ['reporter.email', 'targetType', 'target', 'reason', 'createdAt', 'status']
+    const visible = allColumns.value.filter(column => preferred.includes(column))
+    if (visible.length) return visible
+  }
+  return allColumns.value.slice(0, 8)
 })
 function toggleColumn(column: string) {
   const selected = [...columns.value]
@@ -90,6 +104,73 @@ const globalQuery = ref('')
 const globalGroups = ref<any[]>([])
 const globalOpen = ref(false)
 const adminEmail = computed(() => auth.user?.email ?? 'Administración')
+const adminRoleLabel = computed(() => auth.user?.role === 'SUPERADMIN' ? 'Superadministrador' : 'Administrador')
+const profileName = computed(() => profileDisplayName.value || adminEmail.value.split('@')[0] || 'Administración')
+const canUseRetroTheme = computed(() => auth.user?.role === 'SUPERADMIN')
+function adminPreferenceKey(kind: 'profile' | 'retro') {
+  return `jw-admin-${kind}:${auth.user?.id ?? 'unknown'}`
+}
+function restoreAdminPreferences() {
+  if (!auth.user) return
+  try {
+    const saved = JSON.parse(localStorage.getItem(adminPreferenceKey('profile')) ?? '{}')
+    profileDisplayName.value = typeof saved.displayName === 'string' ? saved.displayName : ''
+    profilePhoto.value = auth.user.role === 'SUPERADMIN' && typeof saved.photo === 'string' ? saved.photo : null
+    retroTheme.value = auth.user.role === 'SUPERADMIN' && localStorage.getItem(adminPreferenceKey('retro')) === 'true'
+  } catch {
+    profileDisplayName.value = ''
+    profilePhoto.value = null
+    retroTheme.value = false
+  }
+}
+function openProfile() {
+  restoreAdminPreferences()
+  profileOpen.value = true
+}
+function cancelProfile() {
+  restoreAdminPreferences()
+  profileOpen.value = false
+}
+function saveProfile() {
+  if (!auth.user) return
+  try {
+    localStorage.setItem(adminPreferenceKey('profile'), JSON.stringify({
+      displayName: profileDisplayName.value.trim().slice(0, 60),
+      photo: auth.user.role === 'SUPERADMIN' ? profilePhoto.value : null,
+    }))
+    profileDisplayName.value = profileDisplayName.value.trim().slice(0, 60)
+    notify('Perfil guardado', 'Los cambios se guardaron en este navegador.')
+    profileOpen.value = false
+  } catch {
+    notify('No se pudo guardar', 'El almacenamiento local está lleno o no está disponible.', 'error')
+  }
+}
+function changeProfilePhoto(event: Event) {
+  if (auth.user?.role !== 'SUPERADMIN') return
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  input.value = ''
+  if (!file) return
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 2 * 1024 * 1024) {
+    notify('Imagen no válida', 'Elige una imagen JPG, PNG o WebP de hasta 2 MB.', 'error')
+    return
+  }
+  const reader = new FileReader()
+  reader.onload = () => {
+    if (typeof reader.result === 'string') profilePhoto.value = reader.result
+  }
+  reader.onerror = () => notify('No se pudo leer la imagen', 'Inténtalo con otro archivo.', 'error')
+  reader.readAsDataURL(file)
+}
+function toggleRetroTheme() {
+  if (!canUseRetroTheme.value) return
+  retroTheme.value = !retroTheme.value
+  localStorage.setItem(adminPreferenceKey('retro'), String(retroTheme.value))
+  retroStartOpen.value = false
+}
+function updateRetroClock() {
+  retroClock.value = new Intl.DateTimeFormat('es-NI', { hour: '2-digit', minute: '2-digit' }).format(new Date())
+}
 watch(selected, async (value, previous) => {
   if (value && !previous) {
     previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
@@ -136,6 +217,8 @@ function trapDialogFocus(event: KeyboardEvent) {
 }
 useEscapeKey(() => {
   if (activeDialog.value) finishDialog(null)
+  else if (profileOpen.value) cancelProfile()
+  else if (retroStartOpen.value) retroStartOpen.value = false
   else if (selected.value && !busyAction.value) selected.value = null
 })
 function trapInspectorFocus(event: KeyboardEvent) {
@@ -155,6 +238,10 @@ const pretty = (value: unknown) => {
   if (typeof value === 'object') return JSON.stringify(value)
   if (typeof value === 'boolean') return value ? 'Sí' : 'No'
   const text = String(value)
+  if (text === 'COMPANY') return 'Empresa'
+  if (text === 'JOB') return 'Oferta laboral'
+  const reasons: Record<string, string> = { FRAUD: 'Fraude o estafa', FAKE_JOB: 'Oferta falsa', IMPERSONATION: 'Suplantación de identidad', HARASSMENT: 'Acoso', INAPPROPRIATE_CONTENT: 'Contenido inapropiado', OTHER: 'Otro motivo' }
+  if (reasons[text]) return reasons[text]
   if (/^\d{4}-\d\d-\d\dT/.test(text)) return new Intl.DateTimeFormat('es-NI', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(text))
   return text
 }
@@ -277,12 +364,12 @@ async function act(kind: string, value: string) {
       if (!resolution) return
       await request(`/api/admin/reports/${id}`, { method: 'PATCH', body: JSON.stringify({ status: value, resolution }) })
     } else {
-      const paths: Record<string, string> = { user: `/api/admin/users/${id}/status`, company: `/api/admin/companies/${id}/verification`, job: `/api/admin/jobs/${id}/status`, role: `/api/admin/users/${id}/role` }
+      const paths: Record<string, string> = { user: `/api/admin/users/${id}/status`, company: `/api/admin/companies/${id}/${['ACTIVE', 'SUSPENDED', 'BANNED'].includes(value) ? 'status' : 'verification'}`, job: `/api/admin/jobs/${id}/status`, role: `/api/admin/users/${id}/role` }
       const path = paths[kind]
       if (!path) throw new Error('Acción no disponible para este registro.')
       let reason: string | undefined
-      if (kind === 'user' && value !== 'ACTIVE') {
-        const response = await requestDialog({ title: 'Motivo de moderación', message: 'El motivo quedará guardado en el registro de la cuenta.', confirmLabel: 'Continuar', inputLabel: 'Motivo', placeholder: 'Explica la razón de esta medida', required: true })
+      if ((kind === 'user' || (kind === 'company' && ['SUSPENDED', 'BANNED'].includes(value))) && value !== 'ACTIVE') {
+        const response = await requestDialog({ title: 'Motivo de moderación', message: 'El motivo quedará guardado en el registro de la cuenta empresarial.', confirmLabel: 'Continuar', inputLabel: 'Motivo', placeholder: 'Explica la razón de esta medida', required: true })
         if (!response) return
         reason = response
       }
@@ -292,10 +379,38 @@ async function act(kind: string, value: string) {
   } catch (cause) { notify('La acción no se completó', cause instanceof Error ? cause.message : 'Inténtalo de nuevo.', 'error') }
   finally { busyAction.value = false }
 }
+const canDeleteSelected = computed(() => ['jobs', 'applications'].includes(section.value) && Boolean(selected.value?.id))
+async function deleteSelected() {
+  if (!selected.value || !canDeleteSelected.value) return
+  const record = selected.value
+  const isJob = section.value === 'jobs'
+  const confirmed = await requestDialog({ title: isJob ? 'Eliminar oferta' : 'Eliminar postulación', message: isJob ? 'Esta acción es permanente. Solo se eliminarán ofertas sin postulaciones ni historial de moderación.' : 'Esta acción es permanente y también elimina el historial de estados de esta postulación.', confirmLabel: 'Eliminar registro', danger: true })
+  if (!confirmed) return
+  busyAction.value = true
+  try {
+    await request(`/api/admin/records/${section.value}/${encodeURIComponent(record.id)}`, { method: 'DELETE' })
+    selected.value = null
+    await load()
+    notify('Registro eliminado', 'La eliminación quedó anotada en la auditoría administrativa.')
+  } catch (cause) {
+    notify('No se pudo eliminar', cause instanceof Error ? cause.message : 'Inténtalo de nuevo.', 'error')
+  } finally {
+    busyAction.value = false
+  }
+}
 function actionOptions(row: Row): [string, string, string][] {
   const actions = (...items: [string, string, string][]) => items
-  if (section.value === 'reports' && ['PENDING', 'IN_REVIEW'].includes(row.status)) return actions(['report', 'IN_REVIEW', 'Tomar revisión'], ['report', 'RESOLVED', 'Resolver reporte'], ['report', 'DISMISSED', 'Descartar reporte'])
-  if (section.value === 'companies' && row.verificationStatus === 'PENDING') return actions(['company', 'VERIFIED', 'Verificar empresa'], ['company', 'REJECTED', 'Rechazar verificación'])
+  if (section.value === 'users' && row.id === auth.user?.id) return []
+  if (section.value === 'users' && auth.user?.role === 'ADMIN' && row.role === 'ADMIN') return []
+  if (section.value === 'reports' && ['PENDING', 'IN_REVIEW'].includes(row.status)) return actions(['report', 'IN_REVIEW', 'Tomar revisión'], ['report', 'RESOLVED', 'Resolver reporte'], ['report', 'REJECTED', 'Rechazar reporte'])
+  if (section.value === 'companies') {
+    const options: [string, string, string][] = row.verificationStatus === 'PENDING' ? [['company', 'VERIFIED', 'Verificar empresa'], ['company', 'REJECTED', 'Rechazar verificación']] : []
+    const accountStatus = row.owner?.status ?? 'ACTIVE'
+    if (accountStatus === 'ACTIVE') options.push(['company', 'SUSPENDED', 'Suspender empresa'], ['company', 'BANNED', 'Bloquear empresa'])
+    else if (accountStatus === 'SUSPENDED') options.push(['company', 'ACTIVE', 'Reactivar empresa'], ['company', 'BANNED', 'Bloquear empresa'])
+    else options.push(['company', 'ACTIVE', 'Reactivar empresa'])
+    return options
+  }
   if (section.value === 'jobs') return actions(['job', 'PAUSED', 'Pausar oferta'], ['job', 'CLOSED', 'Cerrar oferta'], ['job', 'REMOVED', 'Retirar oferta']).filter(([, state]) => row.status !== state)
   if (section.value === 'users') {
     const options: [string, string, string][] = row.status === 'ACTIVE'
@@ -325,11 +440,12 @@ watch(search, () => {
 })
 watch(density, value => localStorage.setItem('jw-admin-density', value))
 watch(globalQuery, () => { clearTimeout(globalSearchDebounce); globalSearchDebounce = setTimeout(() => void globalSearch(), 200) })
-onMounted(async () => { if (!auth.user) await auth.hydrateSession(); if (!auth.user || !['ADMIN', 'SUPERADMIN'].includes(auth.user.role)) { router.replace('/'); return } await load() })
+onMounted(async () => { if (!auth.user) await auth.hydrateSession(); if (!auth.user || !['ADMIN', 'SUPERADMIN'].includes(auth.user.role)) { router.replace('/'); return } restoreAdminPreferences(); updateRetroClock(); retroClockTimer = setInterval(updateRetroClock, 30_000); await load() })
+onUnmounted(() => { if (retroClockTimer) clearInterval(retroClockTimer) })
 </script>
 
 <template>
-  <div class="control-shell" :class="`is-${density}`">
+  <div class="control-shell" :class="[`is-${density}`, { 'is-retro': retroTheme && canUseRetroTheme }]">
     <aside class="control-sidebar">
       <a class="control-brand" href="/" aria-label="Jinowork"><img src="/images/brand/isotipo.svg" alt=""><span>Jino<span>work</span><small>CONTROL</small></span></a>
       <nav class="control-nav" aria-label="Navegación de administración">
@@ -338,11 +454,12 @@ onMounted(async () => { if (!auth.user) await auth.hydrateSession(); if (!auth.u
           <button v-for="item in sections.filter(entry => entry.group === group)" :key="item.id" class="nav-item" :class="{ active: section === item.id }" :aria-label="item.label" :title="item.label" :data-tooltip="`Abrir ${item.label.toLowerCase()}`" @click="go(item.id)"><span class="nav-icon"><component :is="item.icon" :size="18" :stroke-width="1.8" aria-hidden="true" /></span><span class="nav-label">{{ item.label }}</span><b v-if="item.id === 'reports' && overview?.metrics.pendingReports">{{ overview.metrics.pendingReports }}</b></button>
         </template>
       </nav>
-      <button class="sidebar-user" @click="signOut"><span class="avatar">{{ adminEmail[0]?.toUpperCase() }}</span><span class="user-meta"><b>{{ adminEmail }}</b><small>Administración · Salir</small></span><LogOut :size="18" :stroke-width="1.8" aria-hidden="true" /></button>
+      <button class="sidebar-user" @click="openProfile"><span class="avatar"><img v-if="profilePhoto && canUseRetroTheme" :src="profilePhoto" alt=""><span v-else>{{ profileName[0]?.toUpperCase() }}</span></span><span class="user-meta"><b>{{ profileName }}</b><small>{{ adminRoleLabel }} · Mi perfil</small></span><span class="profile-open-mark" aria-hidden="true">›</span></button>
+      <button class="sidebar-logout" @click="signOut"><LogOut :size="16" aria-hidden="true" /> Cerrar sesión</button>
     </aside>
 
     <main class="control-main">
-      <header class="control-topbar"><div class="crumb"><span>JINOWORK</span><i>/</i><b>{{ heading }}</b></div><div class="top-actions"><div class="global-search-wrap" @focusout="closeGlobalSearch"><label class="top-search" data-tooltip="Busca usuarios, empresas, ofertas y reportes"><Search :size="18" :stroke-width="1.8" aria-hidden="true" /><input id="global-search" v-model="globalQuery" placeholder="Buscar en Jinowork…" @focus="globalOpen = true"></label><div v-if="globalOpen && globalQuery.length >= 2" class="global-results"><template v-for="group in globalGroups" :key="group.type"><span>{{ group.label }}</span><button v-for="item in group.items" :key="item.id" @click="openGlobalResult(group.type,item)"><b>{{ item.email ?? item.name ?? item.title ?? item.reason }}</b><small>{{ item.id }} · {{ item.status ?? item.role ?? item.verificationStatus }}</small></button></template><p v-if="!globalGroups.length">Sin coincidencias.</p></div></div><button class="icon-action" :aria-label="theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'" :data-tooltip="theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'" @click="toggleTheme"><Sun v-if="theme === 'dark'" :size="18" aria-hidden="true" /><Moon v-else :size="18" aria-hidden="true" /></button><button class="icon-action mobile-signout" aria-label="Cerrar sesión" title="Cerrar sesión" @click="signOut"><LogOut :size="18" aria-hidden="true" /></button><span class="top-avatar" :data-tooltip="`Sesión activa: ${adminEmail}`">{{ adminEmail[0]?.toUpperCase() }}</span></div></header>
+      <header class="control-topbar"><div class="crumb"><span>JINOWORK</span><i>/</i><b>{{ heading }}</b></div><div class="top-actions"><div class="global-search-wrap" @focusout="closeGlobalSearch"><label class="top-search" data-tooltip="Busca usuarios, empresas, ofertas y reportes"><Search :size="18" :stroke-width="1.8" aria-hidden="true" /><input id="global-search" v-model="globalQuery" placeholder="Buscar en Jinowork…" @focus="globalOpen = true"></label><div v-if="globalOpen && globalQuery.length >= 2" class="global-results"><template v-for="group in globalGroups" :key="group.type"><span>{{ group.label }}</span><button v-for="item in group.items" :key="item.id" @click="openGlobalResult(group.type,item)"><b>{{ item.email ?? item.name ?? item.title ?? item.reason }}</b><small>{{ item.id }} · {{ item.status ?? item.role ?? item.verificationStatus }}</small></button></template><p v-if="!globalGroups.length">Sin coincidencias.</p></div></div><button class="icon-action" :aria-label="theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'" :data-tooltip="theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'" @click="toggleTheme"><Sun v-if="theme === 'dark'" :size="18" aria-hidden="true" /><Moon v-else :size="18" aria-hidden="true" /></button><button class="icon-action mobile-signout" aria-label="Cerrar sesión" title="Cerrar sesión" @click="signOut"><LogOut :size="18" aria-hidden="true" /></button><button class="top-avatar top-profile-button" type="button" :data-tooltip="`Mi perfil: ${profileName}`" aria-label="Abrir mi perfil" @click="openProfile"><img v-if="profilePhoto && canUseRetroTheme" :src="profilePhoto" alt=""><span v-else>{{ profileName[0]?.toUpperCase() }}</span></button></div></header>
       <section class="control-content">
         <div class="page-heading"><div><div class="eyebrow">CONSOLA DE ADMINISTRACIÓN <span class="live-dot"></span> SISTEMA ACTIVO</div><h1>{{ heading }}</h1><p v-if="section === 'overview'">Prioridades y actividad reciente de la plataforma.</p><p v-else-if="section === 'explorer'">Inspección de registros permitidos; los campos sensibles están excluidos.</p><p v-else-if="section === 'stats'">Tendencias calculadas desde los snapshots guardados.</p><p v-else>Consulta datos reales, revisa relaciones y ejecuta acciones autorizadas.</p></div><div class="heading-tools"><button v-if="section !== 'overview' && section !== 'stats'" class="btn-secondary" data-tooltip="Descarga las filas visibles en formato CSV" @click="exportCsv">↓ Exportar página CSV</button><button v-if="resource[section]" class="btn-secondary" data-tooltip="Guarda los filtros y el orden actuales en este navegador" @click="saveView">＋ Guardar vista</button><button class="btn-primary" data-tooltip="Vuelve a consultar los datos del servidor" @click="load">↻ Actualizar</button></div></div>
 
@@ -368,7 +485,7 @@ onMounted(async () => { if (!auth.user) await auth.hydrateSession(); if (!auth.u
 
         <template v-else>
           <section class="surface-block records-block">
-            <div class="records-toolbar"><div class="toolbar-left"><label class="search-box" data-tooltip="Filtra las filas de esta sección"><Search :size="18" :stroke-width="1.8" aria-hidden="true" /><input id="admin-search" v-model="search" :placeholder="`Buscar ${heading.toLowerCase()}…`"></label><select v-if="section !== 'audit'" v-model="status" aria-label="Filtrar por estado"><option value="">Todos los estados</option><option v-for="state in (section === 'users' ? ['ACTIVE','SUSPENDED','BANNED'] : section === 'companies' ? ['PENDING','VERIFIED','REJECTED'] : section === 'jobs' ? ['DRAFT','PUBLISHED','PAUSED','CLOSED','REMOVED'] : section === 'applications' ? ['RECEIVED','IN_REVIEW','SHORTLISTED','INTERVIEW','SELECTED','REJECTED','WITHDRAWN'] : ['PENDING','IN_REVIEW','RESOLVED','DISMISSED'])" :key="state" :value="state">{{ state.replaceAll('_', ' ') }}</option></select><select v-if="section === 'explorer'" v-model="explorerModel" aria-label="Modelo"><option value="users">Usuarios</option><option value="jobs">Ofertas</option><option value="applications">Postulaciones</option><option value="reports">Reportes</option><option value="audit">Auditoría</option><option value="members">CompanyMember</option><option value="moderation">ModerationAction</option><option value="companyStats">CompanyDailyStats</option><option value="jobStats">JobDailyStats</option></select></div><div class="toolbar-right"><details class="column-picker" v-if="allColumns.length"><summary data-tooltip="Elige qué columnas se muestran"><Columns3 :size="16" aria-hidden="true" /> Columnas</summary><label v-for="column in allColumns" :key="column"><input type="checkbox" :checked="columns.includes(column)" @change="toggleColumn(column)">{{ column }}</label></details><select v-model="density" aria-label="Densidad de tabla" title="Ajusta el espacio vertical de las filas"><option value="comfortable">Densidad cómoda</option><option value="compact">Densidad compacta</option></select><select v-model.number="pageSize" aria-label="Filas por página" title="Elige cuántas filas cargar por página"><option :value="25">25 filas</option><option :value="50">50 filas</option><option :value="100">100 filas</option></select></div></div>
+            <div class="records-toolbar"><div class="toolbar-left"><label class="search-box" data-tooltip="Filtra las filas de esta sección"><Search :size="18" :stroke-width="1.8" aria-hidden="true" /><input id="admin-search" v-model="search" :placeholder="`Buscar ${heading.toLowerCase()}…`"></label><select v-if="section !== 'audit'" v-model="status" aria-label="Filtrar por estado"><option value="">Todos los estados</option><option v-for="state in (section === 'users' ? ['ACTIVE','SUSPENDED','BANNED'] : section === 'companies' ? ['PENDING','VERIFIED','REJECTED'] : section === 'jobs' ? ['DRAFT','PUBLISHED','PAUSED','CLOSED','REMOVED'] : section === 'applications' ? ['RECEIVED','IN_REVIEW','SHORTLISTED','INTERVIEW','SELECTED','REJECTED','WITHDRAWN'] : ['PENDING','IN_REVIEW','RESOLVED','REJECTED'])" :key="state" :value="state">{{ state.replaceAll('_', ' ') }}</option></select><select v-if="section === 'explorer'" v-model="explorerModel" aria-label="Modelo"><option value="users">Usuarios</option><option value="jobs">Ofertas</option><option value="applications">Postulaciones</option><option value="reports">Reportes</option><option value="audit">Auditoría</option><option value="members">CompanyMember</option><option value="moderation">ModerationAction</option><option value="companyStats">CompanyDailyStats</option><option value="jobStats">JobDailyStats</option></select></div><div class="toolbar-right"><details class="column-picker" v-if="allColumns.length"><summary data-tooltip="Elige qué columnas se muestran"><Columns3 :size="16" aria-hidden="true" /> Columnas</summary><label v-for="column in allColumns" :key="column"><input type="checkbox" :checked="columns.includes(column)" @change="toggleColumn(column)">{{ column }}</label></details><select v-model="density" aria-label="Densidad de tabla" title="Ajusta el espacio vertical de las filas"><option value="comfortable">Densidad cómoda</option><option value="compact">Densidad compacta</option></select><select v-model.number="pageSize" aria-label="Filas por página" title="Elige cuántas filas cargar por página"><option :value="25">25 filas</option><option :value="50">50 filas</option><option :value="100">100 filas</option></select></div></div>
             <section v-if="section === 'explorer' && explorerModels.find(model => model.id === explorerModel)" class="schema-info"><div><span class="eyebrow">MODEL AND RELATIONS</span><b>{{ explorerModels.find(model => model.id === explorerModel).label }}</b></div><div><small>Fields</small><span v-for="field in explorerModels.find(model => model.id === explorerModel).fields" :key="field[0]" class="schema-chip"><code>{{ field[0] }}</code> {{ field[1] }}</span></div><div><small>Relations</small><span v-for="relation in explorerModels.find(model => model.id === explorerModel).relations" :key="relation" class="schema-chip">{{ relation }}</span></div></section><div v-if="section === 'users'" class="user-extra-filters"><span>FILTROS DE CUENTA</span><select v-model="userRole" aria-label="Filtrar por rol"><option value="">Todos los roles</option><option value="CANDIDATE">Candidato</option><option value="COMPANY">Empresa</option><option value="ADMIN">Administrador</option><option v-if="auth.user?.role === 'SUPERADMIN'" value="SUPERADMIN">Superadministrador</option></select><select v-model="verified" aria-label="Filtrar por verificación de correo"><option value="">Cualquier verificación</option><option value="yes">Correo verificado</option><option value="no">Pendiente de verificación</option></select></div>
             <div v-if="savedViews.length" class="saved-views"><span>VISTAS</span><button v-for="view in savedViews" :key="view" @click="applyView(view)">{{ JSON.parse(view).title }}</button></div>
             <AppMessage v-if="loading" variant="loading" message="Cargando registros…" />
@@ -379,7 +496,14 @@ onMounted(async () => { if (!auth.user) await auth.hydrateSession(); if (!auth.u
       </section>
     </main>
 
-    <div v-if="selected" class="inspector-backdrop" @click.self="selected = null"><aside ref="inspector" class="record-inspector" role="dialog" aria-modal="true" aria-labelledby="inspector-title" tabindex="-1" @keydown="trapInspectorFocus"><header><div><span class="eyebrow">INSPECTOR DE REGISTRO</span><h2 id="inspector-title">{{ selected.name ?? selected.title ?? selected.email ?? selected.id }}</h2></div><button class="icon-action" aria-label="Cerrar inspector" @click="selected = null">×</button></header><p class="record-id">{{ selected.id }}</p><div class="inspector-actions" v-if="actionOptions(selected).length"><span>ACCIONES DISPONIBLES</span><button v-for="[kind, value, label] in actionOptions(selected)" :key="value" :class="{ danger: ['BANNED','REMOVED','REJECTED','DISMISSED'].includes(value) }" :disabled="busyAction" @click="act(kind, value)">{{ label }} →</button></div><div class="record-fields"><div v-for="[key,value] in Object.entries(flatten(selected))" :key="key"><small>{{ key.replaceAll('.', ' / ') }}</small><b>{{ pretty(value) }}</b></div></div><div class="inspector-note">La vista y las acciones disponibles dependen de los permisos validados por el servidor.</div></aside></div>
+    <Teleport to="body">
+      <div v-if="selected" class="inspector-backdrop" @click.self="selected = null"><aside ref="inspector" class="record-inspector" :class="{ 'is-retro': retroTheme && canUseRetroTheme }" role="dialog" aria-modal="true" aria-labelledby="inspector-title" tabindex="-1" @keydown="trapInspectorFocus"><header><div><span class="eyebrow">INSPECTOR DE REGISTRO</span><h2 id="inspector-title">{{ selected.name ?? selected.title ?? selected.email ?? selected.id }}</h2></div><button class="icon-action" aria-label="Cerrar inspector" @click="selected = null">×</button></header><p class="record-id">{{ selected.id }}</p><div class="inspector-actions" v-if="actionOptions(selected).length || canDeleteSelected"><span>ACCIONES DISPONIBLES</span><button v-for="[kind, value, label] in actionOptions(selected)" :key="value" :class="{ danger: ['BANNED','REMOVED','REJECTED','DISMISSED'].includes(value) }" :disabled="busyAction" @click="act(kind, value)">{{ label }} →</button><button v-if="canDeleteSelected" class="danger" :disabled="busyAction" @click="deleteSelected">Eliminar registro permanentemente →</button></div><div class="record-fields"><div v-for="[key,value] in Object.entries(flatten(selected))" :key="key"><small>{{ key.replaceAll('.', ' / ') }}</small><b>{{ pretty(value) }}</b></div></div><div class="inspector-note">La vista y las acciones disponibles dependen de los permisos validados por el servidor. La auditoría y los reportes se conservan.</div></aside></div>
+    </Teleport>
+
+    <Teleport to="body">
+      <div v-if="profileOpen" class="admin-profile-backdrop" @click.self="cancelProfile"><section class="admin-profile" :class="{ 'is-retro': retroTheme && canUseRetroTheme }" role="dialog" aria-modal="true" aria-labelledby="admin-profile-title"><header class="admin-profile__header"><div><span class="eyebrow">CUENTA ADMINISTRATIVA</span><h2 id="admin-profile-title">Mi perfil</h2><p>Personaliza la apariencia de tu espacio de trabajo.</p></div><button class="admin-profile__close" type="button" aria-label="Cerrar perfil" @click="cancelProfile">×</button></header><div class="admin-profile__identity"><div class="admin-profile__avatar"><img v-if="profilePhoto && canUseRetroTheme" :src="profilePhoto" alt="Foto de perfil"><span v-else>{{ profileName.slice(0, 1).toUpperCase() }}</span></div><div><span class="admin-profile__role">{{ adminRoleLabel }}</span><strong>{{ profileName }}</strong><small>{{ adminEmail }}</small></div><div v-if="canUseRetroTheme" class="admin-profile__photo-actions"><input ref="profileFileInput" class="sr-only" type="file" accept="image/jpeg,image/png,image/webp" @change="changeProfilePhoto"><button class="btn-secondary" type="button" @click="profileFileInput?.click()">Cambiar foto</button><button v-if="profilePhoto" class="admin-profile__remove" type="button" @click="profilePhoto = null">Quitar</button></div><p v-else class="admin-profile__photo-note">Las fotos de perfil están disponibles únicamente para superadministración.</p></div><div class="admin-profile__fields"><label><span>Nombre para mostrar</span><input v-model="profileDisplayName" maxlength="60" placeholder="Tu nombre"></label><div><span>Correo de la cuenta</span><strong>{{ adminEmail }}</strong></div><div><span>Estado de la cuenta</span><strong>{{ pretty(auth.user?.status) }}</strong></div></div><section v-if="canUseRetroTheme" class="admin-profile__theme"><div><span>APARIENCIA EXPERIMENTAL</span><strong>Tema retro de escritorio</strong><small>Ventanas en relieve, barra de tareas y menú de inicio clásicos.</small></div><label class="admin-profile__switch"><input type="checkbox" :checked="retroTheme" @change="toggleRetroTheme"><span>{{ retroTheme ? 'Activado' : 'Desactivado' }}</span></label></section><p class="admin-profile__storage-note">Tu nombre y foto se guardan solo en este navegador.</p><footer><button class="btn-secondary" type="button" @click="cancelProfile">Cancelar</button><button class="btn-primary" type="button" @click="saveProfile">Guardar perfil</button></footer></section></div>
+    </Teleport>
+    <footer v-if="retroTheme && canUseRetroTheme" class="retro-taskbar"><button class="retro-start" type="button" :aria-expanded="retroStartOpen" @click="retroStartOpen = !retroStartOpen"><span class="retro-start-mark" aria-hidden="true">J</span> Inicio</button><button class="retro-task-app" type="button" @click="go('overview')"><span aria-hidden="true">▣</span> Jinowork Control — {{ heading }}</button><span class="retro-task-clock">{{ retroClock }}</span><nav v-if="retroStartOpen" class="retro-start-menu" aria-label="Menú de inicio"><div class="retro-start-menu__brand">JINOWORK <small>CONTROL</small></div><button v-for="item in [{ id: 'overview', label: 'Centro de operaciones' }, { id: 'reports', label: 'Moderación' }, { id: 'companies', label: 'Empresas' }, { id: 'users', label: 'Usuarios' }]" :key="item.id" type="button" @click="go(item.id as Section); retroStartOpen = false">{{ item.label }}<span>›</span></button><button type="button" @click="openProfile(); retroStartOpen = false">Mi perfil<span>›</span></button><button type="button" @click="signOut">Cerrar sesión<span>›</span></button></nav></footer>
     <div v-if="activeDialog" class="admin-dialog-backdrop" @click.self="finishDialog(null)"><section ref="dialogElement" class="admin-dialog" role="alertdialog" aria-modal="true" aria-labelledby="admin-dialog-title" aria-describedby="admin-dialog-message" tabindex="-1" @keydown="trapDialogFocus"><span class="eyebrow">CONSOLA DE ADMINISTRACIÓN</span><h2 id="admin-dialog-title">{{ activeDialog.title }}</h2><p id="admin-dialog-message">{{ activeDialog.message }}</p><label v-if="activeDialog.inputLabel" class="admin-dialog-field"><span>{{ activeDialog.inputLabel }}</span><input ref="dialogInputElement" v-model="dialogInput" :placeholder="activeDialog.placeholder" :required="activeDialog.required" maxlength="2000" @keydown.enter.prevent="!activeDialog.required || dialogInput.trim() ? finishDialog(dialogInput) : undefined"></label><div class="admin-dialog-actions"><button class="btn-secondary" @click="finishDialog(null)">Cancelar</button><button :class="activeDialog.danger ? 'btn-danger' : 'btn-primary'" :disabled="activeDialog.required && !dialogInput.trim()" @click="finishDialog(dialogInput)">{{ activeDialog.confirmLabel }}</button></div></section></div>
   </div>
 </template>

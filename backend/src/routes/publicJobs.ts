@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import { Prisma } from '../generated/prisma/client'
 import { prisma } from '../lib/prisma'
-import { JobValidationError } from './jobsValidation'
+import { buildPublicSalaryWhere, JobValidationError, parsePublicSalaryFilter } from './jobsValidation'
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const FILTERS = {
@@ -66,7 +66,7 @@ export async function registerPublicJobRoutes(app: FastifyInstance, db: typeof p
     if (!UUID_PATTERN.test(id)) return reply.code(400).send({ message: 'El identificador de empresa no es válido.' })
     const now = new Date()
     const company = await db.companyProfile.findFirst({
-      where: { id, verificationStatus: 'VERIFIED' },
+      where: { id, verificationStatus: 'VERIFIED', owner: { status: 'ACTIVE' } },
       select: {
         id: true, name: true, logoUrl: true, description: true, website: true, contactEmail: true, phone: true,
         economicSector: { select: { name: true } },
@@ -97,6 +97,7 @@ export async function registerPublicJobRoutes(app: FastifyInstance, db: typeof p
       const workMode = queryEnum('workMode', query.workMode)
       const contractType = queryEnum('contractType', query.contractType)
       const workday = queryEnum('workday', query.workday)
+      const salaryWhere = buildPublicSalaryWhere(parsePublicSalaryFilter(query))
       const pageText = queryText(query.page, 'La página', 6)
       const page = pageText ? Number(pageText) : 1
       if (!Number.isInteger(page) || page < 1 || page > 10000) throw new JobValidationError('La página solicitada no es válida.')
@@ -106,8 +107,8 @@ export async function registerPublicJobRoutes(app: FastifyInstance, db: typeof p
       const where: Prisma.JobWhereInput = {
         status: 'PUBLISHED',
         OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
-        company: { verificationStatus: 'VERIFIED' },
-        ...(q ? { AND: [{ OR: [{ title: contains }, { description: contains }, { requirements: contains }, { company: { name: contains } }] }] } : {}),
+        company: { verificationStatus: 'VERIFIED', owner: { status: 'ACTIVE' } },
+        ...(q || salaryWhere ? { AND: [...(q ? [{ OR: [{ title: contains }, { description: contains }, { requirements: contains }, { company: { name: contains } }] }] : []), ...(salaryWhere ? [salaryWhere as Prisma.JobWhereInput] : [])] } : {}),
         ...(professionalAreaId ? { professionalAreaId } : {}),
         ...(specializationId ? { specializationId } : {}),
         ...(departmentId ? { departmentId } : {}),
@@ -135,7 +136,7 @@ export async function registerPublicJobRoutes(app: FastifyInstance, db: typeof p
     const job = await db.job.findFirst({
       where: {
         id, status: 'PUBLISHED', OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
-        company: { verificationStatus: 'VERIFIED' },
+        company: { verificationStatus: 'VERIFIED', owner: { status: 'ACTIVE' } },
       },
       select: publicJobSelect(),
     })

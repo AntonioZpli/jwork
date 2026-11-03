@@ -29,6 +29,7 @@ export type ReportMinAggregateOutputType = {
   reporterUserId: string | null
   targetType: $Enums.ReportTargetType | null
   targetUserId: string | null
+  targetCompanyId: string | null
   targetJobId: string | null
   assignedAdminId: string | null
   assignedAt: Date | null
@@ -46,6 +47,7 @@ export type ReportMaxAggregateOutputType = {
   reporterUserId: string | null
   targetType: $Enums.ReportTargetType | null
   targetUserId: string | null
+  targetCompanyId: string | null
   targetJobId: string | null
   assignedAdminId: string | null
   assignedAt: Date | null
@@ -63,6 +65,7 @@ export type ReportCountAggregateOutputType = {
   reporterUserId: number
   targetType: number
   targetUserId: number
+  targetCompanyId: number
   targetJobId: number
   assignedAdminId: number
   assignedAt: number
@@ -82,6 +85,7 @@ export type ReportMinAggregateInputType = {
   reporterUserId?: true
   targetType?: true
   targetUserId?: true
+  targetCompanyId?: true
   targetJobId?: true
   assignedAdminId?: true
   assignedAt?: true
@@ -99,6 +103,7 @@ export type ReportMaxAggregateInputType = {
   reporterUserId?: true
   targetType?: true
   targetUserId?: true
+  targetCompanyId?: true
   targetJobId?: true
   assignedAdminId?: true
   assignedAt?: true
@@ -116,6 +121,7 @@ export type ReportCountAggregateInputType = {
   reporterUserId?: true
   targetType?: true
   targetUserId?: true
+  targetCompanyId?: true
   targetJobId?: true
   assignedAdminId?: true
   assignedAt?: true
@@ -206,6 +212,7 @@ export type ReportGroupByOutputType = {
   reporterUserId: string
   targetType: $Enums.ReportTargetType
   targetUserId: string | null
+  targetCompanyId: string | null
   targetJobId: string | null
   assignedAdminId: string | null
   assignedAt: Date | null
@@ -244,6 +251,7 @@ export type ReportWhereInput = {
   reporterUserId?: Prisma.UuidFilter<"Report"> | string
   targetType?: Prisma.EnumReportTargetTypeFilter<"Report"> | $Enums.ReportTargetType
   targetUserId?: Prisma.UuidNullableFilter<"Report"> | string | null
+  targetCompanyId?: Prisma.UuidNullableFilter<"Report"> | string | null
   targetJobId?: Prisma.UuidNullableFilter<"Report"> | string | null
   assignedAdminId?: Prisma.UuidNullableFilter<"Report"> | string | null
   assignedAt?: Prisma.DateTimeNullableFilter<"Report"> | Date | string | null
@@ -256,6 +264,7 @@ export type ReportWhereInput = {
   resolvedAt?: Prisma.DateTimeNullableFilter<"Report"> | Date | string | null
   reporter?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   targetUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  targetCompany?: Prisma.XOR<Prisma.CompanyProfileNullableScalarRelationFilter, Prisma.CompanyProfileWhereInput> | null
   targetJob?: Prisma.XOR<Prisma.JobNullableScalarRelationFilter, Prisma.JobWhereInput> | null
   assignedAdmin?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   evidence?: Prisma.ReportEvidenceListRelationFilter
@@ -267,6 +276,7 @@ export type ReportOrderByWithRelationInput = {
   reporterUserId?: Prisma.SortOrder
   targetType?: Prisma.SortOrder
   targetUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  targetCompanyId?: Prisma.SortOrderInput | Prisma.SortOrder
   targetJobId?: Prisma.SortOrderInput | Prisma.SortOrder
   assignedAdminId?: Prisma.SortOrderInput | Prisma.SortOrder
   assignedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -279,6 +289,7 @@ export type ReportOrderByWithRelationInput = {
   resolvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   reporter?: Prisma.UserOrderByWithRelationInput
   targetUser?: Prisma.UserOrderByWithRelationInput
+  targetCompany?: Prisma.CompanyProfileOrderByWithRelationInput
   targetJob?: Prisma.JobOrderByWithRelationInput
   assignedAdmin?: Prisma.UserOrderByWithRelationInput
   evidence?: Prisma.ReportEvidenceOrderByRelationAggregateInput
@@ -293,6 +304,7 @@ export type ReportWhereUniqueInput = Prisma.AtLeast<{
   reporterUserId?: Prisma.UuidFilter<"Report"> | string
   targetType?: Prisma.EnumReportTargetTypeFilter<"Report"> | $Enums.ReportTargetType
   targetUserId?: Prisma.UuidNullableFilter<"Report"> | string | null
+  targetCompanyId?: Prisma.UuidNullableFilter<"Report"> | string | null
   targetJobId?: Prisma.UuidNullableFilter<"Report"> | string | null
   assignedAdminId?: Prisma.UuidNullableFilter<"Report"> | string | null
   assignedAt?: Prisma.DateTimeNullableFilter<"Report"> | Date | string | null
@@ -305,6 +317,7 @@ export type ReportWhereUniqueInput = Prisma.AtLeast<{
   resolvedAt?: Prisma.DateTimeNullableFilter<"Report"> | Date | string | null
   reporter?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   targetUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  targetCompany?: Prisma.XOR<Prisma.CompanyProfileNullableScalarRelationFilter, Prisma.CompanyProfileWhereInput> | null
   targetJob?: Prisma.XOR<Prisma.JobNullableScalarRelationFilter, Prisma.JobWhereInput> | null
   assignedAdmin?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   evidence?: Prisma.ReportEvidenceListRelationFilter
@@ -316,6 +329,7 @@ export type ReportOrderByWithAggregationInput = {
   reporterUserId?: Prisma.SortOrder
   targetType?: Prisma.SortOrder
   targetUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  targetCompanyId?: Prisma.SortOrderInput | Prisma.SortOrder
   targetJobId?: Prisma.SortOrderInput | Prisma.SortOrder
   assignedAdminId?: Prisma.SortOrderInput | Prisma.SortOrder
   assignedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -339,6 +353,7 @@ export type ReportScalarWhereWithAggregatesInput = {
   reporterUserId?: Prisma.UuidWithAggregatesFilter<"Report"> | string
   targetType?: Prisma.EnumReportTargetTypeWithAggregatesFilter<"Report"> | $Enums.ReportTargetType
   targetUserId?: Prisma.UuidNullableWithAggregatesFilter<"Report"> | string | null
+  targetCompanyId?: Prisma.UuidNullableWithAggregatesFilter<"Report"> | string | null
   targetJobId?: Prisma.UuidNullableWithAggregatesFilter<"Report"> | string | null
   assignedAdminId?: Prisma.UuidNullableWithAggregatesFilter<"Report"> | string | null
   assignedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Report"> | Date | string | null
@@ -364,6 +379,7 @@ export type ReportCreateInput = {
   resolvedAt?: Date | string | null
   reporter: Prisma.UserCreateNestedOneWithoutReportsCreatedInput
   targetUser?: Prisma.UserCreateNestedOneWithoutReportsAgainstInput
+  targetCompany?: Prisma.CompanyProfileCreateNestedOneWithoutReportsInput
   targetJob?: Prisma.JobCreateNestedOneWithoutReportsInput
   assignedAdmin?: Prisma.UserCreateNestedOneWithoutReportsAssignedInput
   evidence?: Prisma.ReportEvidenceCreateNestedManyWithoutReportInput
@@ -375,6 +391,7 @@ export type ReportUncheckedCreateInput = {
   reporterUserId: string
   targetType: $Enums.ReportTargetType
   targetUserId?: string | null
+  targetCompanyId?: string | null
   targetJobId?: string | null
   assignedAdminId?: string | null
   assignedAt?: Date | string | null
@@ -402,6 +419,7 @@ export type ReportUpdateInput = {
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reporter?: Prisma.UserUpdateOneRequiredWithoutReportsCreatedNestedInput
   targetUser?: Prisma.UserUpdateOneWithoutReportsAgainstNestedInput
+  targetCompany?: Prisma.CompanyProfileUpdateOneWithoutReportsNestedInput
   targetJob?: Prisma.JobUpdateOneWithoutReportsNestedInput
   assignedAdmin?: Prisma.UserUpdateOneWithoutReportsAssignedNestedInput
   evidence?: Prisma.ReportEvidenceUpdateManyWithoutReportNestedInput
@@ -413,6 +431,7 @@ export type ReportUncheckedUpdateInput = {
   reporterUserId?: Prisma.StringFieldUpdateOperationsInput | string
   targetType?: Prisma.EnumReportTargetTypeFieldUpdateOperationsInput | $Enums.ReportTargetType
   targetUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetCompanyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetJobId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -432,6 +451,7 @@ export type ReportCreateManyInput = {
   reporterUserId: string
   targetType: $Enums.ReportTargetType
   targetUserId?: string | null
+  targetCompanyId?: string | null
   targetJobId?: string | null
   assignedAdminId?: string | null
   assignedAt?: Date | string | null
@@ -462,6 +482,7 @@ export type ReportUncheckedUpdateManyInput = {
   reporterUserId?: Prisma.StringFieldUpdateOperationsInput | string
   targetType?: Prisma.EnumReportTargetTypeFieldUpdateOperationsInput | $Enums.ReportTargetType
   targetUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetCompanyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetJobId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -489,6 +510,7 @@ export type ReportCountOrderByAggregateInput = {
   reporterUserId?: Prisma.SortOrder
   targetType?: Prisma.SortOrder
   targetUserId?: Prisma.SortOrder
+  targetCompanyId?: Prisma.SortOrder
   targetJobId?: Prisma.SortOrder
   assignedAdminId?: Prisma.SortOrder
   assignedAt?: Prisma.SortOrder
@@ -506,6 +528,7 @@ export type ReportMaxOrderByAggregateInput = {
   reporterUserId?: Prisma.SortOrder
   targetType?: Prisma.SortOrder
   targetUserId?: Prisma.SortOrder
+  targetCompanyId?: Prisma.SortOrder
   targetJobId?: Prisma.SortOrder
   assignedAdminId?: Prisma.SortOrder
   assignedAt?: Prisma.SortOrder
@@ -523,6 +546,7 @@ export type ReportMinOrderByAggregateInput = {
   reporterUserId?: Prisma.SortOrder
   targetType?: Prisma.SortOrder
   targetUserId?: Prisma.SortOrder
+  targetCompanyId?: Prisma.SortOrder
   targetJobId?: Prisma.SortOrder
   assignedAdminId?: Prisma.SortOrder
   assignedAt?: Prisma.SortOrder
@@ -671,6 +695,48 @@ export type ReportUncheckedUpdateManyWithoutAssignedAdminNestedInput = {
   deleteMany?: Prisma.ReportScalarWhereInput | Prisma.ReportScalarWhereInput[]
 }
 
+export type ReportCreateNestedManyWithoutTargetCompanyInput = {
+  create?: Prisma.XOR<Prisma.ReportCreateWithoutTargetCompanyInput, Prisma.ReportUncheckedCreateWithoutTargetCompanyInput> | Prisma.ReportCreateWithoutTargetCompanyInput[] | Prisma.ReportUncheckedCreateWithoutTargetCompanyInput[]
+  connectOrCreate?: Prisma.ReportCreateOrConnectWithoutTargetCompanyInput | Prisma.ReportCreateOrConnectWithoutTargetCompanyInput[]
+  createMany?: Prisma.ReportCreateManyTargetCompanyInputEnvelope
+  connect?: Prisma.ReportWhereUniqueInput | Prisma.ReportWhereUniqueInput[]
+}
+
+export type ReportUncheckedCreateNestedManyWithoutTargetCompanyInput = {
+  create?: Prisma.XOR<Prisma.ReportCreateWithoutTargetCompanyInput, Prisma.ReportUncheckedCreateWithoutTargetCompanyInput> | Prisma.ReportCreateWithoutTargetCompanyInput[] | Prisma.ReportUncheckedCreateWithoutTargetCompanyInput[]
+  connectOrCreate?: Prisma.ReportCreateOrConnectWithoutTargetCompanyInput | Prisma.ReportCreateOrConnectWithoutTargetCompanyInput[]
+  createMany?: Prisma.ReportCreateManyTargetCompanyInputEnvelope
+  connect?: Prisma.ReportWhereUniqueInput | Prisma.ReportWhereUniqueInput[]
+}
+
+export type ReportUpdateManyWithoutTargetCompanyNestedInput = {
+  create?: Prisma.XOR<Prisma.ReportCreateWithoutTargetCompanyInput, Prisma.ReportUncheckedCreateWithoutTargetCompanyInput> | Prisma.ReportCreateWithoutTargetCompanyInput[] | Prisma.ReportUncheckedCreateWithoutTargetCompanyInput[]
+  connectOrCreate?: Prisma.ReportCreateOrConnectWithoutTargetCompanyInput | Prisma.ReportCreateOrConnectWithoutTargetCompanyInput[]
+  upsert?: Prisma.ReportUpsertWithWhereUniqueWithoutTargetCompanyInput | Prisma.ReportUpsertWithWhereUniqueWithoutTargetCompanyInput[]
+  createMany?: Prisma.ReportCreateManyTargetCompanyInputEnvelope
+  set?: Prisma.ReportWhereUniqueInput | Prisma.ReportWhereUniqueInput[]
+  disconnect?: Prisma.ReportWhereUniqueInput | Prisma.ReportWhereUniqueInput[]
+  delete?: Prisma.ReportWhereUniqueInput | Prisma.ReportWhereUniqueInput[]
+  connect?: Prisma.ReportWhereUniqueInput | Prisma.ReportWhereUniqueInput[]
+  update?: Prisma.ReportUpdateWithWhereUniqueWithoutTargetCompanyInput | Prisma.ReportUpdateWithWhereUniqueWithoutTargetCompanyInput[]
+  updateMany?: Prisma.ReportUpdateManyWithWhereWithoutTargetCompanyInput | Prisma.ReportUpdateManyWithWhereWithoutTargetCompanyInput[]
+  deleteMany?: Prisma.ReportScalarWhereInput | Prisma.ReportScalarWhereInput[]
+}
+
+export type ReportUncheckedUpdateManyWithoutTargetCompanyNestedInput = {
+  create?: Prisma.XOR<Prisma.ReportCreateWithoutTargetCompanyInput, Prisma.ReportUncheckedCreateWithoutTargetCompanyInput> | Prisma.ReportCreateWithoutTargetCompanyInput[] | Prisma.ReportUncheckedCreateWithoutTargetCompanyInput[]
+  connectOrCreate?: Prisma.ReportCreateOrConnectWithoutTargetCompanyInput | Prisma.ReportCreateOrConnectWithoutTargetCompanyInput[]
+  upsert?: Prisma.ReportUpsertWithWhereUniqueWithoutTargetCompanyInput | Prisma.ReportUpsertWithWhereUniqueWithoutTargetCompanyInput[]
+  createMany?: Prisma.ReportCreateManyTargetCompanyInputEnvelope
+  set?: Prisma.ReportWhereUniqueInput | Prisma.ReportWhereUniqueInput[]
+  disconnect?: Prisma.ReportWhereUniqueInput | Prisma.ReportWhereUniqueInput[]
+  delete?: Prisma.ReportWhereUniqueInput | Prisma.ReportWhereUniqueInput[]
+  connect?: Prisma.ReportWhereUniqueInput | Prisma.ReportWhereUniqueInput[]
+  update?: Prisma.ReportUpdateWithWhereUniqueWithoutTargetCompanyInput | Prisma.ReportUpdateWithWhereUniqueWithoutTargetCompanyInput[]
+  updateMany?: Prisma.ReportUpdateManyWithWhereWithoutTargetCompanyInput | Prisma.ReportUpdateManyWithWhereWithoutTargetCompanyInput[]
+  deleteMany?: Prisma.ReportScalarWhereInput | Prisma.ReportScalarWhereInput[]
+}
+
 export type ReportCreateNestedManyWithoutTargetJobInput = {
   create?: Prisma.XOR<Prisma.ReportCreateWithoutTargetJobInput, Prisma.ReportUncheckedCreateWithoutTargetJobInput> | Prisma.ReportCreateWithoutTargetJobInput[] | Prisma.ReportUncheckedCreateWithoutTargetJobInput[]
   connectOrCreate?: Prisma.ReportCreateOrConnectWithoutTargetJobInput | Prisma.ReportCreateOrConnectWithoutTargetJobInput[]
@@ -767,6 +833,7 @@ export type ReportCreateWithoutReporterInput = {
   updatedAt?: Date | string
   resolvedAt?: Date | string | null
   targetUser?: Prisma.UserCreateNestedOneWithoutReportsAgainstInput
+  targetCompany?: Prisma.CompanyProfileCreateNestedOneWithoutReportsInput
   targetJob?: Prisma.JobCreateNestedOneWithoutReportsInput
   assignedAdmin?: Prisma.UserCreateNestedOneWithoutReportsAssignedInput
   evidence?: Prisma.ReportEvidenceCreateNestedManyWithoutReportInput
@@ -777,6 +844,7 @@ export type ReportUncheckedCreateWithoutReporterInput = {
   id?: string
   targetType: $Enums.ReportTargetType
   targetUserId?: string | null
+  targetCompanyId?: string | null
   targetJobId?: string | null
   assignedAdminId?: string | null
   assignedAt?: Date | string | null
@@ -813,6 +881,7 @@ export type ReportCreateWithoutTargetUserInput = {
   updatedAt?: Date | string
   resolvedAt?: Date | string | null
   reporter: Prisma.UserCreateNestedOneWithoutReportsCreatedInput
+  targetCompany?: Prisma.CompanyProfileCreateNestedOneWithoutReportsInput
   targetJob?: Prisma.JobCreateNestedOneWithoutReportsInput
   assignedAdmin?: Prisma.UserCreateNestedOneWithoutReportsAssignedInput
   evidence?: Prisma.ReportEvidenceCreateNestedManyWithoutReportInput
@@ -823,6 +892,7 @@ export type ReportUncheckedCreateWithoutTargetUserInput = {
   id?: string
   reporterUserId: string
   targetType: $Enums.ReportTargetType
+  targetCompanyId?: string | null
   targetJobId?: string | null
   assignedAdminId?: string | null
   assignedAt?: Date | string | null
@@ -860,6 +930,7 @@ export type ReportCreateWithoutAssignedAdminInput = {
   resolvedAt?: Date | string | null
   reporter: Prisma.UserCreateNestedOneWithoutReportsCreatedInput
   targetUser?: Prisma.UserCreateNestedOneWithoutReportsAgainstInput
+  targetCompany?: Prisma.CompanyProfileCreateNestedOneWithoutReportsInput
   targetJob?: Prisma.JobCreateNestedOneWithoutReportsInput
   evidence?: Prisma.ReportEvidenceCreateNestedManyWithoutReportInput
   actions?: Prisma.ModerationActionCreateNestedManyWithoutReportInput
@@ -870,6 +941,7 @@ export type ReportUncheckedCreateWithoutAssignedAdminInput = {
   reporterUserId: string
   targetType: $Enums.ReportTargetType
   targetUserId?: string | null
+  targetCompanyId?: string | null
   targetJobId?: string | null
   assignedAt?: Date | string | null
   reason: $Enums.ReportReason
@@ -917,6 +989,7 @@ export type ReportScalarWhereInput = {
   reporterUserId?: Prisma.UuidFilter<"Report"> | string
   targetType?: Prisma.EnumReportTargetTypeFilter<"Report"> | $Enums.ReportTargetType
   targetUserId?: Prisma.UuidNullableFilter<"Report"> | string | null
+  targetCompanyId?: Prisma.UuidNullableFilter<"Report"> | string | null
   targetJobId?: Prisma.UuidNullableFilter<"Report"> | string | null
   assignedAdminId?: Prisma.UuidNullableFilter<"Report"> | string | null
   assignedAt?: Prisma.DateTimeNullableFilter<"Report"> | Date | string | null
@@ -961,6 +1034,70 @@ export type ReportUpdateManyWithWhereWithoutAssignedAdminInput = {
   data: Prisma.XOR<Prisma.ReportUpdateManyMutationInput, Prisma.ReportUncheckedUpdateManyWithoutAssignedAdminInput>
 }
 
+export type ReportCreateWithoutTargetCompanyInput = {
+  id?: string
+  targetType: $Enums.ReportTargetType
+  assignedAt?: Date | string | null
+  reason: $Enums.ReportReason
+  description: string
+  status?: $Enums.ReportStatus
+  resolution?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  resolvedAt?: Date | string | null
+  reporter: Prisma.UserCreateNestedOneWithoutReportsCreatedInput
+  targetUser?: Prisma.UserCreateNestedOneWithoutReportsAgainstInput
+  targetJob?: Prisma.JobCreateNestedOneWithoutReportsInput
+  assignedAdmin?: Prisma.UserCreateNestedOneWithoutReportsAssignedInput
+  evidence?: Prisma.ReportEvidenceCreateNestedManyWithoutReportInput
+  actions?: Prisma.ModerationActionCreateNestedManyWithoutReportInput
+}
+
+export type ReportUncheckedCreateWithoutTargetCompanyInput = {
+  id?: string
+  reporterUserId: string
+  targetType: $Enums.ReportTargetType
+  targetUserId?: string | null
+  targetJobId?: string | null
+  assignedAdminId?: string | null
+  assignedAt?: Date | string | null
+  reason: $Enums.ReportReason
+  description: string
+  status?: $Enums.ReportStatus
+  resolution?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  resolvedAt?: Date | string | null
+  evidence?: Prisma.ReportEvidenceUncheckedCreateNestedManyWithoutReportInput
+  actions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutReportInput
+}
+
+export type ReportCreateOrConnectWithoutTargetCompanyInput = {
+  where: Prisma.ReportWhereUniqueInput
+  create: Prisma.XOR<Prisma.ReportCreateWithoutTargetCompanyInput, Prisma.ReportUncheckedCreateWithoutTargetCompanyInput>
+}
+
+export type ReportCreateManyTargetCompanyInputEnvelope = {
+  data: Prisma.ReportCreateManyTargetCompanyInput | Prisma.ReportCreateManyTargetCompanyInput[]
+  skipDuplicates?: boolean
+}
+
+export type ReportUpsertWithWhereUniqueWithoutTargetCompanyInput = {
+  where: Prisma.ReportWhereUniqueInput
+  update: Prisma.XOR<Prisma.ReportUpdateWithoutTargetCompanyInput, Prisma.ReportUncheckedUpdateWithoutTargetCompanyInput>
+  create: Prisma.XOR<Prisma.ReportCreateWithoutTargetCompanyInput, Prisma.ReportUncheckedCreateWithoutTargetCompanyInput>
+}
+
+export type ReportUpdateWithWhereUniqueWithoutTargetCompanyInput = {
+  where: Prisma.ReportWhereUniqueInput
+  data: Prisma.XOR<Prisma.ReportUpdateWithoutTargetCompanyInput, Prisma.ReportUncheckedUpdateWithoutTargetCompanyInput>
+}
+
+export type ReportUpdateManyWithWhereWithoutTargetCompanyInput = {
+  where: Prisma.ReportScalarWhereInput
+  data: Prisma.XOR<Prisma.ReportUpdateManyMutationInput, Prisma.ReportUncheckedUpdateManyWithoutTargetCompanyInput>
+}
+
 export type ReportCreateWithoutTargetJobInput = {
   id?: string
   targetType: $Enums.ReportTargetType
@@ -974,6 +1111,7 @@ export type ReportCreateWithoutTargetJobInput = {
   resolvedAt?: Date | string | null
   reporter: Prisma.UserCreateNestedOneWithoutReportsCreatedInput
   targetUser?: Prisma.UserCreateNestedOneWithoutReportsAgainstInput
+  targetCompany?: Prisma.CompanyProfileCreateNestedOneWithoutReportsInput
   assignedAdmin?: Prisma.UserCreateNestedOneWithoutReportsAssignedInput
   evidence?: Prisma.ReportEvidenceCreateNestedManyWithoutReportInput
   actions?: Prisma.ModerationActionCreateNestedManyWithoutReportInput
@@ -984,6 +1122,7 @@ export type ReportUncheckedCreateWithoutTargetJobInput = {
   reporterUserId: string
   targetType: $Enums.ReportTargetType
   targetUserId?: string | null
+  targetCompanyId?: string | null
   assignedAdminId?: string | null
   assignedAt?: Date | string | null
   reason: $Enums.ReportReason
@@ -1036,6 +1175,7 @@ export type ReportCreateWithoutEvidenceInput = {
   resolvedAt?: Date | string | null
   reporter: Prisma.UserCreateNestedOneWithoutReportsCreatedInput
   targetUser?: Prisma.UserCreateNestedOneWithoutReportsAgainstInput
+  targetCompany?: Prisma.CompanyProfileCreateNestedOneWithoutReportsInput
   targetJob?: Prisma.JobCreateNestedOneWithoutReportsInput
   assignedAdmin?: Prisma.UserCreateNestedOneWithoutReportsAssignedInput
   actions?: Prisma.ModerationActionCreateNestedManyWithoutReportInput
@@ -1046,6 +1186,7 @@ export type ReportUncheckedCreateWithoutEvidenceInput = {
   reporterUserId: string
   targetType: $Enums.ReportTargetType
   targetUserId?: string | null
+  targetCompanyId?: string | null
   targetJobId?: string | null
   assignedAdminId?: string | null
   assignedAt?: Date | string | null
@@ -1088,6 +1229,7 @@ export type ReportUpdateWithoutEvidenceInput = {
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reporter?: Prisma.UserUpdateOneRequiredWithoutReportsCreatedNestedInput
   targetUser?: Prisma.UserUpdateOneWithoutReportsAgainstNestedInput
+  targetCompany?: Prisma.CompanyProfileUpdateOneWithoutReportsNestedInput
   targetJob?: Prisma.JobUpdateOneWithoutReportsNestedInput
   assignedAdmin?: Prisma.UserUpdateOneWithoutReportsAssignedNestedInput
   actions?: Prisma.ModerationActionUpdateManyWithoutReportNestedInput
@@ -1098,6 +1240,7 @@ export type ReportUncheckedUpdateWithoutEvidenceInput = {
   reporterUserId?: Prisma.StringFieldUpdateOperationsInput | string
   targetType?: Prisma.EnumReportTargetTypeFieldUpdateOperationsInput | $Enums.ReportTargetType
   targetUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetCompanyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetJobId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1124,6 +1267,7 @@ export type ReportCreateWithoutActionsInput = {
   resolvedAt?: Date | string | null
   reporter: Prisma.UserCreateNestedOneWithoutReportsCreatedInput
   targetUser?: Prisma.UserCreateNestedOneWithoutReportsAgainstInput
+  targetCompany?: Prisma.CompanyProfileCreateNestedOneWithoutReportsInput
   targetJob?: Prisma.JobCreateNestedOneWithoutReportsInput
   assignedAdmin?: Prisma.UserCreateNestedOneWithoutReportsAssignedInput
   evidence?: Prisma.ReportEvidenceCreateNestedManyWithoutReportInput
@@ -1134,6 +1278,7 @@ export type ReportUncheckedCreateWithoutActionsInput = {
   reporterUserId: string
   targetType: $Enums.ReportTargetType
   targetUserId?: string | null
+  targetCompanyId?: string | null
   targetJobId?: string | null
   assignedAdminId?: string | null
   assignedAt?: Date | string | null
@@ -1176,6 +1321,7 @@ export type ReportUpdateWithoutActionsInput = {
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reporter?: Prisma.UserUpdateOneRequiredWithoutReportsCreatedNestedInput
   targetUser?: Prisma.UserUpdateOneWithoutReportsAgainstNestedInput
+  targetCompany?: Prisma.CompanyProfileUpdateOneWithoutReportsNestedInput
   targetJob?: Prisma.JobUpdateOneWithoutReportsNestedInput
   assignedAdmin?: Prisma.UserUpdateOneWithoutReportsAssignedNestedInput
   evidence?: Prisma.ReportEvidenceUpdateManyWithoutReportNestedInput
@@ -1186,6 +1332,7 @@ export type ReportUncheckedUpdateWithoutActionsInput = {
   reporterUserId?: Prisma.StringFieldUpdateOperationsInput | string
   targetType?: Prisma.EnumReportTargetTypeFieldUpdateOperationsInput | $Enums.ReportTargetType
   targetUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetCompanyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetJobId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1203,6 +1350,7 @@ export type ReportCreateManyReporterInput = {
   id?: string
   targetType: $Enums.ReportTargetType
   targetUserId?: string | null
+  targetCompanyId?: string | null
   targetJobId?: string | null
   assignedAdminId?: string | null
   assignedAt?: Date | string | null
@@ -1219,6 +1367,7 @@ export type ReportCreateManyTargetUserInput = {
   id?: string
   reporterUserId: string
   targetType: $Enums.ReportTargetType
+  targetCompanyId?: string | null
   targetJobId?: string | null
   assignedAdminId?: string | null
   assignedAt?: Date | string | null
@@ -1236,6 +1385,7 @@ export type ReportCreateManyAssignedAdminInput = {
   reporterUserId: string
   targetType: $Enums.ReportTargetType
   targetUserId?: string | null
+  targetCompanyId?: string | null
   targetJobId?: string | null
   assignedAt?: Date | string | null
   reason: $Enums.ReportReason
@@ -1259,6 +1409,7 @@ export type ReportUpdateWithoutReporterInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   targetUser?: Prisma.UserUpdateOneWithoutReportsAgainstNestedInput
+  targetCompany?: Prisma.CompanyProfileUpdateOneWithoutReportsNestedInput
   targetJob?: Prisma.JobUpdateOneWithoutReportsNestedInput
   assignedAdmin?: Prisma.UserUpdateOneWithoutReportsAssignedNestedInput
   evidence?: Prisma.ReportEvidenceUpdateManyWithoutReportNestedInput
@@ -1269,6 +1420,7 @@ export type ReportUncheckedUpdateWithoutReporterInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   targetType?: Prisma.EnumReportTargetTypeFieldUpdateOperationsInput | $Enums.ReportTargetType
   targetUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetCompanyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetJobId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1287,6 +1439,7 @@ export type ReportUncheckedUpdateManyWithoutReporterInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   targetType?: Prisma.EnumReportTargetTypeFieldUpdateOperationsInput | $Enums.ReportTargetType
   targetUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetCompanyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetJobId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1311,6 +1464,7 @@ export type ReportUpdateWithoutTargetUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reporter?: Prisma.UserUpdateOneRequiredWithoutReportsCreatedNestedInput
+  targetCompany?: Prisma.CompanyProfileUpdateOneWithoutReportsNestedInput
   targetJob?: Prisma.JobUpdateOneWithoutReportsNestedInput
   assignedAdmin?: Prisma.UserUpdateOneWithoutReportsAssignedNestedInput
   evidence?: Prisma.ReportEvidenceUpdateManyWithoutReportNestedInput
@@ -1321,6 +1475,7 @@ export type ReportUncheckedUpdateWithoutTargetUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   reporterUserId?: Prisma.StringFieldUpdateOperationsInput | string
   targetType?: Prisma.EnumReportTargetTypeFieldUpdateOperationsInput | $Enums.ReportTargetType
+  targetCompanyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetJobId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1339,6 +1494,7 @@ export type ReportUncheckedUpdateManyWithoutTargetUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   reporterUserId?: Prisma.StringFieldUpdateOperationsInput | string
   targetType?: Prisma.EnumReportTargetTypeFieldUpdateOperationsInput | $Enums.ReportTargetType
+  targetCompanyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetJobId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1364,6 +1520,7 @@ export type ReportUpdateWithoutAssignedAdminInput = {
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reporter?: Prisma.UserUpdateOneRequiredWithoutReportsCreatedNestedInput
   targetUser?: Prisma.UserUpdateOneWithoutReportsAgainstNestedInput
+  targetCompany?: Prisma.CompanyProfileUpdateOneWithoutReportsNestedInput
   targetJob?: Prisma.JobUpdateOneWithoutReportsNestedInput
   evidence?: Prisma.ReportEvidenceUpdateManyWithoutReportNestedInput
   actions?: Prisma.ModerationActionUpdateManyWithoutReportNestedInput
@@ -1374,6 +1531,7 @@ export type ReportUncheckedUpdateWithoutAssignedAdminInput = {
   reporterUserId?: Prisma.StringFieldUpdateOperationsInput | string
   targetType?: Prisma.EnumReportTargetTypeFieldUpdateOperationsInput | $Enums.ReportTargetType
   targetUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetCompanyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetJobId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reason?: Prisma.EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
@@ -1392,7 +1550,80 @@ export type ReportUncheckedUpdateManyWithoutAssignedAdminInput = {
   reporterUserId?: Prisma.StringFieldUpdateOperationsInput | string
   targetType?: Prisma.EnumReportTargetTypeFieldUpdateOperationsInput | $Enums.ReportTargetType
   targetUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetCompanyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetJobId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reason?: Prisma.EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
+  resolution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type ReportCreateManyTargetCompanyInput = {
+  id?: string
+  reporterUserId: string
+  targetType: $Enums.ReportTargetType
+  targetUserId?: string | null
+  targetJobId?: string | null
+  assignedAdminId?: string | null
+  assignedAt?: Date | string | null
+  reason: $Enums.ReportReason
+  description: string
+  status?: $Enums.ReportStatus
+  resolution?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  resolvedAt?: Date | string | null
+}
+
+export type ReportUpdateWithoutTargetCompanyInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  targetType?: Prisma.EnumReportTargetTypeFieldUpdateOperationsInput | $Enums.ReportTargetType
+  assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reason?: Prisma.EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
+  resolution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reporter?: Prisma.UserUpdateOneRequiredWithoutReportsCreatedNestedInput
+  targetUser?: Prisma.UserUpdateOneWithoutReportsAgainstNestedInput
+  targetJob?: Prisma.JobUpdateOneWithoutReportsNestedInput
+  assignedAdmin?: Prisma.UserUpdateOneWithoutReportsAssignedNestedInput
+  evidence?: Prisma.ReportEvidenceUpdateManyWithoutReportNestedInput
+  actions?: Prisma.ModerationActionUpdateManyWithoutReportNestedInput
+}
+
+export type ReportUncheckedUpdateWithoutTargetCompanyInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  reporterUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  targetType?: Prisma.EnumReportTargetTypeFieldUpdateOperationsInput | $Enums.ReportTargetType
+  targetUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetJobId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assignedAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reason?: Prisma.EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
+  resolution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  evidence?: Prisma.ReportEvidenceUncheckedUpdateManyWithoutReportNestedInput
+  actions?: Prisma.ModerationActionUncheckedUpdateManyWithoutReportNestedInput
+}
+
+export type ReportUncheckedUpdateManyWithoutTargetCompanyInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  reporterUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  targetType?: Prisma.EnumReportTargetTypeFieldUpdateOperationsInput | $Enums.ReportTargetType
+  targetUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetJobId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assignedAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reason?: Prisma.EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
   description?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1408,6 +1639,7 @@ export type ReportCreateManyTargetJobInput = {
   reporterUserId: string
   targetType: $Enums.ReportTargetType
   targetUserId?: string | null
+  targetCompanyId?: string | null
   assignedAdminId?: string | null
   assignedAt?: Date | string | null
   reason: $Enums.ReportReason
@@ -1432,6 +1664,7 @@ export type ReportUpdateWithoutTargetJobInput = {
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reporter?: Prisma.UserUpdateOneRequiredWithoutReportsCreatedNestedInput
   targetUser?: Prisma.UserUpdateOneWithoutReportsAgainstNestedInput
+  targetCompany?: Prisma.CompanyProfileUpdateOneWithoutReportsNestedInput
   assignedAdmin?: Prisma.UserUpdateOneWithoutReportsAssignedNestedInput
   evidence?: Prisma.ReportEvidenceUpdateManyWithoutReportNestedInput
   actions?: Prisma.ModerationActionUpdateManyWithoutReportNestedInput
@@ -1442,6 +1675,7 @@ export type ReportUncheckedUpdateWithoutTargetJobInput = {
   reporterUserId?: Prisma.StringFieldUpdateOperationsInput | string
   targetType?: Prisma.EnumReportTargetTypeFieldUpdateOperationsInput | $Enums.ReportTargetType
   targetUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetCompanyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reason?: Prisma.EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
@@ -1460,6 +1694,7 @@ export type ReportUncheckedUpdateManyWithoutTargetJobInput = {
   reporterUserId?: Prisma.StringFieldUpdateOperationsInput | string
   targetType?: Prisma.EnumReportTargetTypeFieldUpdateOperationsInput | $Enums.ReportTargetType
   targetUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetCompanyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reason?: Prisma.EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
@@ -1516,6 +1751,7 @@ export type ReportSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   reporterUserId?: boolean
   targetType?: boolean
   targetUserId?: boolean
+  targetCompanyId?: boolean
   targetJobId?: boolean
   assignedAdminId?: boolean
   assignedAt?: boolean
@@ -1528,6 +1764,7 @@ export type ReportSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   resolvedAt?: boolean
   reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   targetUser?: boolean | Prisma.Report$targetUserArgs<ExtArgs>
+  targetCompany?: boolean | Prisma.Report$targetCompanyArgs<ExtArgs>
   targetJob?: boolean | Prisma.Report$targetJobArgs<ExtArgs>
   assignedAdmin?: boolean | Prisma.Report$assignedAdminArgs<ExtArgs>
   evidence?: boolean | Prisma.Report$evidenceArgs<ExtArgs>
@@ -1540,6 +1777,7 @@ export type ReportSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   reporterUserId?: boolean
   targetType?: boolean
   targetUserId?: boolean
+  targetCompanyId?: boolean
   targetJobId?: boolean
   assignedAdminId?: boolean
   assignedAt?: boolean
@@ -1552,6 +1790,7 @@ export type ReportSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   resolvedAt?: boolean
   reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   targetUser?: boolean | Prisma.Report$targetUserArgs<ExtArgs>
+  targetCompany?: boolean | Prisma.Report$targetCompanyArgs<ExtArgs>
   targetJob?: boolean | Prisma.Report$targetJobArgs<ExtArgs>
   assignedAdmin?: boolean | Prisma.Report$assignedAdminArgs<ExtArgs>
 }, ExtArgs["result"]["report"]>
@@ -1561,6 +1800,7 @@ export type ReportSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   reporterUserId?: boolean
   targetType?: boolean
   targetUserId?: boolean
+  targetCompanyId?: boolean
   targetJobId?: boolean
   assignedAdminId?: boolean
   assignedAt?: boolean
@@ -1573,6 +1813,7 @@ export type ReportSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   resolvedAt?: boolean
   reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   targetUser?: boolean | Prisma.Report$targetUserArgs<ExtArgs>
+  targetCompany?: boolean | Prisma.Report$targetCompanyArgs<ExtArgs>
   targetJob?: boolean | Prisma.Report$targetJobArgs<ExtArgs>
   assignedAdmin?: boolean | Prisma.Report$assignedAdminArgs<ExtArgs>
 }, ExtArgs["result"]["report"]>
@@ -1582,6 +1823,7 @@ export type ReportSelectScalar = {
   reporterUserId?: boolean
   targetType?: boolean
   targetUserId?: boolean
+  targetCompanyId?: boolean
   targetJobId?: boolean
   assignedAdminId?: boolean
   assignedAt?: boolean
@@ -1594,10 +1836,11 @@ export type ReportSelectScalar = {
   resolvedAt?: boolean
 }
 
-export type ReportOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "reporterUserId" | "targetType" | "targetUserId" | "targetJobId" | "assignedAdminId" | "assignedAt" | "reason" | "description" | "status" | "resolution" | "createdAt" | "updatedAt" | "resolvedAt", ExtArgs["result"]["report"]>
+export type ReportOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "reporterUserId" | "targetType" | "targetUserId" | "targetCompanyId" | "targetJobId" | "assignedAdminId" | "assignedAt" | "reason" | "description" | "status" | "resolution" | "createdAt" | "updatedAt" | "resolvedAt", ExtArgs["result"]["report"]>
 export type ReportInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   targetUser?: boolean | Prisma.Report$targetUserArgs<ExtArgs>
+  targetCompany?: boolean | Prisma.Report$targetCompanyArgs<ExtArgs>
   targetJob?: boolean | Prisma.Report$targetJobArgs<ExtArgs>
   assignedAdmin?: boolean | Prisma.Report$assignedAdminArgs<ExtArgs>
   evidence?: boolean | Prisma.Report$evidenceArgs<ExtArgs>
@@ -1607,12 +1850,14 @@ export type ReportInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type ReportIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   targetUser?: boolean | Prisma.Report$targetUserArgs<ExtArgs>
+  targetCompany?: boolean | Prisma.Report$targetCompanyArgs<ExtArgs>
   targetJob?: boolean | Prisma.Report$targetJobArgs<ExtArgs>
   assignedAdmin?: boolean | Prisma.Report$assignedAdminArgs<ExtArgs>
 }
 export type ReportIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   targetUser?: boolean | Prisma.Report$targetUserArgs<ExtArgs>
+  targetCompany?: boolean | Prisma.Report$targetCompanyArgs<ExtArgs>
   targetJob?: boolean | Prisma.Report$targetJobArgs<ExtArgs>
   assignedAdmin?: boolean | Prisma.Report$assignedAdminArgs<ExtArgs>
 }
@@ -1622,6 +1867,7 @@ export type $ReportPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   objects: {
     reporter: Prisma.$UserPayload<ExtArgs>
     targetUser: Prisma.$UserPayload<ExtArgs> | null
+    targetCompany: Prisma.$CompanyProfilePayload<ExtArgs> | null
     targetJob: Prisma.$JobPayload<ExtArgs> | null
     assignedAdmin: Prisma.$UserPayload<ExtArgs> | null
     evidence: Prisma.$ReportEvidencePayload<ExtArgs>[]
@@ -1632,6 +1878,7 @@ export type $ReportPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     reporterUserId: string
     targetType: $Enums.ReportTargetType
     targetUserId: string | null
+    targetCompanyId: string | null
     targetJobId: string | null
     assignedAdminId: string | null
     assignedAt: Date | null
@@ -2038,6 +2285,7 @@ export interface Prisma__ReportClient<T, Null = never, ExtArgs extends runtime.T
   readonly [Symbol.toStringTag]: "PrismaPromise"
   reporter<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   targetUser<T extends Prisma.Report$targetUserArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Report$targetUserArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  targetCompany<T extends Prisma.Report$targetCompanyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Report$targetCompanyArgs<ExtArgs>>): Prisma.Prisma__CompanyProfileClient<runtime.Types.Result.GetResult<Prisma.$CompanyProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   targetJob<T extends Prisma.Report$targetJobArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Report$targetJobArgs<ExtArgs>>): Prisma.Prisma__JobClient<runtime.Types.Result.GetResult<Prisma.$JobPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   assignedAdmin<T extends Prisma.Report$assignedAdminArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Report$assignedAdminArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   evidence<T extends Prisma.Report$evidenceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Report$evidenceArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportEvidencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2075,6 +2323,7 @@ export interface ReportFieldRefs {
   readonly reporterUserId: Prisma.FieldRef<"Report", 'String'>
   readonly targetType: Prisma.FieldRef<"Report", 'ReportTargetType'>
   readonly targetUserId: Prisma.FieldRef<"Report", 'String'>
+  readonly targetCompanyId: Prisma.FieldRef<"Report", 'String'>
   readonly targetJobId: Prisma.FieldRef<"Report", 'String'>
   readonly assignedAdminId: Prisma.FieldRef<"Report", 'String'>
   readonly assignedAt: Prisma.FieldRef<"Report", 'DateTime'>
@@ -2502,6 +2751,25 @@ export type Report$targetUserArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   include?: Prisma.UserInclude<ExtArgs> | null
   where?: Prisma.UserWhereInput
+}
+
+/**
+ * Report.targetCompany
+ */
+export type Report$targetCompanyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CompanyProfile
+   */
+  select?: Prisma.CompanyProfileSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CompanyProfile
+   */
+  omit?: Prisma.CompanyProfileOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CompanyProfileInclude<ExtArgs> | null
+  where?: Prisma.CompanyProfileWhereInput
 }
 
 /**

@@ -7,6 +7,7 @@ import WorkspaceFrame from '@/components/workspace/WorkspaceFrame.vue'
 import AppMessage from '@/components/ui/AppMessage.vue'
 import { useToast } from '@/composables/useToast'
 import CompanyPublicSummary from '@/components/workspace/CompanyPublicSummary.vue'
+import ReportDialog from '@/components/ReportDialog.vue'
 import { ArrowLeft, Banknote, Bookmark, BriefcaseBusiness, CalendarDays, Clock3, MapPin, UsersRound } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
 import { formatJobSalary, oobsApi, oobLabels, type PublicJob } from '@/services/oobs'
@@ -29,6 +30,7 @@ const error = ref('')
 const application = ref<{ id: string; status: string } | null>(null)
 const saved = ref(false)
 const actionBusy = ref(false)
+const showReportDialog = ref(false)
 
 onMounted(async () => {
   if (!auth.user) await auth.hydrateSession()
@@ -97,8 +99,10 @@ async function toggleSaved() {
           </section>
         </aside>
       </div>
+      <div class="oob-detail__report"><button v-if="auth.user" type="button" @click="showReportDialog = true">Reportar esta oferta</button><RouterLink v-else :to="{ path: '/auth', query: { redirect: route.fullPath } }">Inicia sesión para reportar esta oferta</RouterLink></div>
     </article>
   </component><SiteFooter v-if="!isCandidateWorkspace" />
+  <ReportDialog v-if="showReportDialog && oob" target-type="JOB" :target-id="oob.id" @close="showReportDialog = false" @submitted="showReportDialog = false; notify('Reporte enviado', 'El equipo de Jinowork revisará la oferta.')" />
   </component>
 </template>
 
@@ -148,6 +152,7 @@ async function toggleSaved() {
 .oob-detail__apply-note p{margin:0;font-size:.7rem;line-height:1.45}
 .oob-detail__tracking{display:inline-flex;min-height:2.4rem;align-items:center;oustify-content:center;gap:.35rem;color:var(--primary);font-size:.76rem;font-weight:800;text-align:center}
 .oob-detail__tracking:hover{text-decoration:underline}
+.oob-detail__report{display:flex;justify-content:flex-end;padding:0 clamp(1rem,3vw,2rem) 1.25rem}.oob-detail__report button,.oob-detail__report a{border:0;background:transparent;color:var(--muted-foreground);font:inherit;font-size:.76rem;text-decoration:underline;cursor:pointer}.oob-detail__report button:hover,.oob-detail__report a:hover{color:var(--primary)}
 @media(min-width:1100px){.oob-detail__aside{position:sticky;top:6.5rem}}
 @media(max-width:760px){.oob-detail__layout{grid-template-columns:minmax(0,1fr)}.oob-detail__aside{grid-row:1}.oob-detail-page__main{padding:1.25rem .9rem 2.5rem}}
 @media(max-width:520px){.oob-detail__hero{padding:1rem;flex-direction:column}.oob-detail__identity{align-items:flex-start;gap:.7rem}.oob-detail__company-mark{width:2.7rem;height:2.7rem}.oob-detail__company-mark svg{width:19px}.oob-detail__layout{gap:1.2rem;padding:1rem}.oob-detail__summary,.oob-detail__apply-card{padding:.9rem}}

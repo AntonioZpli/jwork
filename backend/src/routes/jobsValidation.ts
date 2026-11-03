@@ -1,4 +1,42 @@
 export class JobValidationError extends Error {}
+
+export type PublicSalaryFilter = { min?: number; max?: number; currency?: 'NIO' | 'USD'; period?: typeof enums.salaryPeriod[number]; includeUnspecified: boolean }
+
+export function parsePublicSalaryFilter(query: Record<string, unknown>): PublicSalaryFilter {
+  const numeric = (key: 'salaryMin' | 'salaryMax') => {
+    const value = query[key]
+    if (value === undefined || value === '') return undefined
+    const parsed = typeof value === 'string' || typeof value === 'number' ? Number(value) : NaN
+    if (!Number.isFinite(parsed) || parsed < 0 || parsed > 999999999) throw new JobValidationError(`El filtro ${key} no es válido.`)
+    return parsed
+  }
+  const min = numeric('salaryMin')
+  const max = numeric('salaryMax')
+  if (min !== undefined && max !== undefined && min > max) throw new JobValidationError('El salario mínimo no puede superar el máximo.')
+  const hasRange = min !== undefined || max !== undefined
+  const currency = query.currency === undefined || query.currency === '' ? undefined : query.currency
+  const period = query.salaryPeriod === undefined || query.salaryPeriod === '' ? undefined : query.salaryPeriod
+  if (currency !== undefined && !enums.salaryCurrency.includes(currency as never)) throw new JobValidationError('La moneda del filtro salarial no es válida.')
+  if (period !== undefined && !enums.salaryPeriod.includes(period as never)) throw new JobValidationError('El período del filtro salarial no es válido.')
+  if (hasRange && (!currency || !period)) throw new JobValidationError('Selecciona moneda y período para filtrar por salario.')
+  const includeUnspecified = query.includeUnspecified === 'true' || query.includeUnspecified === true
+  return { min, max, currency: currency as PublicSalaryFilter['currency'], period: period as PublicSalaryFilter['period'], includeUnspecified }
+}
+
+export function buildPublicSalaryWhere(filter: PublicSalaryFilter): Record<string, unknown> | undefined {
+  const hasRange = filter.min !== undefined || filter.max !== undefined
+  if (!hasRange && !filter.includeUnspecified) return undefined
+  const range: Record<string, unknown>[] = []
+  if (hasRange) {
+    range.push({ salaryCurrency: filter.currency }, { salaryPeriod: filter.period })
+    if (filter.min !== undefined) range.push({ OR: [{ salaryMax: { gte: filter.min } }, { salaryMax: null, salaryMin: { gte: filter.min } }] })
+    if (filter.max !== undefined) range.push({ OR: [{ salaryMin: { lte: filter.max } }, { salaryMin: null, salaryMax: { lte: filter.max } }] })
+  }
+  const unspecified = { salaryMin: null, salaryMax: null }
+  if (hasRange && filter.includeUnspecified) return { OR: [{ AND: range }, unspecified] }
+  if (!hasRange) return unspecified
+  return { AND: range }
+}
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
 const enums = {

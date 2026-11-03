@@ -1,4 +1,6 @@
 import './assets/main.css'
+import './assets/admin/profile.css'
+import './assets/admin/retro.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'

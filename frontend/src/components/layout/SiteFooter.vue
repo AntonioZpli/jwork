@@ -9,7 +9,7 @@ import WaveTransition from '@/components/landing/WaveTransition.vue'
     <div class="site-footer__grid container">
       <!-- Brand column -->
       <div class="site-footer__brand">
-        <AppBrand variant="full" />
+        <AppBrand variant="full" tone="light" />
         <p class="site-footer__tagline">
           Conectamos talento y oportunidades en un solo lugar.
         </p>
@@ -112,6 +112,7 @@ import WaveTransition from '@/components/landing/WaveTransition.vue'
 .site-footer__brand {
   max-width: 26rem;
 }
+.site-footer__brand :deep(.brand-full__image) { height:2.25rem; }
 
 .site-footer__tagline {
   margin-top: 1rem;

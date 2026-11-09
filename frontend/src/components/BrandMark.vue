@@ -1,5 +1,8 @@
 <script setup lang="ts">
-const src = '/images/brand/isotipo.svg'
+import { computed } from 'vue'
+
+const props = withDefaults(defineProps<{ tone?: 'light' | 'dark' }>(), { tone: 'dark' })
+const src = computed(() => props.tone === 'light' ? '/images/brand/jinowork-icon-claro.svg' : '/images/brand/jinowork-icon.svg')
 </script>
 
 <template>

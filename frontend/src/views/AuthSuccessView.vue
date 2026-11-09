@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { CircleCheck } from '@lucide/vue'
+import AppBrand from '@/components/ui/AppBrand.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -25,7 +26,7 @@ async function signOut() {
   <main class="auth-success">
     <section class="auth-success__card" :aria-busy="checkingSession">
       <div class="auth-success__mark" aria-hidden="true"><CircleCheck :size="30" /></div>
-      <p class="auth-success__eyebrow">Jinowork</p>
+      <AppBrand class="auth-success__brand" variant="full" />
       <h1>{{ checkingSession ? 'Verificando tu sesión' : '¡Iniciaste sesión!' }}</h1>
       <p v-if="checkingSession" role="status">Un momento, estamos confirmando tu acceso.</p>
       <template v-else-if="authStore.user">
@@ -73,6 +74,8 @@ async function signOut() {
   font-size: 1.8rem;
   font-weight: 800;
 }
+.auth-success__brand { margin:0 auto .85rem; }
+.auth-success__brand :deep(.brand-full__image) { height:1.8rem; }
 
 .auth-success__eyebrow { margin: 0 0 0.5rem; color: var(--primary); font-size: 0.75rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; }
 .auth-success h1 { margin: 0 0 0.75rem; font-family: Manrope, sans-serif; font-size: clamp(1.7rem, 5vw, 2.25rem); }

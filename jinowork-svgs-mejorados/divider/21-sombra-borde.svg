@@ -1,4 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 1000" preserveAspectRatio="none" aria-hidden="true">
-<defs><filter id="sh" x="-50%" y="-10%" width="200%" height="120%"><feGaussianBlur stdDeviation="16"/></filter></defs>
-<path d="M0 0 H117 C112 60 100 120 95 180 C85 260 40 330 22 420 C12 470 14 520 20 580 C35 660 70 760 90 840 C100 900 112 950 118 1000 H0Z" transform="translate(10 0)" fill="#0B1F1A" fill-opacity=".30" filter="url(#sh)"/>
-</svg>

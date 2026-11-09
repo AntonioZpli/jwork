@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { LogOut, Search } from 'lucide-vue-next'
+import AppBrand from '@/components/ui/AppBrand.vue'
 import { useAuthStore } from '@/stores/auth'
 import WorkspaceNavigation from './WorkspaceNavigation.vue'
 import { companyLogoUrl, loadCandidatePhoto, profilesApi } from '@/services/profiles'
@@ -100,7 +101,7 @@ async function signOut() {
   <div class="workspace" :class="{ 'workspace--company': isCompany, 'workspace--candidate': !isCompany }">
     <div class="workspace__content">
       <header v-if="isCompany" class="company-topbar">
-        <RouterLink class="company-topbar__brand" to="/company" aria-label="Jinowork, panel de empresa">jinowork</RouterLink>
+        <RouterLink class="company-topbar__brand" to="/company" aria-label="Jinowork, panel de empresa"><AppBrand variant="full" /></RouterLink>
         <form class="company-topbar__search" role="search" @submit.prevent="searchCompanyJobs"><Search :size="18" aria-hidden="true" /><input v-model="companySearch" type="search" aria-label="Buscar en mis ofertas" placeholder="Buscar ofertas…"></form>
         <Teleport to="body" :disabled="!isCompactViewport">
           <WorkspaceNavigation role="COMPANY" />
@@ -112,7 +113,7 @@ async function signOut() {
         </div>
       </header>
       <header v-else class="candidate-topbar">
-        <RouterLink class="candidate-topbar__brand" to="/candidate" aria-label="Jinowork, inicio">jinowork</RouterLink>
+        <RouterLink class="candidate-topbar__brand" to="/candidate" aria-label="Jinowork, inicio"><AppBrand variant="full" /></RouterLink>
         <form class="candidate-topbar__search" role="search" @submit.prevent="searchJobs"><Search :size="18" aria-hidden="true" /><input v-model="candidateSearch" type="search" aria-label="Buscar empleos o empresas" placeholder="Buscar empleos, empresas…"></form>
         <Teleport to="body" :disabled="!isCompactViewport">
           <WorkspaceNavigation role="CANDIDATE" />
@@ -331,6 +332,7 @@ async function signOut() {
 @media(max-width:1024px){.workspace.workspace--company>.workspace__content{padding-top:4.1rem;padding-bottom:calc(5.15rem + env(safe-area-inset-bottom,0px))}.company-topbar{display:grid;min-height:4.1rem;grid-template-columns:minmax(0,1fr) auto;gap:.55rem 1rem;padding:.55rem 1rem}.company-topbar__brand{grid-column:1;grid-row:1}.company-topbar__search{display:none}.company-topbar__actions{grid-column:2;grid-row:1}}
 @media(max-width:480px){.company-topbar{padding-inline:.75rem}.company-topbar .workspace-nav--company .workspace-nav__link{min-height:2.35rem;padding-inline:.5rem;font-size:.7rem}.company-topbar__actions{gap:.35rem}.company-topbar__avatar{width:2.5rem;height:2.5rem}}
 .candidate-topbar__avatar,.company-topbar__avatar{aspect-ratio:1;border-radius:50%!important}
+.candidate-topbar__brand .brand-full__image,.company-topbar__brand .brand-full__image{height:1.8rem}
 </style>
 
 <style>

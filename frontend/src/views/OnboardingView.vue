@@ -17,7 +17,7 @@ const {
   <main class="onboarding-page">
     <div class="onboarding-glow onboarding-glow--one" aria-hidden="true" />
     <div class="onboarding-glow onboarding-glow--two" aria-hidden="true" />
-    <a class="onboarding-brand" href="/" aria-label="Jinowork, ir al inicio"><span class="onboarding-brand__mark">J</span><span>jinowork</span></a>
+    <a class="onboarding-brand" href="/" aria-label="Jinowork, ir al inicio"><img class="onboarding-brand__logo" src="/images/brand/jinowork-logo.svg" alt="Jinowork"></a>
 
     <section v-if="loading" class="onboarding-loading" role="status" aria-live="polite">
       <span class="onboarding-loading__spinner" aria-hidden="true" /><p>Preparando tu perfil...</p>
@@ -277,6 +277,7 @@ const {
   background: linear-gradient(145deg, #35615a, #2f5d50);
   box-shadow: 0 5px 14px rgb(20 48 42 / 20%);
 }
+.onboarding-brand__logo { display:block; width:auto; height:2rem; max-width:min(10rem,100%); object-fit:contain; }
 
 .onboarding-workspace {
   border-color: rgb(20 48 42 / 11%);

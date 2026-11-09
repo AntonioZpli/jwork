@@ -15,8 +15,10 @@ export const FINAL_CTA_IMAGE = '/images/landing/final_call.png'
 /** Login background image: replace this file independently from the landing images */
 export const AUTH_BACKGROUND_IMAGE = '/images/landing/auth-background.webp'
 
-/** Isotipo (compact mark) — swap file at this path when the brand asset is ready */
-export const ISOTIPO_SRC = '/images/brand/isotipo.svg'
+/** Brand kit icon (compact mark) */
+export const ISOTIPO_SRC = '/images/brand/jinowork-icon.svg'
 
-/** Full logo (wordmark + mark) — swap file at this path when the brand asset is ready */
-export const LOGO_SRC = '/images/brand/logo.svg'
+/** Brand kit horizontal wordmark */
+export const LOGO_SRC = '/images/brand/jinowork-logo.svg'
+export const LOGO_LIGHT_SRC = '/images/brand/jinowork-logo-claro.svg'
+export const ISOTIPO_LIGHT_SRC = '/images/brand/jinowork-icon-claro.svg'

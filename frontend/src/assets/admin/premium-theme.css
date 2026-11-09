@@ -24,6 +24,8 @@
   color: #fffdfb;
 }
 .control-shell:not(.is-retro) .control-brand { color: #fffdfb; }
+.control-shell:not(.is-retro) .control-brand__logo { width:8.5rem; height:auto; margin:0; object-fit:contain; }
+.control-shell.is-retro .control-brand__logo { width:8.5rem; height:auto; margin:0; object-fit:contain; }
 .control-shell:not(.is-retro) .control-brand > span > span { color: #ef9b82; }
 .control-shell:not(.is-retro) .control-brand small { color: rgb(255 253 251 / 58%); }
 .control-shell:not(.is-retro) .nav-group { color: rgb(255 253 251 / 55%); }

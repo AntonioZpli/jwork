@@ -155,11 +155,6 @@
   color: #1b3a33;
 }
 
-.workspace.workspace--company .company-topbar__brand::after {
-  color: #e08c74;
-  content: '.';
-}
-
 .workspace.workspace--company .company-topbar__search,
 .workspace.workspace--candidate .candidate-topbar__search {
   border-color: #f0dacf;

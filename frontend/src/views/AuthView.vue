@@ -47,6 +47,7 @@ onBeforeUnmount(() => {
     <header class="auth-mobile-header">
       <a href="/" class="auth-mobile-brand" aria-label="Jinowork — volver al inicio">
         <ArrowLeft :size="16" aria-hidden="true" />
+        <img src="/images/brand/jinowork-icon.svg" alt="" aria-hidden="true" class="auth-mobile-brand__icon">
         <span class="auth-mobile-brand__name">Volver a Jinowork</span>
       </a>
     </header>
@@ -102,6 +103,7 @@ onBeforeUnmount(() => {
   gap: 0.6rem;
   text-decoration: none;
 }
+.auth-mobile-brand__icon { display:block; width:1.5rem; height:1.5rem; object-fit:contain; }
 
 .auth-mobile-brand__name {
   font-family: 'Manrope', sans-serif;

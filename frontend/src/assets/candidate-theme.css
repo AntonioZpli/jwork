@@ -68,11 +68,6 @@
   color: var(--palette-ink) !important;
 }
 
-.workspace--candidate .candidate-topbar__brand::after {
-  color: #e08c74;
-  content: '.';
-}
-
 .workspace--candidate .candidate-topbar__search {
   border-color: var(--border) !important;
   background: #f7ede6 !important;

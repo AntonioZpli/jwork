@@ -107,6 +107,7 @@ const navItems = [
   text-decoration: none;
   flex-shrink: 0;
 }
+.site-nav__brand :deep(.brand-full__image) { height:1.9rem; }
 
 /* Desktop nav links */
 .site-nav__links {

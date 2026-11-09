@@ -445,7 +445,7 @@ onUnmounted(() => { if (retroClockTimer) clearInterval(retroClockTimer) })
 <template>
   <div class="control-shell" :class="[`is-${density}`, { 'is-retro': retroTheme && canUseRetroTheme }]">
     <aside class="control-sidebar">
-      <a class="control-brand" href="/" aria-label="Jinowork"><img src="/images/brand/isotipo.svg" alt=""><span>Jino<span>work</span><small>CONTROL</small></span></a>
+      <a class="control-brand" href="/" aria-label="Jinowork"><img class="control-brand__logo" :src="retroTheme && canUseRetroTheme ? '/images/brand/jinowork-logo.svg' : '/images/brand/jinowork-logo-claro.svg'" alt="Jinowork"><small>CONTROL</small></a>
       <nav class="control-nav" aria-label="Navegación de administración">
         <template v-for="group in [...new Set(sections.map(item => item.group))]" :key="group">
           <p class="nav-group">{{ group }}</p>

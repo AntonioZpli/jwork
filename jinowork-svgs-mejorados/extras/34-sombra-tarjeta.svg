@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 900" preserveAspectRatio="none" aria-hidden="true">
-<defs><filter id="bl" x="-20%" y="-10%" width="140%" height="130%"><feGaussianBlur stdDeviation="28"/></filter></defs>
-<rect x="60" y="80" width="520" height="740" rx="28" fill="#1B3A33" fill-opacity=".10" filter="url(#bl)" transform="translate(0 26)"/>
-<rect x="60" y="80" width="520" height="740" rx="28" fill="#fff" fill-opacity=".55"/>
-</svg>

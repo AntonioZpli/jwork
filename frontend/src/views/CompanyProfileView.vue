@@ -303,4 +303,12 @@ async function removeLogo() {
 .workspace.workspace--company .company-profile-aside__action strong{font-size:.8rem;color:#1b3a33}
 .workspace.workspace--company .company-profile-aside__action small{font-size:.72rem}
 .workspace.workspace--company .company-profile-aside__action>span:last-child{display:grid;width:1.8rem;height:1.8rem;place-items:center;border-radius:50%;background:#e7efe9;color:#2f5f52}
+/* La navegación móvil ocupa el borde inferior; deja el guardado encima de ella. */
+@media(max-width:1024px){
+  .workspace.workspace--company .company-profile-layout{padding-bottom:8.5rem}
+  .workspace.workspace--company .company-profile .profile-save-button{z-index:1111!important;bottom:calc(4.15rem + env(safe-area-inset-bottom,0px) + .85rem)!important}
+}
+@media(max-width:600px){
+  .workspace.workspace--company .company-profile .profile-save-button{right:1rem!important;left:1rem!important;width:calc(100% - 2rem)!important}
+}
 </style>

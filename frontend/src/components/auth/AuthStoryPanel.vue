@@ -6,7 +6,7 @@ import { ArrowLeft } from '@lucide/vue'
 <template>
   <aside class="story-panel">
     <div class="story-panel__brand">
-      <AppBrand variant="full" />
+      <AppBrand variant="full" tone="light" />
     </div>
 
     <span class="story-panel__base" aria-hidden="true" />
@@ -78,6 +78,7 @@ import { ArrowLeft } from '@lucide/vue'
   padding: clamp(2rem, 5vh, 3.5rem) clamp(2rem, 7vw, 7rem) 0;
   flex-shrink: 0;
 }
+.story-panel__brand :deep(.brand-full__image) { height:2.35rem; }
 
 .story-panel__brand-name {
   color: var(--foreground);

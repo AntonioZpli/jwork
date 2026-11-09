@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <title>Jinowork</title>
-  <rect width="100" height="100" rx="22" fill="#16302B"/>
-  <g transform="translate(50 50) rotate(30) scale(.74) translate(0 -15)">
-    <rect x="-14" y="-48" width="28" height="11" rx="5.5" fill="#F7EDE6"/>
-    <rect x="-4.5" y="-40" width="9" height="60" rx="2" fill="#F7EDE6"/>
-    <path d="M-19 18 L19 18 L19 42 Q19 66 0 78 Q-19 66 -19 42 Z" fill="#D8695A"/>
-  </g>
-</svg>

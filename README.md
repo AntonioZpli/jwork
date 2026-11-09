@@ -758,7 +758,7 @@ una plataforma común.
 
 Desarrollado por [**Antonio**](https://github.com/AntonioZpli), **Ethan** y **Diego**.
 
-![equipo](https://i.pinimg.com/1200x/11/c8/12/11c812167a87e162a2b7e702b703eeaa.jpg)
+![equipo](https://i.pinimg.com/1200x/86/be/9a/86be9aef2ec6bb050c50f086dcbd55aa.jpg)
 
 ---
 

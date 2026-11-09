@@ -1,0 +1,635 @@
+/* Lenguaje visual compartido para todas las vistas del postulante. */
+.workspace--candidate {
+  --palette-ink: #1b3a33;
+  --palette-violet: #b5483a;
+  --palette-blue: #8fb0a8;
+  --palette-ice: #f4d9d0;
+  --palette-platinum: #5f6f6b;
+  --background: #fcf8f5;
+  --surface: #fffdfb;
+  --foreground: #16302b;
+  --primary: #2f5f52;
+  --secondary: #e9f0ec;
+  --muted-foreground: #5f6f6b;
+  --border: #e3cfc1;
+  --panel: #f7ede6;
+  --surface-strong: #f7ede6;
+  --accent-strong: #f4d9d0;
+  --shadow: rgb(27 58 51 / 9%);
+  background-color: var(--background) !important;
+  background-image:
+    radial-gradient(ellipse at 92% 0%, rgb(244 217 208 / 44%), transparent 27%),
+    url('/assets/jinowork-svgs-mejorados/right/13-orbitas-claras.svg');
+  background-repeat: no-repeat;
+  background-position: top right, right 1.5rem top 5rem;
+  background-size: auto, min(36vw, 540px) auto;
+  color: var(--foreground) !important;
+}
+
+.workspace.workspace--candidate {
+  background-color: var(--background) !important;
+  background-image:
+    radial-gradient(ellipse at 92% 0%, rgb(244 217 208 / 44%), transparent 27%),
+    url('/assets/jinowork-svgs-mejorados/right/13-orbitas-claras.svg') !important;
+  background-repeat: no-repeat;
+  background-position: top right, right 1.5rem top 5rem;
+  background-size: auto, min(36vw, 540px) auto;
+}
+
+.workspace-nav.workspace-nav--candidate {
+  --palette-ink: #1b3a33;
+  --palette-violet: #b5483a;
+  --palette-blue: #8fb0a8;
+  --palette-ice: #f4d9d0;
+  --background: #fcf8f5;
+  --surface: #fffdfb;
+  --foreground: #16302b;
+  --primary: #2f5f52;
+  --secondary: #e9f0ec;
+  --muted-foreground: #5f6f6b;
+  --border: #e3cfc1;
+}
+
+.workspace-nav.workspace-nav--candidate .workspace-nav__link {
+  color: var(--muted-foreground) !important;
+}
+
+.workspace-nav.workspace-nav--candidate .workspace-nav__link--active {
+  color: var(--primary) !important;
+}
+
+.workspace--candidate .candidate-topbar {
+  border-color: var(--border) !important;
+  background: color-mix(in srgb, var(--surface) 94%, transparent) !important;
+  box-shadow: 0 5px 22px rgb(27 58 51 / 4%);
+}
+
+.workspace--candidate .candidate-topbar__brand {
+  color: var(--palette-ink) !important;
+}
+
+.workspace--candidate .candidate-topbar__brand::after {
+  color: #e08c74;
+  content: '.';
+}
+
+.workspace--candidate .candidate-topbar__search {
+  border-color: var(--border) !important;
+  background: #f7ede6 !important;
+  color: var(--muted-foreground) !important;
+}
+
+.workspace--candidate .candidate-topbar__search:focus-within {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgb(47 95 82 / 12%) !important;
+}
+
+.workspace--candidate .candidate-topbar__search input::placeholder,
+.workspace--candidate .candidate-topbar__logout {
+  color: var(--muted-foreground) !important;
+}
+
+.workspace--candidate .candidate-topbar__avatar {
+  background: linear-gradient(145deg, #3e7f69, #1b3a33) !important;
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 3px var(--border);
+}
+
+.workspace--candidate .candidate-profile-hero__initials {
+  background: linear-gradient(145deg, #3e7f69, #1b3a33) !important;
+}
+
+.workspace--candidate .workspace__main {
+  background-image: url('/assets/jinowork-svgs-mejorados/right/10-contornos-claros.svg');
+  background-position: right 1.5rem top 0;
+  background-repeat: no-repeat;
+  background-size: min(44vw, 620px) auto;
+}
+
+.workspace--candidate .workspace__eyebrow {
+  color: #b5483a !important;
+}
+
+.workspace--candidate .workspace__heading h1,
+.workspace--candidate .workspace__section h2 {
+  color: var(--foreground);
+}
+
+.workspace--candidate .workspace__footer {
+  border-color: var(--border) !important;
+  background: url('/assets/jinowork-svgs-mejorados/left/03-ondas-oscuras.svg') center bottom / 100% 88px no-repeat;
+  color: var(--muted-foreground) !important;
+}
+
+/* Iconos visibles en la navegación de escritorio y estados activos en verde. */
+.workspace--candidate .workspace-nav--candidate .workspace-nav__link {
+  gap: .42rem !important;
+  border-color: transparent !important;
+  color: var(--muted-foreground) !important;
+}
+
+.workspace--candidate .workspace-nav--candidate .workspace-nav__link svg {
+  display: block !important;
+  flex: none;
+  color: currentColor;
+}
+
+.workspace--candidate .workspace-nav--candidate .workspace-nav__link:hover {
+  background: #f7ede6 !important;
+  color: var(--palette-ink) !important;
+}
+
+.workspace--candidate .workspace-nav--candidate .workspace-nav__link--active {
+  border-color: #d5e3dc !important;
+  background: #e9f0ec !important;
+  color: var(--primary) !important;
+}
+
+.workspace--candidate .workspace-nav--candidate .workspace-nav__link::after {
+  background: var(--primary) !important;
+}
+
+.workspace--candidate .workspace__card,
+.workspace--candidate .workspace__section,
+.workspace--candidate .candidate-application,
+.workspace--candidate .candidate-saved,
+.workspace--candidate .candidate-preview,
+.workspace--candidate .profile-content {
+  border-color: var(--border) !important;
+  background-color: var(--surface) !important;
+  box-shadow: 0 14px 34px rgb(27 58 51 / 7%) !important;
+}
+
+.workspace--candidate .workspace__cta,
+.workspace--candidate .candidate-dashboard__primary-action {
+  border-color: transparent !important;
+  background: linear-gradient(120deg, #2f5f52, #3e7f69) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 20px rgb(47 95 82 / 20%) !important;
+}
+
+.workspace--candidate .workspace__cta:hover,
+.workspace--candidate .candidate-dashboard__primary-action:hover {
+  background: linear-gradient(120deg, #234b40, #356b59) !important;
+}
+
+.workspace--candidate .workspace__pill {
+  border-color: rgb(47 95 82 / 18%) !important;
+  background: #e9f0ec !important;
+  color: var(--primary) !important;
+}
+
+.workspace--candidate .candidate-dashboard__actions a {
+  border-color: var(--border) !important;
+  background: var(--surface) !important;
+  color: var(--foreground) !important;
+}
+
+.workspace--candidate .candidate-dashboard__actions a:hover {
+  border-color: var(--primary) !important;
+  background: #e9f0ec !important;
+  color: var(--primary) !important;
+}
+
+.workspace--candidate .candidate-stat {
+  border-top: 3px solid #8fb0a8 !important;
+  background: linear-gradient(145deg, #fffdfb, #f7ede6) !important;
+}
+
+.workspace--candidate .candidate-stat__icon {
+  display: grid;
+  width: 2.4rem;
+  height: 2.4rem;
+  place-items: center;
+  background: #e9f0ec !important;
+  color: var(--primary) !important;
+}
+
+.workspace--candidate .candidate-stat--area,
+.workspace--candidate .candidate-dashboard__profile {
+  border: 0 !important;
+  background-color: #1b3a33 !important;
+  background-image:
+    linear-gradient(135deg, rgb(27 58 51 / 92%), rgb(47 95 82 / 90%)),
+    url('/assets/jinowork-svgs-mejorados/left/03-ondas-oscuras.svg'),
+    url('/assets/jinowork-svgs-mejorados/left/01-contornos-oscuros.svg') !important;
+  background-position: center, center bottom, center !important;
+  background-size: cover, cover, cover !important;
+  color: #fcf8f5 !important;
+}
+
+.workspace--candidate .candidate-stat--area .workspace__stat-label,
+.workspace--candidate .candidate-stat--area .candidate-stat__meta,
+.workspace--candidate .candidate-dashboard__profile .candidate-dashboard__kicker,
+.workspace--candidate .candidate-dashboard__profile p {
+  color: rgb(252 248 245 / 78%) !important;
+}
+
+.workspace--candidate .candidate-dashboard__profile h2 {
+  color: #fcf8f5 !important;
+}
+
+.workspace--candidate .candidate-dashboard__profile::after,
+.workspace--candidate .candidate-profile-hero::after,
+.workspace--candidate .candidate-profile-aside__journey::after {
+  display: none !important;
+  content: none !important;
+}
+
+.workspace--candidate .candidate-dashboard__profile-mark {
+  border: 1px solid rgb(252 248 245 / 28%);
+  background: rgb(252 248 245 / 10%);
+}
+
+.workspace--candidate .candidate-dashboard__profile-meta span {
+  border-color: rgb(252 248 245 / 25%);
+  background: rgb(252 248 245 / 8%);
+}
+
+.workspace--candidate .candidate-dashboard__profile-link {
+  color: #fff !important;
+}
+
+.workspace--candidate .candidate-dashboard__section-head > a,
+.workspace--candidate .candidate-stat a,
+.workspace--candidate .candidate-oob-row__open,
+.workspace--candidate .candidate-dashboard__empty a {
+  color: var(--primary) !important;
+}
+
+.workspace--candidate .candidate-oob-row__mark,
+.workspace--candidate .candidate-saved__oob-mark {
+  box-shadow: 0 0 0 3px #f7ede6;
+}
+
+.workspace--candidate .candidate-application {
+  position: relative;
+  overflow: hidden;
+  background-image: url('/assets/jinowork-svgs-mejorados/right/13-orbitas-claras.svg') !important;
+  background-position: right top;
+  background-repeat: no-repeat;
+  background-size: min(32%, 300px) auto;
+}
+
+.workspace--candidate .candidate-application__company-mark {
+  background: linear-gradient(145deg, #3e7f69, #1b3a33) !important;
+}
+
+.workspace--candidate .candidate-application__location,
+.workspace--candidate .candidate-application__process li.is-done,
+.workspace--candidate .candidate-application__process li.is-current {
+  color: var(--primary) !important;
+}
+
+.workspace--candidate .candidate-application .candidate-application__process::before {
+  background: #d9e6df !important;
+}
+
+.workspace--candidate .candidate-application .candidate-application__step-circle {
+  border-color: #c5d9cf !important;
+  background: #fffdfb !important;
+  color: #65746e !important;
+  box-shadow: 0 0 0 4px #fffdfb !important;
+}
+
+.workspace--candidate .candidate-application .candidate-application__step-circle svg {
+  stroke: #fff !important;
+}
+
+.workspace--candidate .candidate-application .candidate-application__process li.is-done .candidate-application__step-circle,
+.workspace--candidate .candidate-application .candidate-application__process li.is-current .candidate-application__step-circle {
+  border-color: var(--primary) !important;
+  background: var(--primary) !important;
+  color: #fff !important;
+}
+
+.workspace--candidate .candidate-application--selected .candidate-application__process li.is-current .candidate-application__step-circle {
+  border-color: #3e7f69 !important;
+  background: #3e7f69 !important;
+}
+
+.workspace--candidate .candidate-application--rejected .candidate-application__process li.is-current,
+.workspace--candidate .candidate-application__actions button {
+  color: #b5483a !important;
+}
+
+.workspace--candidate .candidate-application--rejected .candidate-application__process li.is-current .candidate-application__step-circle {
+  border-color: #b5483a !important;
+  background: #b5483a !important;
+}
+
+.workspace--candidate .candidate-application__footer {
+  border-color: var(--border) !important;
+}
+
+.workspace--candidate .candidate-application__actions a,
+.workspace--candidate .candidate-saved__actions > a {
+  border-color: var(--primary) !important;
+  background: var(--primary) !important;
+  color: #fff !important;
+}
+
+.workspace--candidate .candidate-application__actions a:hover,
+.workspace--candidate .candidate-saved__actions > a:hover {
+  background: #234b40 !important;
+}
+
+.workspace--candidate .candidate-saved__overview {
+  background: transparent !important;
+}
+
+.workspace--candidate .candidate-saved__details span {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+}
+
+.workspace--candidate .candidate-saved__details span svg,
+.workspace--candidate .candidate-saved__date svg {
+  flex: none;
+  color: var(--primary);
+}
+
+.workspace--candidate .candidate-saved__date {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+}
+
+.workspace--candidate .candidate-saved__actions .saved-oob__remove {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  color: var(--muted-foreground) !important;
+}
+
+.workspace--candidate .candidate-saved__actions .saved-oob__remove:hover {
+  color: #b5483a !important;
+}
+
+.workspace--candidate .candidate-saved__filters input,
+.workspace--candidate .candidate-saved__filters select,
+.workspace--candidate .profile-content input:not([type='file']),
+.workspace--candidate .profile-content select,
+.workspace--candidate .profile-content textarea,
+.workspace--candidate .profile-date-fields input,
+.workspace--candidate .profile-date-fields select {
+  border-color: var(--border) !important;
+  background-color: #fffdfb !important;
+  color: var(--foreground) !important;
+}
+
+.workspace--candidate .candidate-saved__filters input:focus,
+.workspace--candidate .candidate-saved__filters select:focus,
+.workspace--candidate .profile-content input:focus,
+.workspace--candidate .profile-content select:focus,
+.workspace--candidate .profile-content textarea:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgb(47 95 82 / 12%) !important;
+  outline: 0;
+}
+
+.workspace--candidate .profile-content {
+  background-image: url('/assets/jinowork-svgs-mejorados/right/10-contornos-claros.svg') !important;
+  background-position: right top;
+  background-repeat: no-repeat;
+  background-size: min(40%, 440px) auto;
+}
+
+.workspace--candidate .profile-content .profile-section h2 svg,
+.workspace--candidate .profile-entry-card__icon,
+.workspace--candidate .candidate-profile-aside__preview-icon,
+.workspace--candidate .candidate-profile-aside__jobs-icon {
+  color: var(--primary) !important;
+}
+
+.workspace--candidate .profile-entry-card__icon,
+.workspace--candidate .candidate-profile-aside__preview-icon {
+  border-color: var(--border) !important;
+  background: #e9f0ec !important;
+}
+
+.workspace.workspace--candidate .candidate-profile-aside__score,
+.workspace.workspace--candidate .candidate-profile-aside__journey {
+  border-color: rgb(255 255 255 / 14%) !important;
+  background-color: #1b3a33 !important;
+  background-image:
+    linear-gradient(145deg, rgb(27 58 51 / 90%), rgb(47 95 82 / 92%)),
+    url('/assets/jinowork-svgs-mejorados/left/03-ondas-oscuras.svg'),
+    url('/assets/jinowork-svgs-mejorados/left/05-orbitas-oscuras.svg') !important;
+  background-position: center, center bottom, center !important;
+  background-size: cover, cover, cover !important;
+  color: #fcf8f5 !important;
+}
+
+.workspace--candidate .candidate-profile-aside__ring {
+  background:
+    radial-gradient(closest-side, #1b3a33 79%, transparent 81% 99%),
+    conic-gradient(#e08c74 var(--completion), rgb(255 255 255 / 20%) 0) !important;
+}
+
+.workspace--candidate .candidate-profile-aside__progress > span {
+  background: linear-gradient(90deg, #e08c74, #f4d9d0) !important;
+}
+
+.workspace--candidate .candidate-profile-aside__score-head svg {
+  color: #e8b7a8 !important;
+}
+
+.workspace--candidate .candidate-profile-aside__score .workspace__cta {
+  background: #fcf8f5 !important;
+  color: #1b3a33 !important;
+}
+
+.workspace--candidate .candidate-profile-aside__next,
+.workspace--candidate .candidate-profile-aside__preview {
+  border: 1px solid var(--border) !important;
+  background: #fffdfb !important;
+  color: var(--foreground) !important;
+}
+
+.workspace--candidate .candidate-profile-aside__preview strong,
+.workspace--candidate .candidate-profile-aside__next strong {
+  color: var(--foreground) !important;
+}
+
+.workspace--candidate .candidate-profile-aside__preview small,
+.workspace--candidate .candidate-profile-aside__next small {
+  color: var(--muted-foreground) !important;
+}
+
+.workspace--candidate .candidate-profile-aside__jobs {
+  background: linear-gradient(120deg, #2f5f52, #3e7f69) !important;
+}
+
+.workspace--candidate .candidate-profile-aside__jobs strong,
+.workspace--candidate .candidate-profile-aside__jobs small,
+.workspace--candidate .candidate-profile-aside__jobs > svg {
+  color: #fff !important;
+}
+
+.workspace.workspace--candidate .candidate-profile-hero {
+  background-color: #1b3a33 !important;
+  background-image:
+    linear-gradient(110deg, rgb(27 58 51 / 94%), rgb(47 95 82 / 88%)),
+    url('/assets/jinowork-svgs-mejorados/left/03-ondas-oscuras.svg'),
+    url('/assets/jinowork-svgs-mejorados/left/01-contornos-oscuros.svg') !important;
+  background-position: center, center bottom, center !important;
+  background-size: cover, cover, cover !important;
+}
+
+.workspace--candidate .candidate-preview__identity {
+  background-image: url('/assets/jinowork-svgs-mejorados/right/13-orbitas-claras.svg');
+  background-position: right center;
+  background-repeat: no-repeat;
+  background-size: min(40%, 360px) auto;
+}
+
+.workspace--candidate .candidate-preview__aside {
+  border-color: var(--border) !important;
+  background-color: #f7ede6 !important;
+  background-image: url('/assets/jinowork-svgs-mejorados/right/10-contornos-claros.svg');
+  background-position: right bottom;
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+}
+
+.workspace--candidate .candidate-preview__download {
+  background: linear-gradient(120deg, #2f5f52, #3e7f69) !important;
+}
+
+.workspace--candidate .candidate-preview__download:hover {
+  background: #234b40 !important;
+}
+
+.workspace--candidate .candidate-preview__languages li {
+  border-color: var(--border) !important;
+  border-left-color: #8fb0a8 !important;
+  background: #fffdfb !important;
+}
+
+.workspace--candidate .candidate-preview__languages li .candidate-preview__language-level {
+  background: #e9f0ec !important;
+  color: var(--primary) !important;
+}
+
+.workspace--candidate .candidate-preview__language-summary,
+.workspace--candidate .candidate-preview__identity-copy > p {
+  color: var(--primary) !important;
+}
+
+.workspace--candidate .candidate-preview__section::before {
+  background-color: var(--primary) !important;
+}
+
+.workspace--candidate .candidate-preview__contact-link > svg,
+.workspace--candidate .candidate-preview__privacy > div svg {
+  color: var(--primary) !important;
+}
+
+.workspace--candidate .candidate-preview__contact-link--whatsapp > svg {
+  color: #3e7f69 !important;
+}
+
+.workspace--candidate .profile-preview-actions__preview {
+  border-color: var(--border) !important;
+  background: #fffdfb !important;
+  color: var(--primary) !important;
+}
+
+.workspace--candidate :is(.workspace__error, .app-message--error, .app-notice--error) {
+  border-color: rgb(181 72 58 / 30%);
+  background: #fbefeb;
+  color: #7d342b;
+}
+
+@media (max-width: 1024px) {
+  .workspace-nav.workspace-nav--candidate {
+    position: fixed !important;
+    z-index: 1100 !important;
+    border-color: var(--border) !important;
+    background: #fcf8f5 !important;
+    box-shadow: 0 -10px 28px rgb(22 48 43 / 12%) !important;
+    backdrop-filter: blur(16px) !important;
+  }
+
+  .workspace-nav.workspace-nav--candidate .workspace-nav__link--active {
+    color: var(--primary) !important;
+  }
+
+  .workspace--candidate .workspace-nav.workspace-nav--candidate {
+    position: fixed !important;
+    z-index: 1100 !important;
+    border-color: var(--border) !important;
+    background: #fcf8f5 !important;
+    box-shadow: 0 -10px 28px rgb(22 48 43 / 12%) !important;
+    backdrop-filter: blur(16px) !important;
+  }
+
+  .workspace--candidate .workspace-nav.workspace-nav--candidate .workspace-nav__link--active {
+    color: var(--primary) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .workspace--candidate {
+    background-size: auto, 0 0;
+  }
+
+  .workspace--candidate .workspace__main {
+    background-size: 0 0;
+  }
+
+  .workspace--candidate .candidate-application {
+    background-size: 0 0;
+  }
+
+  .workspace--candidate .candidate-preview__aside {
+    background-size: 0 0;
+  }
+}
+
+/* El recorrido del postulante usa verde y terracota también en sus estados. */
+.workspace--candidate .candidate-application__process::before,
+.workspace--candidate .candidate-application__process:before {
+  background-color: #d9e6df !important;
+}
+
+.workspace--candidate .candidate-application__process li.is-done,
+.workspace--candidate .candidate-application__process li.is-current {
+  color: #2f5f52 !important;
+}
+
+.workspace--candidate .candidate-application__process li.is-done .candidate-application__step-circle,
+.workspace--candidate .candidate-application__process li.is-current .candidate-application__step-circle {
+  border-color: #2f5f52 !important;
+  background: #2f5f52 !important;
+  box-shadow: 0 0 0 4px #fffdfb !important;
+}
+
+.workspace--candidate .candidate-application--selected .candidate-application__process::before {
+  background: linear-gradient(90deg, #2f5f52 0 74%, #19805a 76% 100%) !important;
+}
+
+.workspace--candidate .candidate-application--selected .candidate-application__process li.is-current .candidate-application__step-circle {
+  border-color: #19805a !important;
+  background: #19805a !important;
+}
+
+.workspace--candidate .candidate-application--rejected .candidate-application__process::before {
+  background: linear-gradient(90deg, #2f5f52 0 74%, #b5483a 76% 100%) !important;
+}
+
+.workspace--candidate .candidate-application--rejected .candidate-application__process li.is-current .candidate-application__step-circle {
+  border-color: #b5483a !important;
+  background: #b5483a !important;
+}
+
+.workspace--candidate .candidate-profile-aside__percent {
+  background: rgb(255 255 255 / 14%) !important;
+  color: #fff !important;
+}
+
+.workspace--candidate .candidate-profile-aside__preview-icon {
+  background: #e9f0ec !important;
+  color: #2f5f52 !important;
+}

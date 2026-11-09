@@ -22,7 +22,7 @@ const isCandidateWorkspace = computed(() => auth.user?.role === 'CANDIDATE')
 const workspaceProps = computed(() => ({
   eyebrow: 'Perfil público de empresa',
   title: company.value?.name ?? 'Perfil de empresa',
-  subtitle: 'Conoce la empresa y revisa sus vacantes publicadas.',
+  subtitle: 'Conoce la empresa y revisa sus ofertas publicadas.',
   initials: auth.user?.email?.slice(0, 2).toUpperCase() ?? 'JW',
 }))
 
@@ -38,7 +38,7 @@ onMounted(async () => {
   <component :is="isCandidateWorkspace ? WorkspaceFrame : 'div'" :class="isCandidateWorkspace ? 'public-company-workspace' : 'public-company-page'" v-bind="isCandidateWorkspace ? workspaceProps : {}">
     <SiteHeader v-if="!isCandidateWorkspace" />
     <component :is="isCandidateWorkspace ? 'div' : 'main'" class="public-company-page__main">
-      <RouterLink class="public-company-page__back" to="/jobs"><ArrowLeft :size="16" /> Volver a las vacantes</RouterLink>
+      <RouterLink class="public-company-page__back" to="/jobs"><ArrowLeft :size="16" /> Volver a las ofertas</RouterLink>
       <p v-if="loading" class="public-company-page__state" role="status">Cargando perfil de empresa…</p>
       <p v-else-if="error" class="public-company-page__state public-company-page__state--error" role="alert">{{ error }}</p>
       <CompanyPublicPresentation v-else-if="company" :profile="{ ...company, verificationStatus: 'VERIFIED' }" :jobs="company.jobs" />

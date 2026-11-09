@@ -39,12 +39,12 @@ async function undoStatus(application: AppRow) {
 <template>
   <WorkspaceFrame
     eyebrow="Selección de talento"
-    title="Postulantes de la vacante"
+    title="Postulantes de la oferta"
     subtitle="Revisa cada perfil y gestiona el avance de sus candidaturas."
     initials="JW"
   >
     <template #heading-action>
-      <RouterLink class="workspace__cta" to="/company/jobs">Mis vacantes</RouterLink>
+      <RouterLink class="workspace__cta" to="/company/jobs">Mis ofertas</RouterLink>
     </template>
 
     <p class="company-job-applicants__back"><RouterLink to="/company/applications">Ver todos los postulantes</RouterLink></p>
@@ -57,12 +57,12 @@ async function undoStatus(application: AppRow) {
 
       <AppEmptyState
         v-if="!rows.length && !loading"
-        :title="searchText ? 'No hay perfiles que coincidan' : 'Esta vacante aún no tiene postulantes'"
+        :title="searchText ? 'No hay perfiles que coincidan' : 'Esta oferta aún no tiene postulantes'"
         :description="searchText ? 'Prueba con otro nombre, área o especialidad.' : 'Cuando alguien se postule, aparecerá aquí su perfil y podrás gestionar su candidatura.'"
       >
         <template #actions>
           <button v-if="searchText" type="button" @click="clearFilters">Limpiar búsqueda</button>
-          <RouterLink v-else to="/company/jobs">Volver a mis vacantes</RouterLink>
+          <RouterLink v-else to="/company/jobs">Volver a mis ofertas</RouterLink>
         </template>
       </AppEmptyState>
 

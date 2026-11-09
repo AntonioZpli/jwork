@@ -20,12 +20,12 @@ const resultsSummary = computed(() => {
 <template>
   <WorkspaceFrame
     eyebrow="Talento"
-    :title="jobId ? 'Postulantes de la vacante' : 'Postulantes'"
-    :subtitle="jobId ? 'Perfiles que se postularon a esta vacante.' : 'Explora los perfiles que se han postulado a tus vacantes, su experiencia y formación.'"
+    :title="jobId ? 'Postulantes de la oferta' : 'Postulantes'"
+    :subtitle="jobId ? 'Perfiles que se postularon a esta oferta.' : 'Explora los perfiles que se han postulado a tus ofertas, su experiencia y formación.'"
     initials="JW"
   >
     <template #heading-action>
-      <RouterLink class="workspace__cta" to="/company/jobs">Mis vacantes</RouterLink>
+      <RouterLink class="workspace__cta" to="/company/jobs">Mis ofertas</RouterLink>
     </template>
 
     <p v-if="jobId" class="company-applicants__back"><RouterLink to="/company/applications">Ver todos los postulantes</RouterLink></p>
@@ -39,12 +39,12 @@ const resultsSummary = computed(() => {
 
       <AppEmptyState
         v-if="!rows.length && !loading"
-        :title="searchText ? 'No hay perfiles que coincidan' : (jobId ? 'Esta vacante aún no tiene postulantes' : 'Aún no tienes postulantes')"
-        :description="searchText ? 'Prueba con otro nombre, área o especialidad.' : (jobId ? 'Cuando alguien se postule a esta vacante, aparecerá aquí su perfil profesional.' : 'Cuando alguien se postule a una de tus vacantes, podrás consultar aquí su perfil profesional.')"
+        :title="searchText ? 'No hay perfiles que coincidan' : (jobId ? 'Esta oferta aún no tiene postulantes' : 'Aún no tienes postulantes')"
+        :description="searchText ? 'Prueba con otro nombre, área o especialidad.' : (jobId ? 'Cuando alguien se postule a esta oferta, aparecerá aquí su perfil profesional.' : 'Cuando alguien se postule a una de tus ofertas, podrás consultar aquí su perfil profesional.')"
       >
         <template #actions>
           <button v-if="searchText" type="button" @click="clearFilters">Limpiar búsqueda</button>
-          <RouterLink v-else to="/company/jobs">Revisar mis vacantes</RouterLink>
+          <RouterLink v-else to="/company/jobs">Revisar mis ofertas</RouterLink>
         </template>
       </AppEmptyState>
 

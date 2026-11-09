@@ -3,13 +3,12 @@ import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import type { PublicJob } from '@/services/jobs'
 import type { Job } from '@/types/job'
-import { MapPin, ArrowRight, Briefcase, FileText } from '@lucide/vue'
+import { MapPin, ArrowRight, Briefcase, FileText, CheckCircle2 } from '@lucide/vue'
 import { formatJobSalary } from '@/services/oobs'
 import { oobAreaStyle } from '@/utils/oobAreaStyle'
-import { profileAvatarStyle } from '@/utils/profileAvatar'
 import { vacancyInitials } from '@/utils/vacancyInitials'
 
-const props = defineProps<{ job: Job | PublicJob; example?: boolean }>()
+const props = defineProps<{ job: Job | PublicJob; example?: boolean; applied?: boolean }>()
 const emit = defineEmits<{ select: [id: string] }>()
 const oob = computed(() => props.job)
 const isPublicJob = computed(() => 'professionalArea' in props.job)
@@ -22,7 +21,7 @@ const contract = computed(() => isPublicJob.value ? ({ PERMANENT: 'Permanente', 
 const avatarClass = computed(() => isPublicJob.value ? '' : `avatar--${(props.job as Job).avatarVariant}`)
 const cardVariant = computed(() => isPublicJob.value ? 'public' : (props.job as Job).avatarVariant)
 const salary = computed(() => isPublicJob.value ? formatJobSalary(props.job as PublicJob) : (props.job as Job).salaryLabel ?? '')
-const companyMarkStyle = computed(() => profileAvatarStyle(companyName.value, category.value))
+const isVerifiedCompany = computed(() => isPublicJob.value && (props.job as PublicJob).company.verificationStatus === 'VERIFIED')
 </script>
 
 <template>
@@ -36,14 +35,14 @@ const companyMarkStyle = computed(() => profileAvatarStyle(companyName.value, ca
         <circle cx="161" cy="50" r="5" />
       </svg>
       <div class="oob-card__top">
-        <div :class="['avatar', 'oob-card__vacancy-mark', 'vacancy-mark', avatarClass]" :style="isPublicJob ? companyMarkStyle : undefined" aria-hidden="true"><span>{{ vacancyInitial }}</span></div>
+        <div :class="['avatar', 'oob-card__vacancy-mark', 'vacancy-mark', avatarClass]" aria-hidden="true"><span>{{ vacancyInitial }}</span></div>
         <div class="oob-card__company-info">
-          <span class="oob-card__company-name">{{ companyName }}</span>
+          <span class="oob-card__company-line"><span class="oob-card__company-name">{{ companyName }}</span><span v-if="isVerifiedCompany" class="oob-card__verified"><CheckCircle2 :size="13" aria-hidden="true" />Empresa verificada</span></span>
           <span class="oob-card__category">{{ category }}</span>
         </div>
       </div>
       <span class="oob-card__accent" aria-hidden="true"></span>
-      <h3 class="oob-card__title">{{ oob.title }}</h3>
+      <div class="oob-card__title-line"><h3 class="oob-card__title">{{ oob.title }}</h3><span v-if="applied" class="oob-card__applied">Ya postulaste</span></div>
     </div>
     <div class="oob-card__details">
       <ul class="oob-card__meta" aria-label="Condiciones del puesto">
@@ -62,43 +61,53 @@ const companyMarkStyle = computed(() => profileAvatarStyle(companyName.value, ca
 </template>
 
 <style scoped>
-.oob-card{--card-accent:#8dc5ff;display:flex;min-width:0;min-height:19rem;flex-direction:column;overflow:hidden;border:0;border-radius:0;background:#fff;box-shadow:0 8px 24px rgb(16 35 68 / 8%);transition:transform .22s ease,box-shadow .22s ease}
-.oob-card--violet,.oob-card--deep,.oob-card--soft,.oob-card--muted,.oob-card--public{--card-accent:#8dc5ff}
-.oob-card:hover{box-shadow:0 12px 30px rgb(13 52 95 / 12%)}
-.oob-card--linked:hover{transform:translateY(-3px);border-color:#8db8e8;box-shadow:0 16px 32px rgb(16 35 58 / 12%)}
-.oob-card:focus-within{outline:0;box-shadow:0 12px 28px rgb(16 35 58 / 10%)}
-.oob-card__banner{position:relative;isolation:isolate;overflow:hidden;min-height:0;padding:1.2rem 1.2rem .5rem;background:#fff;color:var(--foreground)}
+.oob-card{--job-green-900:#0f2420;--job-green-800:#16302b;--job-green-700:#234640;--job-green-600:#35615a;--job-green-300:#8fb0a8;--job-green-100:#dce8e4;--job-terracotta-700:#8f3a2e;--job-terracotta-600:#b5483a;--job-terracotta-500:#d8695a;--job-cream-50:#fdf9f6;--job-cream-100:#f7ede6;--job-cream-200:#efdfd4;--job-cream-300:#e3cfc1;--job-text-secondary:#5f6f6b;--card-accent:var(--job-terracotta-600);position:relative;display:flex;min-width:0;min-height:19rem;flex-direction:column;overflow:hidden;border:1px solid var(--job-cream-300);border-radius:0;background:var(--job-cream-50);box-shadow:0 8px 24px rgb(22 48 43 / 8%);transition:transform .22s ease,box-shadow .22s ease}
+.oob-card::after{position:absolute;z-index:0;top:0;right:0;width:7.5rem;height:7.5rem;background:url('/assets/jinowork-assets/02-oportunidades/card-corner-arcs.svg') top right/contain no-repeat;content:"";pointer-events:none}
+.oob-card__banner,.oob-card__details{position:relative;z-index:1}
+.oob-card--violet,.oob-card--deep,.oob-card--soft,.oob-card--muted,.oob-card--public{--card-accent:var(--job-terracotta-600)}
+.oob-card:hover{box-shadow:0 12px 30px rgb(22 48 43 / 12%)}
+.oob-card--linked:hover{transform:translateY(-3px);border-color:var(--job-green-300);box-shadow:0 16px 32px rgb(22 48 43 / 12%)}
+.oob-card:focus-within{outline:0;box-shadow:0 12px 28px rgb(22 48 43 / 10%)}
+.oob-card__banner{position:relative;isolation:isolate;overflow:hidden;min-height:0;padding:1.2rem 1.2rem .5rem;background:var(--job-cream-50);color:var(--job-green-800)}
 .oob-card__banner::before{display:none}
 .oob-card__banner::after{display:none}
 .oob-card__connection{display:none}
-.oob-card__connection path{stroke:rgb(178 220 255 / 52%);stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:150;stroke-dashoffset:0;transition:stroke-dashoffset .45s ease,stroke .25s ease}
-.oob-card__connection circle{fill:#b9e3ff;stroke:#2d75ad;stroke-width:2;transform-box:fill-box;transform-origin:center;transition:transform .22s ease,fill .22s ease}
-.oob-card:hover .oob-card__connection path,.oob-card:focus-within .oob-card__connection path{stroke:#c7e8ff;stroke-dashoffset:-18}
+.oob-card__connection path{stroke:color-mix(in srgb,var(--job-green-300) 70%,transparent);stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:150;stroke-dashoffset:0;transition:stroke-dashoffset .45s ease,stroke .25s ease}
+.oob-card__connection circle{fill:var(--job-green-300);stroke:var(--job-green-800);stroke-width:2;transform-box:fill-box;transform-origin:center;transition:transform .22s ease,fill .22s ease}
+.oob-card:hover .oob-card__connection path,.oob-card:focus-within .oob-card__connection path{stroke:var(--job-green-100);stroke-dashoffset:-18}
 .oob-card:hover .oob-card__connection circle,.oob-card:focus-within .oob-card__connection circle{fill:#fff;transform:scale(1.16)}
 .oob-card__top{position:relative;display:flex;align-items:center;gap:.7rem;min-width:0}
 .oob-card__company-info{display:flex;min-width:0;flex-direction:column;gap:.15rem}
-.oob-card__company-name{overflow:hidden;color:#19334f;font-size:.88rem;font-weight:800;text-overflow:ellipsis;white-space:nowrap}
-.oob-card__category{color:#6d819c;font-size:.68rem;font-weight:650}
-.avatar{display:grid;width:3.2rem;height:3.2rem;flex:none;place-items:center;border:0;border-radius:0;background:linear-gradient(135deg,#0f74e6,#0a5fc0);color:#fff;font-size:1.05rem;font-weight:850;letter-spacing:.02em}
-.oob-card--deep .avatar,.oob-card--soft .avatar,.oob-card--muted .avatar{background:linear-gradient(135deg,#0f74e6,#0a5fc0);color:#fff}
+.oob-card__company-line{display:flex;min-width:0;align-items:center;flex-wrap:wrap;gap:.35rem .5rem}
+.oob-card__company-name{min-width:0;overflow:hidden;color:var(--job-green-800);font-size:.88rem;font-weight:800;text-overflow:ellipsis;white-space:nowrap}
+.oob-card__verified,.oob-card__applied{display:inline-flex;flex:none;align-items:center;gap:.24rem;padding:.22rem .45rem;border-radius:999px;background:#e8f2ed;color:#245d4d;font-size:.58rem;font-weight:800;line-height:1.2;white-space:nowrap}
+.oob-card__verified svg{color:#19805a}
+.oob-card__category{color:var(--job-text-secondary);font-size:.68rem;font-weight:650}
+.avatar{display:grid;width:3.2rem;height:3.2rem;flex:none;place-items:center;border:0;border-radius:0;background:linear-gradient(135deg,var(--job-green-600),var(--job-green-800));color:#fff;font-size:1.05rem;font-weight:850;letter-spacing:.02em}
+.oob-card .vacancy-mark{border:1px solid var(--job-terracotta-200,#f0c9c0)!important;background:linear-gradient(145deg,var(--job-terracotta-500),var(--job-terracotta-600))!important;box-shadow:0 4px 10px rgb(181 72 58 / 15%)!important;color:#fff!important}
+.oob-card--public .avatar{background:linear-gradient(135deg,var(--job-terracotta-500),var(--job-terracotta-600))!important}
+.oob-card--deep .avatar,.oob-card--soft .avatar,.oob-card--muted .avatar{background:linear-gradient(135deg,var(--job-green-600),var(--job-green-800));color:#fff}
 .oob-card__accent{display:none}
-.oob-card__title{position:relative;max-width:32rem;margin:.9rem 0 0;color:#10243d;font:800 1.2rem/1.28 Manrope,sans-serif;letter-spacing:-.025em}
+.oob-card__title{position:relative;max-width:32rem;margin:.9rem 0 0;color:var(--job-green-800);font:800 1.2rem/1.28 Manrope,sans-serif;letter-spacing:-.025em}
+.oob-card__title-line{display:flex;align-items:flex-start;flex-wrap:wrap;gap:.5rem .65rem}
+.oob-card__title-line .oob-card__title{flex:1 1 12rem}
+.oob-card__applied{margin-top:1rem;background:#f7e8e3;color:#8f3a2e}
 .oob-card__details{display:flex;flex:1;flex-direction:column;gap:.55rem;padding:.4rem 1.2rem 1.15rem}
 .oob-card__location{display:flex;align-items:center;gap:.65rem;min-width:0}
-.oob-card__detail-icon{display:grid;width:1.4rem;height:1.4rem;flex:none;place-items:center;border:0;background:transparent;color:#1769c2}
+.oob-card__detail-icon{display:grid;width:1.4rem;height:1.4rem;flex:none;place-items:center;border:0;background:transparent;color:var(--job-green-600)}
 .oob-card__location>span:last-child{display:grid;min-width:0;gap:.08rem}
-.oob-card__location small{color:#71839b;font-size:.65rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
-.oob-card__location strong{overflow:hidden;color:#19334f;font-size:.82rem;font-weight:750;text-overflow:ellipsis;white-space:nowrap}
+.oob-card__location small{color:var(--job-text-secondary);font-size:.65rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.oob-card__location strong{overflow:hidden;color:var(--job-green-800);font-size:.82rem;font-weight:750;text-overflow:ellipsis;white-space:nowrap}
 .oob-card__meta{display:flex;flex-wrap:wrap;gap:.4rem;margin:0;padding:0;list-style:none}
-.oob-card__meta-item{display:inline-flex;min-height:1.85rem;align-items:center;gap:.35rem;padding:.3rem .55rem;border:0;border-radius:0;background:transparent;color:#183c6d;font-size:.76rem;font-weight:700}
-.oob-card__meta-item svg{flex:none;color:#1769c2}
-.oob-card__footer{display:flex;align-items:center;justify-content:space-between;gap:.55rem;margin-top:auto;padding-top:.85rem;border-top:1px solid #e8eef6}
-.oob-card__salary{color:#0d5fc4;font-size:.88rem;font-weight:850}
-.oob-card__link{display:inline-flex;min-height:2.15rem;align-items:center;justify-content:center;gap:.45rem;margin-left:auto;padding:.3rem .65rem .3rem .8rem;border:0;border-radius:.62rem;background:linear-gradient(100deg,#1769c2,#1356a2);color:#fff;font-size:.73rem;font-weight:800;white-space:nowrap;transition:background .2s ease,transform .2s ease,box-shadow .2s ease}
+.oob-card__meta-item{display:inline-flex;min-height:1.85rem;align-items:center;gap:.35rem;padding:.3rem .55rem;border:0;border-radius:0;background:transparent;color:var(--job-green-800);font-size:.76rem;font-weight:700}
+.oob-card__meta-item svg{flex:none;color:var(--job-terracotta-600)}
+.oob-card__footer{display:flex;align-items:center;justify-content:space-between;gap:.55rem;margin-top:auto;padding-top:.85rem;border-top:1px solid var(--job-cream-200)}
+.oob-card__salary{color:var(--job-green-800);font-size:.88rem;font-weight:850}
+.oob-card__link{display:inline-flex;min-height:2.15rem;align-items:center;justify-content:center;gap:.45rem;margin-left:auto;padding:.3rem .65rem .3rem .8rem;border:0;border-radius:.62rem;background:var(--job-green-600);color:#fff;font-size:.73rem;font-weight:800;white-space:nowrap;transition:background .2s ease,transform .2s ease,box-shadow .2s ease}
 .oob-card__link svg{width:16px;height:16px;padding:0;border-radius:0;background:transparent;transition:transform .18s}
-.oob-card__link:hover{transform:translateY(-1px);background:linear-gradient(100deg,#1356a2,#0e477f);box-shadow:0 6px 14px rgb(23 105 194 / 24%)}
+.oob-card__link:hover{transform:translateY(-1px);background:var(--job-green-700);box-shadow:0 6px 14px rgb(35 70 64 / 24%)}
 .oob-card__link:hover svg{transform:translateX(3px)}
-.oob-card__link:focus-visible{outline:2px solid var(--primary);outline-offset:3px}
+.oob-card__link:focus-visible{outline:2px solid var(--job-green-600);outline-offset:3px}
 @media(max-width:560px){.oob-card{min-height:0}.oob-card__banner{min-height:8.8rem}.oob-card__details{padding:1rem}}
 @media(prefers-reduced-motion:reduce){.oob-card,.oob-card__link,.oob-card__connection path,.oob-card__connection circle{transition:none}.oob-card--linked:hover{transform:none}.oob-card__link:hover svg{transform:none}}
 </style>

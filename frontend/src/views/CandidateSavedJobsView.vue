@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import { ArrowRight, BriefcaseBusiness, CalendarDays, MapPin, Trash2 } from 'lucide-vue-next'
 import WorkspaceFrame from '@/components/workspace/WorkspaceFrame.vue'
 import AppMessage from '@/components/ui/AppMessage.vue'
 import AppEmptyState from '@/components/ui/AppEmptyState.vue'
@@ -34,7 +35,7 @@ const filteredJobs = computed(() => {
 async function load() {
   error.value = ''
   try { savedJobs.value = (await oobsApi.candidateSavedJobs()).savedJobs }
-  catch (e) { error.value = e instanceof Error ? e.message : 'No se pudieron cargar tus vacantes guardadas.' }
+  catch (e) { error.value = e instanceof Error ? e.message : 'No se pudieron cargar tus ofertas guardadas.' }
   finally { loading.value = false }
 }
 
@@ -45,10 +46,10 @@ async function remove(id: string) {
   busyId.value = id
   error.value = ''
   savedJobs.value = previous.filter(saved => saved.oob.id !== id)
-  try { await oobsApi.unsave(id); notify('Vacante quitada', 'Se eliminó de tus vacantes guardadas.') }
+  try { await oobsApi.unsave(id); notify('Oferta quitada', 'Se eliminó de tus ofertas guardadas.') }
   catch (e) {
     savedJobs.value = previous
-    notify('No se pudo quitar la vacante', e instanceof Error ? e.message : 'Inténtalo de nuevo.', 'error')
+    notify('No se pudo quitar la oferta', e instanceof Error ? e.message : 'Inténtalo de nuevo.', 'error')
   }
   finally { busyId.value = '' }
 }
@@ -57,20 +58,20 @@ onMounted(load)
 </script>
 
 <template>
-  <WorkspaceFrame eyebrow="Mi actividad" title="Vacantes guardadas" subtitle="Ofertas que conservaste para revisar y comparar después." initials="JW">
-    <template #heading-action><RouterLink class="workspace__cta" to="/jobs">Explorar vacantes</RouterLink></template>
-    <AppMessage v-if="error" variant="error" title="No se pudieron cargar tus vacantes guardadas" :message="error" />
-    <AppMessage v-if="loading" variant="loading" message="Cargando vacantes…" />
+  <WorkspaceFrame eyebrow="Mi actividad" title="Ofertas guardadas" subtitle="Ofertas que conservaste para revisar y comparar después." initials="JW">
+    <template #heading-action><RouterLink class="workspace__cta" to="/jobs">Explorar ofertas</RouterLink></template>
+    <AppMessage v-if="error" variant="error" title="No se pudieron cargar tus ofertas guardadas" :message="error" />
+    <AppMessage v-if="loading" variant="loading" message="Cargando ofertas…" />
 
     <section v-if="!loading" class="workspace__card workspace__section candidate-saved">
-      <AppEmptyState v-if="!savedJobs.length" title="Todavía no tienes vacantes guardadas" description="Guarda las ofertas que te interesen y podrás encontrarlas aquí."><template #actions><RouterLink to="/jobs">Explorar vacantes</RouterLink></template></AppEmptyState>
+      <AppEmptyState v-if="!savedJobs.length" title="Todavía no tienes ofertas guardadas" description="Guarda las ofertas que te interesen y podrás encontrarlas aquí."><template #actions><RouterLink to="/jobs">Explorar ofertas</RouterLink></template></AppEmptyState>
       <template v-else>
         <div class="candidate-saved__overview">
-          <p><strong>{{ savedJobs.length }}</strong> {{ savedJobs.length === 1 ? 'vacante guardada' : 'vacantes guardadas' }}</p>
+          <p><strong>{{ savedJobs.length }}</strong> {{ savedJobs.length === 1 ? 'oferta guardada' : 'ofertas guardadas' }}</p>
           <span>{{ filteredJobs.length === savedJobs.length ? 'Tu lista para revisar después' : `${filteredJobs.length} resultados con estos filtros` }}</span>
         </div>
 
-        <div class="candidate-saved__filters" role="search" aria-label="Filtrar vacantes guardadas">
+        <div class="candidate-saved__filters" role="search" aria-label="Filtrar ofertas guardadas">
           <label class="candidate-saved__search">
             <span>Buscar</span>
             <input v-model="search" type="search" placeholder="Puesto, empresa o ubicación" />
@@ -107,19 +108,19 @@ onMounted(load)
                 </span>
               </div>
               <div class="candidate-saved__details">
-                <span>{{ [saved.oob.municipality?.name, saved.oob.department?.name].filter(Boolean).join(', ') || 'Ubicación no especificada' }}</span>
-                <span>{{ oobLabels.workMode[saved.oob.workMode] ?? saved.oob.workMode }} · {{ oobLabels.contract[saved.oob.contractType] ?? saved.oob.contractType }}</span>
+                <span><MapPin :size="15" aria-hidden="true" />{{ [saved.oob.municipality?.name, saved.oob.department?.name].filter(Boolean).join(', ') || 'Ubicación no especificada' }}</span>
+                <span><BriefcaseBusiness :size="15" aria-hidden="true" />{{ oobLabels.workMode[saved.oob.workMode] ?? saved.oob.workMode }} · {{ oobLabels.contract[saved.oob.contractType] ?? saved.oob.contractType }}</span>
                 <span>{{ formatJobSalary(saved.oob) }}</span>
               </div>
-              <span class="candidate-saved__date">Guardada el {{ new Date(saved.createdAt).toLocaleDateString('es-NI') }}</span>
+              <span class="candidate-saved__date"><CalendarDays :size="14" aria-hidden="true" />Guardada el {{ new Date(saved.createdAt).toLocaleDateString('es-NI') }}</span>
             </div>
             <div class="candidate-saved__actions">
-              <RouterLink v-if="saved.available" :to="`/jobs/${saved.oob.id}`">Ver oferta <span aria-hidden="true">→</span></RouterLink>
-              <button class="saved-oob__remove" type="button" :disabled="Boolean(busyId)" @click="remove(saved.oob.id)">{{ busyId === saved.oob.id ? 'Quitando…' : 'Quitar' }}</button>
+              <RouterLink v-if="saved.available" :to="`/jobs/${saved.oob.id}`">Ver oferta <ArrowRight :size="16" aria-hidden="true" /></RouterLink>
+              <button class="saved-oob__remove" type="button" :disabled="Boolean(busyId)" @click="remove(saved.oob.id)"><Trash2 :size="15" aria-hidden="true" />{{ busyId === saved.oob.id ? 'Quitando…' : 'Quitar' }}</button>
             </div>
           </article>
         </div>
-        <AppEmptyState v-else title="No hay vacantes que coincidan" description="Prueba con otro término o cambia los filtros."><template #actions><button type="button" @click="search = ''; availability = 'all'; workMode = 'all'">Limpiar filtros</button></template></AppEmptyState>
+        <AppEmptyState v-else title="No hay ofertas que coincidan" description="Prueba con otro término o cambia los filtros."><template #actions><button type="button" @click="search = ''; availability = 'all'; workMode = 'all'">Limpiar filtros</button></template></AppEmptyState>
       </template>
     </section>
   </WorkspaceFrame>
@@ -137,4 +138,32 @@ onMounted(load)
 
 <style scoped>
 .candidate-saved__oob-mark{display:grid;width:3rem;height:3rem;flex:none;place-items:center;background:linear-gradient(145deg,color-mix(in srgb,var(--oob-accent) 80%,white),var(--oob-accent));color:white;font:800 1rem Manrope,sans-serif}
+</style>
+
+<style scoped>
+.candidate-saved{box-sizing:border-box;width:100%;min-width:0;overflow:hidden}
+.candidate-saved__filters{grid-template-columns:minmax(0,1.5fr) minmax(9rem,.65fr) minmax(9rem,.65fr);border-color:color-mix(in srgb,var(--palette-ink) 12%,transparent)}
+.candidate-saved__overview{margin:0 0 1rem;padding:.15rem 0;background:transparent}
+.candidate-saved__overview strong{color:var(--primary);font-size:1.15rem}
+.candidate-saved__overview>span{color:var(--muted-foreground)}
+.candidate-saved__filters input,.candidate-saved__filters select{box-sizing:border-box;height:3rem;border:1px solid color-mix(in srgb,var(--palette-ink) 16%,transparent);border-radius:.75rem!important;background:#fffdfb}
+.candidate-saved__filters input:focus,.candidate-saved__filters select:focus{border-color:var(--primary);background:#fffdfb;box-shadow:0 0 0 3px rgb(47 95 82 / 10%)}
+.candidate-saved__list{min-width:0}
+.candidate-saved__row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:1.25rem;min-width:0;margin:0;padding:1.15rem .15rem;border-top:1px solid color-mix(in srgb,var(--palette-ink) 10%,transparent)}
+.candidate-saved__row:hover{background:color-mix(in srgb,var(--palette-ice) 28%,transparent)}
+.candidate-saved__content{min-width:0}
+.candidate-saved__heading{display:grid;grid-template-columns:3rem minmax(0,1fr) auto;min-width:0;align-items:center;gap:.8rem}
+.candidate-saved__actions{display:flex;flex:none;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:.5rem}
+.candidate-saved__actions>a{display:inline-flex;min-height:2.5rem;align-items:center;justify-content:center;gap:.4rem;padding:.5rem .8rem;border:0;border-radius:.75rem;background:var(--primary);color:#fff;font-size:.76rem;font-weight:800;white-space:nowrap;box-shadow:0 5px 14px rgb(47 95 82 / 15%);transition:background .16s,transform .16s,box-shadow .16s}
+.candidate-saved__actions>a:hover{transform:translateY(-1px);background:#234b40;box-shadow:0 7px 18px rgb(47 95 82 / 20%)}
+.candidate-saved__actions>a svg{transition:transform .15s}
+.candidate-saved__actions>a:hover svg{transform:translateX(2px)}
+.saved-oob__remove{display:inline-flex;min-height:2.5rem;align-items:center;justify-content:center;gap:.4rem;padding:.5rem .7rem;border:1px solid color-mix(in srgb,var(--palette-ink) 14%,transparent);border-radius:.75rem;background:transparent;color:var(--muted-foreground);font:inherit;font-size:.72rem;font-weight:750;white-space:nowrap;cursor:pointer;transition:border-color .16s,background .16s,color .16s}
+.saved-oob__remove:hover{border-color:rgb(179 61 73 / 24%);background:#fff5f3;color:#a63843}
+.candidate-saved__date{display:flex;align-items:center;gap:.35rem}
+.candidate-saved__details{margin-top:.8rem}
+.candidate-saved__oob-mark{border-radius:.7rem!important;box-shadow:0 5px 12px rgb(22 48 43 / 15%)}
+@media(max-width:900px){.candidate-saved__row{grid-template-columns:minmax(0,1fr);gap:.75rem}.candidate-saved__actions{justify-content:flex-start;padding-left:3.8rem}}
+@media(max-width:700px){.candidate-saved__filters{grid-template-columns:repeat(2,minmax(0,1fr))}.candidate-saved__search{grid-column:1/-1}.candidate-saved__row{gap:.75rem;padding:.95rem .2rem}.candidate-saved__heading{grid-template-columns:3rem minmax(0,1fr);align-items:start;gap:.5rem .75rem}.candidate-saved__oob-mark{grid-row:span 2}.candidate-saved__identity,.candidate-saved__availability{grid-column:2}.candidate-saved__availability{justify-self:start}.candidate-saved__actions{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.5rem;padding-left:0}.candidate-saved__actions>a,.saved-oob__remove{min-height:2.65rem}.candidate-saved__details{gap:.35rem .75rem}.candidate-saved__details span+span:before{margin-right:.75rem}}
+@media(max-width:440px){.candidate-saved__filters{grid-template-columns:1fr}.candidate-saved__search{grid-column:auto}.candidate-saved__overview{align-items:flex-start;flex-direction:column;gap:.25rem}}
 </style>

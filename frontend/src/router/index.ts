@@ -96,7 +96,7 @@ router.beforeEach(async (to, from) => {
       window.dispatchEvent(new CustomEvent('jinowork:open-job', { detail: String(to.params.id) }))
       return false
     }
-    return { name: 'jobs', query: { vacante: String(to.params.id) } }
+    return { name: 'jobs', query: { oferta: String(to.params.id) } }
   }
   if (!to.meta.requiresAuth) return true
   const authStore = useAuthStore()

@@ -8,6 +8,7 @@ export type PublicJob = {
   experienceYearsMin: number | null; isUrgent: boolean; vacancies: number; publishedAt: string | null; expiresAt: string | null
   company: {
     id: string; name: string; logoUrl?: string | null; website?: string | null; description?: string | null
+    verificationStatus?: string
     economicSector?: { name: string } | null; department?: { name: string } | null; municipality?: { name: string } | null
   }
   professionalArea: { id: string; name: string }

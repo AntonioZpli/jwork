@@ -1,10 +1,10 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { CheckCircle } from '@lucide/vue'
 import { COMPANIES_IMAGE } from '@/config/assets'
 
 const benefits = [
   'Presenta tus oportunidades de forma clara y profesional.',
-  'Facilita el encuentro entre tus vacantes y los candidatos adecuados.',
+  'Facilita el encuentro entre tus ofertas y los candidatos adecuados.',
 ]
 </script>
 
@@ -19,6 +19,9 @@ const benefits = [
           class="companies__img"
           loading="lazy"
         />
+        <span class="companies__dots" />
+        <span class="companies__bracket companies__bracket--tl" />
+        <span class="companies__bracket companies__bracket--br" />
       </div>
 
       <!-- Copy column -->
@@ -49,10 +52,24 @@ const benefits = [
 
 <style scoped>
 .companies {
+  --companies-green-800: #16302b;
+  --companies-green-700: #234640;
+  --companies-green-600: #35615a;
+  --companies-terracotta-600: #b5483a;
+  --companies-cream-100: #f7ede6;
+  --companies-cream-300: #e3cfc1;
+  --companies-text-secondary: #5f6f6b;
   padding-top: 6rem;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.companies::before {
+  position:absolute;z-index:0;inset:0;background:url('/assets/jinowork-assets/04-empresas/empresas-bg-topo.svg') right center/cover no-repeat;content:"";pointer-events:none;opacity:.82;
 }
 
 .companies__grid {
+  position:relative;z-index:1;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 5rem;
@@ -63,9 +80,26 @@ const benefits = [
 .companies__visual {
   position: relative;
   flex-shrink: 0;
+  isolation:isolate;
 }
 
+.companies__visual::before {
+  position:absolute;z-index:-1;inset:0;transform:translate(18px,18px);border:1.5px solid rgb(200 85 61 / 40%);content:"";
+}
+
+.companies__dots {
+  position:absolute;z-index:0;right:-24px;bottom:-24px;width:144px;height:144px;background:url('/assets/jinowork-assets/04-empresas/empresas-dots-patch.svg') center/contain no-repeat;pointer-events:none;opacity:.9;
+}
+
+.companies__bracket {
+  position:absolute;z-index:2;width:44px;height:44px;background:url('/assets/jinowork-assets/04-empresas/empresas-bracket.svg') center/contain no-repeat;pointer-events:none;
+}
+
+.companies__bracket--tl {top:-12px;left:-12px}
+.companies__bracket--br {right:-12px;bottom:-12px;transform:rotate(180deg)}
+
 .companies__img {
+  position:relative;z-index:1;
   width: 100%;
   height: 400px;
   object-fit: cover;
@@ -80,7 +114,7 @@ const benefits = [
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: var(--primary);
+  color: var(--companies-terracotta-600);
 }
 
 .companies__title {
@@ -88,7 +122,7 @@ const benefits = [
   font-family: 'Manrope', sans-serif;
   font-size: clamp(1.75rem, 2.3vw, 2.2rem);
   font-weight: 800;
-  color: var(--foreground);
+  color: var(--companies-green-800);
   letter-spacing: -0.04em;
   line-height: 1.15;
 }
@@ -96,7 +130,7 @@ const benefits = [
 .companies__desc {
   margin: 0 0 1.5rem;
   font-size: 0.95rem;
-  color: var(--muted-foreground);
+  color: var(--companies-text-secondary);
   line-height: 1.7;
 }
 
@@ -114,12 +148,12 @@ const benefits = [
   align-items: flex-start;
   gap: 0.65rem;
   font-size: 0.9rem;
-  color: var(--foreground);
+  color: var(--companies-green-800);
   line-height: 1.55;
 }
 
 .companies__benefit-icon {
-  color: var(--primary);
+  color: var(--companies-green-600);
   flex-shrink: 0;
   margin-top: 2px;
 }
@@ -128,7 +162,7 @@ const benefits = [
   display: inline-flex;
   align-items: center;
   padding: 0.82rem 1.5rem;
-  background: var(--primary);
+  background: var(--companies-green-600);
   color: #fff;
   font-size: 0.93rem;
   font-weight: 700;
@@ -140,12 +174,12 @@ const benefits = [
 }
 
 .companies__cta:hover {
-  background: oklch(from var(--primary) calc(l - 0.05) c h);
+  background: var(--companies-green-700);
   transform: translateY(-1px);
 }
 
 .companies__cta:focus-visible {
-  outline: 2px solid var(--primary);
+  outline: 2px solid var(--companies-green-600);
   outline-offset: 4px;
 }
 
@@ -167,7 +201,7 @@ const benefits = [
   width: 100vw;
   margin: 0 0 0 -50vw;
   padding: 4.5rem max(clamp(20px, 4vw, 64px), calc((100vw - 1600px) / 2 + clamp(20px, 4vw, 64px)));
-  background: var(--background);
+  background: var(--companies-cream-100);
 }
 
 .companies__grid { width: min(100%, 1600px); margin-inline: auto; }
@@ -175,9 +209,9 @@ const benefits = [
 .companies__title { font-size: clamp(2.2rem, 3.5vw, 3.2rem); }
 .companies__desc { font-size: 1.12rem; }
 .companies__benefit { font-size: 1rem; }
-.companies { padding-block: 4.5rem; background: var(--panel); }
-.companies__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(2rem, 4vw, 3.5rem); }
-.companies__img { height: 300px; box-shadow: 0 16px 40px rgb(23 66 117 / 10%); }
+.companies { padding-block: 4.5rem; background: var(--companies-cream-100); isolation:isolate;overflow:hidden; }
+.companies__grid { position:relative;z-index:1;grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(2rem, 4vw, 3.5rem); }
+.companies__img { height: 300px; border: 1px solid var(--companies-cream-300); box-shadow: 0 16px 40px rgb(22 48 43 / 10%); }
 .companies__cta { border-radius: 5px; }
 
 @media (max-width: 1100px) {
@@ -192,5 +226,9 @@ const benefits = [
 @media (max-width: 900px) {
   .companies__grid { grid-template-columns: 1fr; gap: 2rem; }
   .companies__img { height: clamp(12rem, 48vw, 18rem); object-position: center 42%; }
+}
+
+@media (max-width: 767px) {
+  .companies__dots,.companies__bracket { display:none; }
 }
 </style>

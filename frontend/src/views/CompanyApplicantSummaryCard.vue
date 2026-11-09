@@ -60,8 +60,8 @@ const experience = computed(() => props.application.candidateProfile.experiences
 .company-applicant-card__identity h2{margin:0;color:var(--foreground);font:800 1rem/1.3 Manrope,sans-serif;letter-spacing:-.025em}
 .company-applicant-card__identity p{display:flex;align-items:flex-start;gap:.5rem;margin:0;color:var(--muted-foreground);font-size:.78rem;line-height:1.4}
 .company-applicant-card__identity p svg{flex:none;color:var(--primary)}
-.company-applicant-card__open{display:inline-flex;align-items:center;gap:.4rem;min-height:2.4rem;padding:.45rem .75rem;border:1px solid #1769c2;background:#1769c2;color:#fff;font:750 .78rem Manrope,sans-serif;white-space:nowrap;cursor:pointer}
-.company-applicant-card__open:hover{border-color:#1256a3;background:#1256a3}
+.company-applicant-card__open{display:inline-flex;align-items:center;gap:.4rem;min-height:2.4rem;padding:.45rem .9rem;border:1px solid transparent;border-radius:.75rem;background:linear-gradient(120deg,#2f5f52,#3e7f69);color:#fff;font:750 .78rem Manrope,sans-serif;white-space:nowrap;cursor:pointer;transition:background .16s,box-shadow .16s}
+.company-applicant-card__open:hover{border-color:transparent;background:#234b40;box-shadow:0 5px 14px rgb(27 58 51 / 16%)}
 .company-applicant-card__details{display:grid;grid-template-columns:minmax(0,1fr);gap:1rem;margin:0}
 .company-applicant-card__details>div{display:grid;align-content:start;gap:.25rem;min-width:0}
 .company-applicant-card__details dt{display:flex;align-items:center;gap:.45rem;color:var(--muted-foreground);font-size:.7rem;font-weight:750}

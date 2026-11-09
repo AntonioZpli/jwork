@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 1000" preserveAspectRatio="none" aria-hidden="true">
+<defs><filter id="sh" x="-50%" y="-10%" width="200%" height="120%"><feGaussianBlur stdDeviation="16"/></filter></defs>
+<path d="M0 0 H117 C114 65 110 125 106 190 C101 275 79 345 67 425 C58 480 58 525 63 585 C71 665 96 765 108 845 C112 905 116 955 118 1000 H0Z" transform="translate(10 0)" fill="#0B1F1A" fill-opacity=".16" filter="url(#sh)"/>
+<path d="M0 0 H117 C114 65 110 125 106 190 C101 275 79 345 67 425 C58 480 58 525 63 585 C71 665 96 765 108 845 C112 905 116 955 118 1000 H0Z" fill="#1B3A33"/>
+<path d="M0 0 H117 C114 65 110 125 106 190 C101 275 79 345 67 425 C58 480 58 525 63 585 C71 665 96 765 108 845 C112 905 116 955 118 1000" fill="none" stroke="#fff" stroke-opacity=".07" stroke-width="1.5"/>
+</svg>

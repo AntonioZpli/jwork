@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Mail } from 'lucide-vue-next'
+import { Mail, X } from 'lucide-vue-next'
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import CandidateCredentials from '@/components/workspace/CandidateCredentials.vue'
 import { candidateFileUrl } from '@/services/profiles'
@@ -84,7 +84,7 @@ onBeforeUnmount(() => {
               <span>{{ candidateLocation(application) }}</span>
             </div>
           </div>
-          <button type="button" aria-label="Cerrar perfil" data-application-profile-close @click="emit('close')">×</button>
+          <button type="button" aria-label="Cerrar perfil" data-application-profile-close @click="emit('close')"><X :size="18" aria-hidden="true" /></button>
         </header>
         <div class="profile-modal__body">
           <main>
@@ -158,4 +158,49 @@ onBeforeUnmount(() => {
 @supports(backdrop-filter:blur(4px)){.profile-modal{backdrop-filter:blur(5px)}}
 @media(max-width:700px){.profile-modal{align-items:end;padding:max(.45rem,env(safe-area-inset-top)) max(.45rem,env(safe-area-inset-right)) max(.45rem,env(safe-area-inset-bottom)) max(.45rem,env(safe-area-inset-left))}.profile-modal__panel{max-height:min(95vh,95dvh);border-radius:.75rem}.profile-modal__header{gap:.75rem;padding:1rem}.profile-modal__body{grid-template-columns:minmax(0,1fr)}.profile-modal__body main{padding-inline:1rem}.profile-modal__body aside{border-top:1px solid var(--border);border-left:0}}
 @media(prefers-reduced-motion:reduce){.profile-modal{backdrop-filter:none}}
+</style>
+
+<style scoped>
+/* Mismo lenguaje visual que la vista previa del perfil profesional. */
+.profile-modal{z-index:1300;background:rgb(13 31 27 / 62%);backdrop-filter:blur(7px)}
+.profile-modal__panel{display:grid;gap:1rem;width:min(76rem,100%);max-height:min(92vh,92dvh,64rem);box-sizing:border-box;overflow:auto;padding:1rem;border:1px solid #f0dacf;border-radius:1.15rem;background:#fffdfb;color:#16302b;box-shadow:0 28px 90px rgb(7 19 35 / 30%)}
+.profile-modal__header{position:relative;isolation:isolate;min-height:10rem;align-items:center;overflow:hidden;padding:1.5rem 4.5rem 1.5rem 1.6rem;border:0;border-radius:1rem;background-color:#1b3a33;background-image:linear-gradient(105deg,rgb(18 55 46 / 95%),rgb(36 83 69 / 91%)),url('/assets/jinowork-svgs-mejorados/left/03-ondas-oscuras.svg'),url('/assets/jinowork-svgs-mejorados/left/01-contornos-oscuros.svg');background-position:center,center bottom,center;background-size:cover,cover,cover;box-shadow:0 14px 32px rgb(27 58 51 / 16%)}
+.profile-modal__header:after{position:absolute;z-index:-1;right:-3rem;bottom:-6rem;width:15rem;height:9rem;border-radius:50%;background:#e08c74;content:"";transform:rotate(-18deg)}
+.profile-modal__identity{position:relative;z-index:1;gap:1.2rem}
+.profile-modal__header .profile-modal__avatar{box-sizing:border-box;width:clamp(5rem,9vw,7rem);height:clamp(5rem,9vw,7rem);border:4px solid rgb(255 253 251 / 88%);background:#e9f0ec;box-shadow:0 8px 20px rgb(0 0 0 / 16%)}
+.profile-modal__copy{gap:.38rem}
+.profile-modal__header p{justify-self:start;margin:0;padding:.38rem .7rem;border:1px solid rgb(255 255 255 / 14%);border-radius:999px;background:rgb(62 127 105 / 65%);color:#fffdfb;font-size:.65rem;letter-spacing:.08em}
+.profile-modal__header h2{color:#fffdfb;font-size:clamp(1.45rem,2.5vw,2.3rem);line-height:1.15}
+.profile-modal__header strong,.profile-modal__header .profile-modal__copy>span{color:rgb(255 253 251 / 88%)}
+.profile-modal__header strong{font-size:.85rem}
+.profile-modal__header .profile-modal__copy>span{font-size:.77rem}
+.profile-modal__header>button{position:absolute;z-index:2;top:1rem;right:1rem;display:grid;width:2.5rem;height:2.5rem;place-items:center;border:1px solid rgb(255 253 251 / 40%);border-radius:50%;background:rgb(255 253 251 / 10%);color:#fff;transition:background .16s,color .16s}
+.profile-modal__header>button:hover{background:#fffdfb;color:#1b3a33}
+.profile-modal__body{grid-template-columns:minmax(0,1.7fr) minmax(17rem,.72fr);align-items:start;gap:1rem}
+.profile-modal__body main{display:grid;gap:1rem;padding:0}
+.profile-modal__body main>section,.profile-modal__body aside>section{padding:1.2rem 1.25rem;border:1px solid #f0dacf;border-radius:1rem;background:rgb(255 253 251 / 96%);box-shadow:0 12px 28px rgb(85 48 33 / 7%)}
+.profile-modal__body h3{margin:0 0 .65rem;color:#1b3a33;font-size:1.05rem}
+.profile-modal__about{position:relative;padding-left:2rem!important}
+.profile-modal__about:before{position:absolute;top:1.4rem;left:1rem;width:3px;height:1.3rem;border-radius:3px;background:#e08c74;content:""}
+.profile-modal__about>p{color:#394b46;font-size:.86rem;line-height:1.7}
+.profile-modal__body aside{display:grid;align-content:start;gap:1rem;min-width:0;padding:0;border:0;background:transparent}
+.profile-modal__body aside>section{margin:0}
+.profile-modal__download{min-height:2.75rem;padding:.55rem .8rem;border-radius:.7rem;background:linear-gradient(120deg,#2f5f52,#3e7f69);font-size:.8rem}
+.profile-modal__download:hover{background:#234b40}
+.profile-modal__contact{display:grid;gap:.65rem}
+.profile-modal__contact-link{padding:.75rem;border-color:#f0dacf;border-radius:.75rem;background:#fffdfb}
+.profile-modal__contact-link--whatsapp{border-color:#cce6d8;background:#edf6f0;color:#1b3a33}
+.profile-modal__contact-link--whatsapp>svg{color:#2f5f52}
+.profile-modal__languages>p{padding:.55rem 0;margin:0;border-top:1px solid #f0dacf}
+.profile-modal__languages>p:first-of-type{border-top:0}
+.profile-modal :deep(.candidate-credentials){grid-template-columns:minmax(0,1fr);gap:1rem;margin:0}
+.profile-modal :deep(.candidate-credentials section){padding:1.2rem 1.25rem;border:1px solid #f0dacf;border-radius:1rem;background:rgb(255 253 251 / 96%);box-shadow:0 12px 28px rgb(85 48 33 / 7%)}
+.profile-modal :deep(.candidate-credentials h3){margin-bottom:.7rem;color:#1b3a33;font-size:1.05rem;letter-spacing:0;text-transform:none}
+.profile-modal :deep(.candidate-credentials article){gap:.25rem;padding:.7rem 0;border-color:#f0dacf}
+.profile-modal :deep(.candidate-credentials article strong){color:#16302b;font-size:.84rem}
+.profile-modal :deep(.candidate-credentials article span),.profile-modal :deep(.candidate-credentials article p){color:#5f6f6b;font-size:.76rem;line-height:1.6}
+.profile-modal :deep(.candidate-credentials__more){color:#2f5f52}
+@media(max-width:900px){.profile-modal__body{grid-template-columns:minmax(0,1fr)}.profile-modal__body aside{grid-template-columns:repeat(2,minmax(0,1fr))}.profile-modal__contact{grid-column:1/-1}}
+@media(max-width:700px){.profile-modal{align-items:end;padding:max(.45rem,env(safe-area-inset-top)) max(.45rem,env(safe-area-inset-right)) max(.45rem,env(safe-area-inset-bottom)) max(.45rem,env(safe-area-inset-left))}.profile-modal__panel{gap:.7rem;max-height:95dvh;padding:.65rem;border-radius:1rem}.profile-modal__header{min-height:8rem;padding:1rem 3.7rem 1rem 1rem;border-radius:.9rem}.profile-modal__identity{align-items:center;gap:.8rem}.profile-modal__header .profile-modal__avatar{width:4.5rem;height:4.5rem}.profile-modal__header h2{font-size:1.35rem}.profile-modal__body{gap:.7rem}.profile-modal__body main{gap:.7rem}.profile-modal__body aside{grid-template-columns:minmax(0,1fr);gap:.7rem}.profile-modal__contact{grid-column:auto}.profile-modal__body main>section,.profile-modal__body aside>section,.profile-modal :deep(.candidate-credentials section){padding:1rem}.profile-modal__about{padding-left:1.75rem!important}.profile-modal__about:before{left:.8rem}}
+@media(prefers-reduced-motion:reduce){.profile-modal__header>button{transition:none}}
 </style>

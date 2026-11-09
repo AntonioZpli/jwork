@@ -1,0 +1,337 @@
+/* Shared visual system for every candidate and company workspace view. */
+.workspace--company {
+  --palette-ink: #1b3a33;
+  --palette-violet: #b5483a;
+  --palette-blue: #8fb0a8;
+  --palette-ice: #f4d9d0;
+  --palette-platinum: #5f6f6b;
+  --background: #fcf8f5;
+  --surface: #fffdfb;
+  --foreground: #16302b;
+  --primary: #2f5f52;
+  --secondary: #e9f0ec;
+  --muted-foreground: #5f6f6b;
+  --border: #e3cfc1;
+  --panel: #f7ede6;
+  --surface-strong: #f7ede6;
+  --accent-strong: #f4d9d0;
+  --shadow: rgb(27 58 51 / 9%);
+}
+
+.workspace.workspace--candidate,
+.workspace.workspace--company {
+  background-color: #fcf8f5 !important;
+  background-image:
+    radial-gradient(ellipse at 92% 0%, rgb(244 217 208 / 38%), transparent 27%),
+    url('/assets/jinowork-svgs-mejorados/right/13-orbitas-claras.svg') !important;
+  background-position: top right, right 1.5rem top 5rem;
+  background-repeat: no-repeat;
+  background-size: auto, min(36vw, 540px) auto;
+  color: #16302b !important;
+}
+
+.workspace.workspace--candidate .workspace__content,
+.workspace.workspace--company .workspace__content {
+  background: transparent;
+}
+
+.workspace.workspace--candidate .workspace__main,
+.workspace.workspace--company .workspace__main {
+  background-image: url('/assets/jinowork-svgs-mejorados/right/10-contornos-claros.svg');
+  background-position: right 1.5rem top 0;
+  background-repeat: no-repeat;
+  background-size: min(44vw, 620px) auto;
+}
+
+.workspace.workspace--candidate .workspace__heading h1,
+.workspace.workspace--company .workspace__heading h1,
+.workspace.workspace--candidate .workspace__section h2,
+.workspace.workspace--company .workspace__section h2 {
+  color: #1b3a33;
+}
+
+.workspace.workspace--candidate .workspace__eyebrow,
+.workspace.workspace--company .workspace__eyebrow {
+  color: #b5483a;
+}
+
+.workspace.workspace--candidate :is(.workspace__card, .workspace__section, .profile-section, .company-profile, .company-form, .candidate-application, .candidate-saved):not(.candidate-dashboard__profile):not(.candidate-stat--area):not(.candidate-profile-aside__journey):not(.candidate-profile-aside__score),
+.workspace.workspace--company :is(.workspace__card, .workspace__section, .profile-section, .company-profile, .company-form, .company-application, .company-job-row):not(.company-dashboard__profile) {
+  border: 0 !important;
+  border-radius: 1.05rem !important;
+  background-color: rgb(255 253 251 / 94%) !important;
+  box-shadow: 0 12px 30px rgb(85 48 33 / 7%) !important;
+}
+
+.workspace.workspace--candidate .candidate-preview {
+  border: 0 !important;
+  border-radius: 1rem !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.public-oob-dialog .public-oob-hero {
+  border-radius: 0 !important;
+}
+
+/* The preview uses standalone section classes rather than workspace cards. */
+.workspace.workspace--candidate :is(.candidate-preview__section, .candidate-preview__side-section) {
+  border: 0 !important;
+  border-radius: 1.05rem !important;
+  background-color: rgb(255 253 251 / 94%) !important;
+  box-shadow: 0 12px 30px rgb(85 48 33 / 7%) !important;
+}
+
+/* Shared cards outside the candidate and company workspaces. */
+:is(
+  .oob-card,
+  .job-search,
+  .oob-detail,
+  .oob-detail__summary,
+  .oob-detail__apply-card,
+  .onboarding-workspace,
+  .onboarding-success,
+  .reset-card,
+  .security-alert-card
+) {
+  border: 0 !important;
+}
+
+:where(
+  .workspace__card,
+  .workspace__section,
+  .workspace__stat,
+  .profile-section,
+  .company-profile,
+  .company-form,
+  .company-profile__group,
+  .candidate-application,
+  .candidate-saved,
+  .company-application,
+  .company-job-row,
+  .candidate-preview__section,
+  .candidate-preview__side-section,
+  .job-card,
+  .applicant-card,
+  .company-applicant-card,
+  .profile-content,
+  .profile-modal__panel,
+  .onboarding-workspace,
+  .onboarding-success,
+  .reset-card,
+  .security-alert-card,
+  [class$="-card"],
+  [class~="card"]
+) {
+  border: 0 !important;
+}
+
+.workspace.workspace--candidate .workspace__cta,
+.workspace.workspace--company .workspace__cta,
+.workspace.workspace--candidate .workspace-nav__create,
+.workspace.workspace--company .workspace-nav__create {
+  border-color: transparent;
+  background: linear-gradient(120deg, #2f5f52, #3e7f69);
+  color: #fff;
+  box-shadow: 0 8px 18px rgb(47 95 82 / 17%);
+}
+
+.workspace.workspace--candidate .workspace__cta:hover,
+.workspace.workspace--company .workspace__cta:hover,
+.workspace.workspace--candidate .workspace-nav__create:hover,
+.workspace.workspace--company .workspace-nav__create:hover {
+  background: #234b40;
+}
+
+.workspace.workspace--company .company-topbar,
+.workspace.workspace--candidate .candidate-topbar {
+  border-color: rgb(227 207 193 / 78%);
+  background: rgb(252 248 245 / 90%);
+  backdrop-filter: blur(16px);
+}
+
+.workspace.workspace--company .company-topbar__brand,
+.workspace.workspace--candidate .candidate-topbar__brand {
+  color: #1b3a33;
+}
+
+.workspace.workspace--company .company-topbar__brand::after {
+  color: #e08c74;
+  content: '.';
+}
+
+.workspace.workspace--company .company-topbar__search,
+.workspace.workspace--candidate .candidate-topbar__search {
+  border-color: #f0dacf;
+  border-radius: 999px;
+  background: #f9eee8;
+  color: #5f6f6b;
+}
+
+.workspace.workspace--company .company-topbar__search:focus-within,
+.workspace.workspace--candidate .candidate-topbar__search:focus-within {
+  border-color: #3e7f69;
+  box-shadow: 0 0 0 3px rgb(47 95 82 / 11%);
+}
+
+.workspace.workspace--company .company-topbar .workspace-nav__link,
+.workspace.workspace--candidate .workspace-nav__link {
+  border-radius: 999px;
+  color: #5f6f6b;
+}
+
+.workspace.workspace--company .company-topbar .workspace-nav__link:hover,
+.workspace.workspace--candidate .workspace-nav__link:hover {
+  background: rgb(233 240 236 / 70%);
+  color: #1b3a33;
+}
+
+.workspace.workspace--company .company-topbar .workspace-nav__link--active,
+.workspace.workspace--candidate .workspace-nav__link--active {
+  border-color: transparent;
+  background: #e1e9e1;
+  color: #1b3a33;
+}
+
+.workspace.workspace--candidate .workspace__footer,
+.workspace.workspace--company .workspace__footer {
+  border-color: #e3cfc1;
+  background: url('/assets/jinowork-svgs-mejorados/left/03-ondas-oscuras.svg') right bottom / min(42rem, 70%) 5.5rem no-repeat;
+  color: #35544c;
+}
+
+/* Alinea la navegación de ambas áreas con la paleta cálida y verde. */
+.workspace.workspace--candidate .candidate-topbar,
+.workspace.workspace--company .company-topbar {
+  border-bottom-color: rgb(227 207 193 / 72%);
+  background: rgb(252 248 245 / 94%);
+  box-shadow: 0 8px 26px rgb(27 58 51 / 5%);
+  backdrop-filter: blur(18px);
+}
+
+.workspace.workspace--candidate .candidate-topbar__search,
+.workspace.workspace--company .company-topbar__search {
+  height: 2.85rem;
+  border-radius: 999px;
+  background: #f7ede6;
+}
+
+.workspace.workspace--candidate .candidate-topbar .workspace-nav__link,
+.workspace.workspace--company .company-topbar .workspace-nav__link {
+  min-height: 2.65rem;
+  gap: .45rem;
+  padding-inline: .8rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: #5f6f6b;
+  font-size: .77rem;
+  font-weight: 750;
+  transition: background .18s, color .18s, transform .18s;
+}
+
+.workspace.workspace--candidate .candidate-topbar .workspace-nav__link svg,
+.workspace.workspace--company .company-topbar .workspace-nav__link svg {
+  display: block !important;
+  width: 16px;
+  height: 16px;
+  color: currentColor;
+}
+
+.workspace.workspace--candidate .candidate-topbar .workspace-nav__link:hover,
+.workspace.workspace--company .company-topbar .workspace-nav__link:hover {
+  background: #f7ede6;
+  color: #1b3a33;
+  transform: none;
+}
+
+.workspace.workspace--candidate .candidate-topbar .workspace-nav__link--active,
+.workspace.workspace--company .company-topbar .workspace-nav__link--active {
+  border-color: #d5e3dc;
+  background: #e9f0ec;
+  color: #234b40;
+}
+
+.workspace.workspace--candidate .candidate-topbar__avatar,
+.workspace.workspace--company .company-topbar__avatar {
+  box-shadow: 0 0 0 2px #fcf8f5, 0 0 0 3px #e3cfc1;
+}
+
+.workspace.workspace--candidate .candidate-topbar__logout,
+.workspace.workspace--company .company-topbar__logout {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  transition: background .18s, color .18s;
+}
+
+.workspace.workspace--candidate .candidate-topbar__logout:hover,
+.workspace.workspace--company .company-topbar__logout:hover {
+  background: #e9f0ec;
+  color: #234b40;
+}
+
+/* Keep the profile header readable above its photographic SVG texture. */
+.workspace.workspace--candidate .candidate-preview__identity {
+  background-color: #1b3a33 !important;
+  background-image:
+    linear-gradient(105deg, rgb(18 55 46 / 94%), rgb(36 83 69 / 90%)),
+    url('/assets/jinowork-svgs-mejorados/left/03-ondas-oscuras.svg'),
+    url('/assets/jinowork-svgs-mejorados/left/01-contornos-oscuros.svg') !important;
+  background-position: center, center bottom, center !important;
+  background-size: cover, cover, cover !important;
+}
+
+.workspace.workspace--candidate .candidate-preview__identity-copy > p,
+.workspace.workspace--candidate .candidate-preview__identity-copy > strong,
+.workspace.workspace--candidate .candidate-preview__identity-copy h2,
+.workspace.workspace--candidate .candidate-preview__location,
+.workspace.workspace--candidate .candidate-preview__location svg,
+.workspace.workspace--candidate .candidate-preview__language-summary,
+.workspace.workspace--candidate .candidate-preview__language-summary small {
+  color: #fffdfb !important;
+}
+
+.workspace.workspace--candidate .candidate-preview__identity-copy > p {
+  background: rgb(62 127 105 / 76%) !important;
+}
+
+.workspace.workspace--candidate .candidate-preview__aside {
+  border-color: transparent !important;
+  background: transparent !important;
+  background-image: none !important;
+}
+
+.workspace.workspace--candidate .candidate-preview__section::before {
+  background: #e08c74 !important;
+}
+
+.workspace.workspace--candidate :is(input:not([type='checkbox']):not([type='file']), select, textarea),
+.workspace.workspace--company :is(input:not([type='checkbox']):not([type='file']), select, textarea) {
+  border-color: #e3cfc1;
+  border-radius: .75rem;
+  background-color: #fffdfb;
+  color: #16302b;
+}
+
+.workspace.workspace--candidate :is(input:not([type='checkbox']):not([type='file']), select, textarea):focus,
+.workspace.workspace--company :is(input:not([type='checkbox']):not([type='file']), select, textarea):focus {
+  border-color: #3e7f69;
+  box-shadow: 0 0 0 3px rgb(47 95 82 / 11%);
+}
+
+.workspace.workspace--candidate :is(.workspace-nav__link, .workspace__cta, button, a):focus-visible,
+.workspace.workspace--company :is(.workspace-nav__link, .workspace__cta, button, a):focus-visible {
+  outline-color: rgb(224 140 116 / 65%);
+}
+
+@media (max-width: 760px) {
+  .workspace.workspace--candidate,
+  .workspace.workspace--company {
+    background-size: auto, 0 0;
+  }
+
+  .workspace.workspace--candidate .workspace__main,
+  .workspace.workspace--company .workspace__main {
+    background-size: 0 0;
+  }
+}

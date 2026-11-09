@@ -8,7 +8,7 @@ const route = useRoute()
 const isCompany = computed(() => props.role === 'COMPANY')
 const items = computed(() => isCompany.value ? [
   { label: 'Resumen', mobileLabel: 'Inicio', to: '/company', icon: LayoutDashboard, exact: true },
-  { label: 'Mis vacantes', mobileLabel: 'Vacantes', to: '/company/jobs', icon: BriefcaseBusiness },
+  { label: 'Mis ofertas', mobileLabel: 'Ofertas', to: '/company/jobs', icon: BriefcaseBusiness },
   { label: 'Postulantes', mobileLabel: 'Talento', to: '/company/applications', icon: UsersRound },
   { label: 'Mi perfil', mobileLabel: 'Perfil', to: '/company/profile/edit', icon: Building2 },
 ] : [
@@ -58,9 +58,9 @@ function active(to: string, exact = false) {
 @media(max-width:1024px){
   .workspace-nav.workspace-nav--candidate,
   .workspace-nav.workspace-nav--company{
-    position:fixed!important;z-index:1000;inset:auto 0 0;width:100%;height:calc(4.15rem + env(safe-area-inset-bottom,0px));
-    overflow:visible;border-top:1px solid var(--border);border-bottom:0;
-    background-color:#fff!important;background-image:none!important;backdrop-filter:none!important;box-shadow:0 -8px 24px rgb(20 37 66 / 10%);
+    position:fixed!important;z-index:1100;inset:auto 0 0;width:100%;height:auto;min-height:calc(4.15rem + env(safe-area-inset-bottom,0px));box-sizing:border-box;isolation:isolate;
+    overflow:visible;border-top:1px solid #e3cfc1;border-bottom:0;
+    background:#fcf8f5!important;background-image:none!important;backdrop-filter:blur(16px)!important;box-shadow:0 -10px 28px rgb(22 48 43 / 12%);
     padding-bottom:env(safe-area-inset-bottom,0px)
   }
   .workspace-nav.workspace-nav--candidate .workspace-nav__inner,
@@ -74,7 +74,8 @@ function active(to: string, exact = false) {
   .workspace-nav.workspace-nav--candidate .workspace-nav__link,
   .workspace-nav.workspace-nav--company .workspace-nav__link{
     display:flex;min-width:0;min-height:3.6rem;width:100%;flex-direction:column;flex:initial;align-items:center;justify-content:center;gap:.18rem;
-    padding:.35rem .08rem;border:0;border-radius:0!important;background:transparent!important;color:var(--muted-foreground);font-size:.58rem;font-weight:750;white-space:nowrap
+    margin:.2rem .12rem;padding:.35rem .08rem;border:1px solid transparent;border-radius:.85rem!important;background:transparent!important;color:#5f6f6b;font-size:.58rem;font-weight:750;white-space:nowrap;
+    transition:background .16s,border-color .16s,color .16s
   }
   .workspace-nav.workspace-nav--candidate .workspace-nav__link svg,
   .workspace-nav.workspace-nav--company .workspace-nav__link svg{display:block!important;width:19px;height:19px}
@@ -87,9 +88,11 @@ function active(to: string, exact = false) {
   .workspace-nav.workspace-nav--candidate .workspace-nav__link span:after,
   .workspace-nav.workspace-nav--company .workspace-nav__link span:after{content:attr(data-mobile-label);font-size:.58rem;line-height:1.15}
   .workspace-nav.workspace-nav--candidate .workspace-nav__link--active,
-  .workspace-nav.workspace-nav--company .workspace-nav__link--active{border:0;background:transparent!important;color:var(--muted-foreground);box-shadow:none}
+  .workspace-nav.workspace-nav--company .workspace-nav__link--active{border-color:#d5e3dc;background:#e9f0ec!important;color:#234b40;box-shadow:none}
   .workspace-nav.workspace-nav--candidate .workspace-nav__link:hover,
-  .workspace-nav.workspace-nav--company .workspace-nav__link:hover{border-radius:0!important;background:transparent!important;color:var(--muted-foreground)}
+  .workspace-nav.workspace-nav--company .workspace-nav__link:hover{border-color:transparent;background:#f1f5f2!important;color:#1b3a33}
+  .workspace-nav.workspace-nav--candidate .workspace-nav__link--active:hover,
+  .workspace-nav.workspace-nav--company .workspace-nav__link--active:hover{border-color:#c9dbd1;background:#e2ece6!important;color:#1b3a33}
   .workspace-nav.workspace-nav--candidate .workspace-nav__link--active svg,
   .workspace-nav.workspace-nav--company .workspace-nav__link--active svg,
   .workspace-nav.workspace-nav--candidate .workspace-nav__link:hover svg,

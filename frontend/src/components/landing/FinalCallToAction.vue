@@ -1,12 +1,15 @@
 ﻿<script setup lang="ts">
-import { JINOTEGA_IMAGE } from '@/config/assets'
+import { FINAL_CTA_IMAGE } from '@/config/assets'
 // Final CTA: no statistics or invented content
 </script>
 
 <template>
   <section class="final-cta" aria-labelledby="cta-heading">
-    <img class="final-cta__image" :src="JINOTEGA_IMAGE" alt="" loading="lazy" />
+    <img class="final-cta__image" :src="FINAL_CTA_IMAGE" alt="" loading="lazy" />
     <div class="final-cta__shade" aria-hidden="true" />
+    <span class="final-cta__ridges" aria-hidden="true" />
+    <span class="final-cta__rings" aria-hidden="true" />
+    <span class="final-cta__coffee" aria-hidden="true" />
     <div class="final-cta__inner">
       <div class="final-cta__copy">
         <p class="final-cta__kicker">Siguiente paso</p>
@@ -19,23 +22,24 @@ import { JINOTEGA_IMAGE } from '@/config/assets'
           Comenzar ahora →
         </a>
       </div>
-      <p class="final-cta__credit">
-        Foto:
-        <a href="https://commons.wikimedia.org/wiki/File:Jinotega_desde_La_Pe%C3%B1a_de_La_Cruz.jpg" target="_blank" rel="noreferrer">HeraldFrancisco NI / Wikimedia Commons</a>
-        ·
-        <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noreferrer">CC BY-SA 4.0</a>
-      </p>
     </div>
   </section>
 </template>
 
 <style scoped>
 .final-cta {
+  --cta-green-900: #0f2420;
+  --cta-green-700: #234640;
+  --cta-green-600: #35615a;
+  --cta-cream-50: #fdf9f6;
+  --cta-cream-200: #efdfd4;
+  --cta-terracotta-200: #f0c9c0;
   position: relative;
+  isolation:isolate;
   overflow: hidden;
   margin-top: 6rem;
-  background: #123250;
-  border: 1px solid oklch(from var(--primary) l c h / 0.2);
+  background: var(--cta-green-900);
+  border: 1px solid var(--cta-green-700);
   border-radius: 10px;
   padding: 3rem 3.5rem;
 }
@@ -58,8 +62,12 @@ import { JINOTEGA_IMAGE } from '@/config/assets'
   height: 100%;
 }
 
-.final-cta__image { object-fit: cover; object-position: center 54%; }
-.final-cta__shade { background: linear-gradient(90deg, rgb(7 21 37 / 88%), rgb(7 21 37 / 48%) 62%, rgb(7 21 37 / 30%)); }
+.final-cta__image { z-index:-2;object-fit: cover; object-position: center 54%; }
+.final-cta__shade { z-index:-1;background: linear-gradient(90deg, rgb(15 36 32 / 58%), rgb(15 36 32 / 38%) 62%, rgb(15 36 32 / 20%)); }
+.final-cta__ridges,.final-cta__rings,.final-cta__coffee{position:absolute;z-index:0;display:block;pointer-events:none;background-repeat:no-repeat}
+.final-cta__ridges{right:0;bottom:0;left:0;height:300px;background-image:url('/assets/jinowork-assets/05-cta/cta-ridges.svg');background-position:center bottom;background-size:cover;opacity:.68}
+.final-cta__rings{right:-30px;top:50%;width:min(46vw,580px);aspect-ratio:1;transform:translateY(-50%);background-image:url('/assets/jinowork-assets/05-cta/cta-rings.svg');background-position:center;background-size:contain;opacity:.5}
+.final-cta__coffee{right:clamp(120px,20vw,320px);bottom:1rem;width:150px;height:180px;background-image:url('/assets/jinowork-assets/shared/motif-coffee-branch-cream.svg');background-position:center bottom;background-size:contain;opacity:.48}
 
 .final-cta__kicker {
   margin: 0 0 0.6rem;
@@ -67,7 +75,7 @@ import { JINOTEGA_IMAGE } from '@/config/assets'
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #aed2ff;
+  color: var(--cta-terracotta-200);
 }
 
 .final-cta__title {
@@ -75,7 +83,7 @@ import { JINOTEGA_IMAGE } from '@/config/assets'
   font-family: 'Manrope', sans-serif;
   font-size: clamp(1.5rem, 2vw, 1.85rem);
   font-weight: 800;
-  color: #fff;
+  color: var(--cta-cream-50);
   letter-spacing: -0.04em;
   line-height: 1.15;
   max-width: 34ch;
@@ -85,22 +93,12 @@ import { JINOTEGA_IMAGE } from '@/config/assets'
   flex-shrink: 0;
 }
 
-.final-cta__credit {
-  flex-basis: 100%;
-  margin-bottom: 0;
-  margin-top: 0;
-  color: rgb(255 255 255 / 76%);
-  font-size: 0.68rem;
-}
-
-.final-cta__credit a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
-
 .final-cta__btn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.82rem 1.5rem;
-  background: var(--primary);
+  background: var(--cta-green-600);
   color: #fff;
   font-size: 0.93rem;
   font-weight: 700;
@@ -113,12 +111,12 @@ import { JINOTEGA_IMAGE } from '@/config/assets'
 }
 
 .final-cta__btn:hover {
-  background: oklch(from var(--primary) calc(l - 0.05) c h);
+  background: var(--cta-green-700);
   transform: translateY(-1px);
 }
 
 .final-cta__btn:focus-visible {
-  outline: 2px solid var(--primary);
+  outline: 2px solid var(--cta-cream-200);
   outline-offset: 4px;
 }
 
@@ -143,6 +141,10 @@ import { JINOTEGA_IMAGE } from '@/config/assets'
     padding: 1.5rem;
     border-radius: 8px;
   }
+}
+
+@media (max-width: 767px) {
+  .final-cta__rings,.final-cta__coffee { display:none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

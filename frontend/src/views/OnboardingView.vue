@@ -81,7 +81,7 @@ const {
         <div v-else-if="isCandidate && step === 2" class="onboarding-fields">
           <label class="onboarding-field onboarding-field--wide"><span>Área profesional <b>*</b></span><select v-model="form.professionalAreaId" required :aria-invalid="Boolean(fieldErrors.professionalAreaId)" :aria-describedby="fieldErrors.professionalAreaId ? 'area-error' : 'area-hint'"><option value="" disabled>Selecciona el área que mejor te representa</option><option v-for="area in catalogs.professionalAreas" :key="area.id" :value="area.id">{{ area.name }}</option></select><small v-if="fieldErrors.professionalAreaId" id="area-error" class="onboarding-field__error" role="alert">{{ fieldErrors.professionalAreaId }}</small><small v-else id="area-hint" class="onboarding-field__hint">La usarás para descubrir oportunidades relacionadas.</small></label>
           <label class="onboarding-field onboarding-field--wide"><span>Especialización <small>Opcional</small></span><select v-model="form.specializationId" :disabled="!form.professionalAreaId || !filteredSpecializations.length"><option value="">{{ form.professionalAreaId ? 'Elige una especialización (opcional)' : 'Primero elige un área profesional' }}</option><option v-for="specialization in filteredSpecializations" :key="specialization.id" :value="specialization.id">{{ specialization.name }}</option></select><small class="onboarding-field__hint">Puedes agregar o cambiar este dato más adelante.</small></label>
-          <div class="onboarding-tip"><MapPin :size="18" /><p>Tu ubicación y área nos ayudan a mostrarte vacantes adecuadas. No compartiremos tu teléfono públicamente.</p></div>
+          <div class="onboarding-tip"><MapPin :size="18" /><p>Tu ubicación y área nos ayudan a mostrarte ofertas adecuadas. No compartiremos tu teléfono públicamente.</p></div>
         </div>
 
         <dl v-else-if="step === 1" class="onboarding-fields">
@@ -250,4 +250,110 @@ const {
   .onboarding-success{padding:1.6rem 1.1rem;border-radius:.9rem!important}
 }
 @media(prefers-reduced-motion:reduce){.onboarding-button--primary:hover:not(:disabled){transform:none}}
+</style>
+
+<style scoped>
+.onboarding-page {
+  --palette-ink: #14302a;
+  --palette-violet: #c8553d;
+  --palette-blue: #8fb0a8;
+  --palette-ice: #f6eae4;
+  --palette-platinum: #5f6f6b;
+  --background: #fcf8f5;
+  --surface: #fffdfb;
+  --foreground: #16302b;
+  --primary: #2f5d50;
+  --secondary: #f6eae4;
+  --muted-foreground: #5f6f6b;
+  --border: #e3cfc1;
+  --panel: #f6eae4;
+  --shadow: rgb(20 48 42 / 10%);
+  background:
+    url('/assets/jinowork-assets/03-dos-caminos/caminos-orbits.svg') right top / min(46rem, 60vw) auto no-repeat,
+    #fcf8f5;
+}
+
+.onboarding-brand__mark {
+  background: linear-gradient(145deg, #35615a, #2f5d50);
+  box-shadow: 0 5px 14px rgb(20 48 42 / 20%);
+}
+
+.onboarding-workspace {
+  border-color: rgb(20 48 42 / 11%);
+  background: #fffdfb;
+  box-shadow: 0 24px 70px rgb(20 48 42 / 10%);
+}
+
+.onboarding-aside {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(150deg, #14302a 0%, #1c443a 62%, #234640 100%);
+}
+
+.onboarding-aside::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: url('/assets/jinowork-assets/01-hero/hero-topo-dark.svg') left center / cover no-repeat;
+  content: '';
+  opacity: .64;
+  pointer-events: none;
+}
+
+.onboarding-aside::after {
+  position: absolute;
+  z-index: 0;
+  right: 1rem;
+  bottom: 1.5rem;
+  width: 5rem;
+  height: 8rem;
+  background: url('/assets/jinowork-assets/shared/motif-coffee-branch-cream.svg') center / contain no-repeat;
+  content: '';
+  opacity: .35;
+  pointer-events: none;
+}
+
+.onboarding-aside .onboarding-eyebrow { color: #e68a78; }
+.onboarding-aside__intro > p:last-child { color: rgb(252 248 245 / 78%); }
+.onboarding-steps li { color: rgb(243 227 219 / 68%); }
+.onboarding-steps li.is-active,
+.onboarding-steps li.is-complete { color: #fcf8f5; }
+.onboarding-steps__number { border-color: rgb(243 227 219 / 42%); }
+.onboarding-steps li.is-active .onboarding-steps__number { border-color: #f3e3db; background: #f3e3db; color: #14302a; box-shadow: 0 0 0 4px rgb(243 227 219 / 15%); }
+.onboarding-steps li.is-complete .onboarding-steps__number { border-color: #8fb0a8; background: #8fb0a8; color: #14302a; }
+.onboarding-aside__privacy { color: rgb(243 227 219 / 78%); }
+.onboarding-aside__privacy svg { color: #e68a78; }
+.onboarding-aside__decoration {
+  z-index: 0;
+  border-color: rgb(243 227 219 / 15%);
+  background: url('/assets/jinowork-assets/01-hero/hero-rings-accent.svg') center / contain no-repeat;
+}
+.onboarding-aside__decoration span { border-color: rgb(243 227 219 / 18%); }
+.onboarding-aside__decoration span:nth-child(3) { background: rgb(200 85 61 / 22%); }
+
+.onboarding-panel {
+  position: relative;
+  isolation: isolate;
+  background: url('/assets/jinowork-assets/03-dos-caminos/caminos-orbits.svg') right top / min(75%, 32rem) auto no-repeat, #fcf8f5;
+}
+
+.onboarding-panel__role,
+.onboarding-panel__role svg { color: #2f5d50; }
+.onboarding-panel__step { border-color: #e3cfc1; background: #f6eae4; }
+.onboarding-progress { background: #efdfd4; }
+.onboarding-progress span { background: linear-gradient(90deg, #2f5d50, #5c8a7c); }
+.onboarding-field b { color: #c8553d; }
+.onboarding-button--primary { background: #2f5d50; box-shadow: 0 8px 20px rgb(47 93 80 / 20%); }
+.onboarding-button--primary:hover:not(:disabled) { background: #234640; box-shadow: 0 12px 24px rgb(35 70 64 / 22%); }
+.onboarding-review__avatar { background: linear-gradient(145deg, #35615a, #2f5d50); }
+.onboarding-success__icon { border-color: #b8d0c7; background: #dce8e4; color: #2f5d50; }
+.onboarding-success__summary span svg,
+.onboarding-review__verified { color: #2f5d50; }
+
+@media (max-width: 760px) {
+  .onboarding-page { background: #fcf8f5; }
+  .onboarding-aside::after,
+  .onboarding-aside__decoration { display: none; }
+  .onboarding-panel { background-size: min(75%, 22rem) auto, auto; }
+}
 </style>

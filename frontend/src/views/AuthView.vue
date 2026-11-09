@@ -21,11 +21,6 @@ onMounted(() => {
         { autoAlpha: 0, y: -10 },
         { autoAlpha: 1, y: 0, duration: 0.55 },
       )
-      intro.fromTo('.story-panel__map iframe',
-        { autoAlpha: 0, scale: 0.97 },
-        { autoAlpha: 1, scale: 1, duration: 1.15 },
-        0.12,
-      )
       intro.fromTo('.story-panel__text > *',
         { autoAlpha: 0, y: 12 },
         { autoAlpha: 1, y: 0, duration: 0.65, stagger: 0.1 },
@@ -69,6 +64,23 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .auth-view {
+  --palette-ink: #14302a;
+  --palette-violet: #c8553d;
+  --palette-blue: #8fb0a8;
+  --palette-ice: #f6eae4;
+  --palette-platinum: #5f6f6b;
+  --background: #fcf8f5;
+  --surface: #fffdfb;
+  --foreground: #16302b;
+  --primary: #2f5d50;
+  --secondary: #f6eae4;
+  --muted-foreground: #5f6f6b;
+  --border: #e3cfc1;
+  --panel: #f6eae4;
+  --surface-strong: #f6eae4;
+  --accent-strong: #f6eae4;
+  --shadow: rgb(20 48 42 / 9%);
+  color: var(--foreground);
   min-height: 100vh;
   min-height: 100dvh;
   background: var(--background);
@@ -114,9 +126,9 @@ onBeforeUnmount(() => {
 
 .auth-story {
   position: absolute;
-  z-index: 0;
+  z-index: 2;
   inset: 0 auto 0 0;
-  width: 50%;
+  width: 58%;
   max-width: none;
   overflow: visible;
 }
@@ -124,9 +136,15 @@ onBeforeUnmount(() => {
 .auth-layout :deep(.auth-form-panel) {
   position: relative;
   z-index: 1;
-  flex: 0 0 50%;
+  flex: 0 0 42%;
   margin-left: auto;
   min-width: 0;
+  background:
+    url('/assets/jinowork-svgs-mejorados/right/12-ondas-claras.svg') center bottom / 100% auto no-repeat,
+    url('/assets/jinowork-svgs-mejorados/right/13-orbitas-claras.svg') center / 100% 100% no-repeat,
+    url('/assets/jinowork-svgs-mejorados/right/10-contornos-claros.svg') center / 100% 100% no-repeat,
+    url('/assets/jinowork-svgs-mejorados/right/11-brillo-rosado.svg') center / 100% 100% no-repeat,
+    var(--background);
 }
 
 /* Responsive */
@@ -160,6 +178,8 @@ onBeforeUnmount(() => {
   .auth-layout :deep(.auth-form-panel) {
     flex: 1;
     padding: 1rem clamp(1rem, 6vw, 2rem);
+    border: 0;
+    border-radius: 0;
     background: var(--background);
   }
 }

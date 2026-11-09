@@ -1,5 +1,5 @@
 ﻿<script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import SiteHeader from '@/components/layout/SiteHeader.vue'
@@ -16,6 +16,14 @@ let landingContext: gsap.Context | undefined
 let landingMotion: gsap.MatchMedia | undefined
 
 onMounted(() => {
+  window.history.scrollRestoration = 'manual'
+  void nextTick().then(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+    window.requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+    })
+  })
+
   if (!landingRoot.value) return
 
   landingContext = gsap.context(() => {

@@ -20,7 +20,7 @@ const { notify } = useToast()
 const isCandidateWorkspace = computed(() => auth.user?.role === 'CANDIDATE')
 const layoutProps = computed(() => isCandidateWorkspace.value ? {
   eyebrow: 'Oportunidad',
-  title: 'Detalle de vacante',
+  title: 'Detalle de oferta',
   subtitle: 'Revisa la oportunidad y sus condiciones antes de postularte.',
   initials: auth.user?.email?.slice(0, 2).toUpperCase() ?? 'JW',
 } : {})
@@ -35,7 +35,7 @@ const showReportDialog = ref(false)
 onMounted(async () => {
   if (!auth.user) await auth.hydrateSession()
   try { oob.value = (await oobsApi.get(String(route.params.id))).oob }
-  catch (e) { error.value = e instanceof Error ? e.message : 'No se pudo cargar esta vacante.' }
+  catch (e) { error.value = e instanceof Error ? e.message : 'No se pudo cargar esta oferta.' }
   finally { loading.value = false }
   if (auth.user?.role === 'CANDIDATE') {
     try { const state = await oobsApi.candidateJobState(String(route.params.id)); application.value = state.application; saved.value = state.saved }
@@ -55,15 +55,15 @@ async function toggleSaved() {
   if (actionBusy.value || !oob.value) return
   actionBusy.value = true
   try {
-    if (saved.value) { await oobsApi.unsave(oob.value.id); saved.value = false; notify('Vacante quitada', 'Se eliminó de tus vacantes guardadas.') }
-    else { await oobsApi.save(oob.value.id); saved.value = true; notify('Vacante guardada', 'Puedes encontrarla en tu lista de guardadas.') }
-  } catch (e) { notify('No se pudo actualizar la vacante guardada', e instanceof Error ? e.message : 'Inténtalo de nuevo.', 'error') }
+    if (saved.value) { await oobsApi.unsave(oob.value.id); saved.value = false; notify('Oferta quitada', 'Se eliminó de tus ofertas guardadas.') }
+    else { await oobsApi.save(oob.value.id); saved.value = true; notify('Oferta guardada', 'Puedes encontrarla en tu lista de guardadas.') }
+  } catch (e) { notify('No se pudo actualizar la oferta guardada', e instanceof Error ? e.message : 'Inténtalo de nuevo.', 'error') }
   finally { actionBusy.value = false }
 }
 </script>
 
 <template>
-  <component :is="isCandidateWorkspace ? WorkspaceFrame : 'div'" :class="!isCandidateWorkspace ? 'oob-detail-page' : undefined" v-bind="layoutProps"><SiteHeader v-if="!isCandidateWorkspace" /><component :is="isCandidateWorkspace ? 'div' : 'main'" class="oob-detail-page__main" :class="{ 'oob-detail-page__main--workspace': isCandidateWorkspace }"><RouterLink class="oob-detail-page__back" to="/jobs"><ArrowLeft :size="16" />Volver a las vacantes</RouterLink>
+  <component :is="isCandidateWorkspace ? WorkspaceFrame : 'div'" :class="!isCandidateWorkspace ? 'oob-detail-page' : undefined" v-bind="layoutProps"><SiteHeader v-if="!isCandidateWorkspace" /><component :is="isCandidateWorkspace ? 'div' : 'main'" class="oob-detail-page__main" :class="{ 'oob-detail-page__main--workspace': isCandidateWorkspace }"><RouterLink class="oob-detail-page__back" to="/jobs"><ArrowLeft :size="16" />Volver a las ofertas</RouterLink>
     <AppMessage v-if="loading" variant="loading" message="Cargando oferta…" /><AppMessage v-else-if="error" variant="error" title="No se pudo cargar la oferta" :message="error"><template #actions><RouterLink to="/jobs">Ver otras ofertas</RouterLink></template></AppMessage>
     <article v-else-if="oob" class="oob-detail">
       <header class="oob-detail__hero">
@@ -76,7 +76,7 @@ async function toggleSaved() {
           <section class="oob-detail__section oob-detail__requirements"><h2>Lo que buscamos</h2><p>{{ oob.requirements }}</p></section>
           <CompanyPublicSummary :company="oob.company" />
         </div>
-        <aside class="oob-detail__aside" aria-label="Resumen de la vacante">
+        <aside class="oob-detail__aside" aria-label="Resumen de la oferta">
           <section class="oob-detail__summary"><h2>Detalles de la oferta</h2>
             <dl class="oob-detail__facts">
               <div><dt><Banknote :size="16" />Salario</dt><dd>{{ formatJobSalary(oob) }}</dd></div>
@@ -84,7 +84,7 @@ async function toggleSaved() {
               <div><dt><BriefcaseBusiness :size="16" />Contrato</dt><dd>{{ oobLabels.contract[oob.contractType] ?? oob.contractType }}</dd></div>
               <div><dt><Clock3 :size="16" />Jornada y horario</dt><dd>{{ oobLabels.workday[oob.workday] ?? oob.workday }} · {{ oobLabels.schedule[oob.scheduleType] ?? oob.scheduleType }}<template v-if="oob.scheduleDescription"> · {{ oob.scheduleDescription }}</template></dd></div>
               <div v-if="oob.experienceYearsMin !== null"><dt><UsersRound :size="16" />Experiencia</dt><dd>{{ oob.experienceYearsMin }} {{ oob.experienceYearsMin === 1 ? 'año' : 'años' }} mínimo</dd></div>
-              <div><dt><UsersRound :size="16" />Vacantes</dt><dd>{{ oob.vacancies }}</dd></div>
+              <div><dt><UsersRound :size="16" />Ofertas</dt><dd>{{ oob.vacancies }}</dd></div>
               <div v-if="oob.expiresAt"><dt><CalendarDays :size="16" />Cierre de convocatoria</dt><dd>{{ new Date(oob.expiresAt).toLocaleDateString('es-NI') }}</dd></div>
             </dl>
             <p v-if="oob.publishedAt" class="oob-detail__published">Publicada el {{ new Date(oob.publishedAt).toLocaleDateString('es-NI') }}</p>
@@ -93,7 +93,7 @@ async function toggleSaved() {
             <span class="oob-detail__apply-kicker">SIGUIENTE PASO</span>
             <h2>{{ application ? 'Tu candidatura está en marcha' : '¿Te interesa esta oportunidad?' }}</h2>
             <p class="oob-detail__apply-copy">{{ application ? 'Consulta el avance de tu proceso de selección cuando quieras.' : 'Postúlate con tu perfil profesional y sigue las actualizaciones desde tu cuenta.' }}</p>
-            <div v-if="auth.user?.role === 'CANDIDATE'" class="oob-detail__actions"><button class="workspace__cta" type="button" :disabled="actionBusy || Boolean(application)" @click="apply">{{ actionBusy && !application ? 'Procesando…' : application ? 'Ya te postulaste' : 'Postularme' }}</button><button class="oob-detail__save" type="button" :disabled="actionBusy" :aria-pressed="saved" @click="toggleSaved"><Bookmark :size="16" />{{ saved ? 'Quitar de guardados' : 'Guardar vacante' }}</button><RouterLink v-if="application" class="oob-detail__tracking" to="/candidate/applications">Ver seguimiento de mi postulación <span aria-hidden="true">→</span></RouterLink></div>
+            <div v-if="auth.user?.role === 'CANDIDATE'" class="oob-detail__actions"><button class="workspace__cta" type="button" :disabled="actionBusy || Boolean(application)" @click="apply">{{ actionBusy && !application ? 'Procesando…' : application ? 'Ya te postulaste' : 'Postularme' }}</button><button class="oob-detail__save" type="button" :disabled="actionBusy" :aria-pressed="saved" @click="toggleSaved"><Bookmark :size="16" />{{ saved ? 'Quitar de guardados' : 'Guardar oferta' }}</button><RouterLink v-if="application" class="oob-detail__tracking" to="/candidate/applications">Ver seguimiento de mi postulación <span aria-hidden="true">→</span></RouterLink></div>
             <RouterLink v-else-if="!auth.user" class="workspace__cta oob-detail__login" :to="{ path: '/auth', query: { redirect: route.fullPath } }">Inicia sesión para postularte</RouterLink>
             <div class="oob-detail__apply-note"><span aria-hidden="true">✓</span><p>Tu perfil se comparte con la empresa cuando envías tu postulación.</p></div>
           </section>

@@ -39,49 +39,49 @@ async function load() {
     const [result, options] = await Promise.all([workspaceApi.companyJobs(), workspaceApi.companyJobOptions()])
     oobs.value = result.jobs
     verified.value = options.companyVerificationStatus === 'VERIFIED'
-  } catch (e) { error.value = e instanceof Error ? e.message : 'No se pudieron cargar tus vacantes.' }
+  } catch (e) { error.value = e instanceof Error ? e.message : 'No se pudieron cargar tus ofertas.' }
   finally { loading.value = false }
 }
 
 async function changeStatus(oob: CompanyJob, status: string) {
   if (savingId.value) return
   const actionLabel = status === 'PUBLISHED' ? 'publicar' : status === 'PAUSED' ? 'pausar' : 'cerrar'
-  const confirmLabel = status === 'PUBLISHED' ? 'Publicar' : status === 'PAUSED' ? 'Pausar' : 'Cerrar vacante'
-  if (!await askConfirmation({ title: `${confirmLabel} vacante`, message: `¿Confirmas que quieres ${actionLabel} “${oob.title}”?`, confirmLabel, danger: status === 'CLOSED' })) return
+  const confirmLabel = status === 'PUBLISHED' ? 'Publicar' : status === 'PAUSED' ? 'Pausar' : 'Cerrar oferta'
+  if (!await askConfirmation({ title: `${confirmLabel} oferta`, message: `¿Confirmas que quieres ${actionLabel} “${oob.title}”?`, confirmLabel, danger: status === 'CLOSED' })) return
   savingId.value = oob.id
   error.value = ''
   try {
     await workspaceApi.updateCompanyJobStatus(oob.id, status)
     await load()
-    const title = status === 'PUBLISHED' ? 'Vacante publicada' : status === 'PAUSED' ? 'Vacante pausada' : 'Vacante cerrada'
+    const title = status === 'PUBLISHED' ? 'Oferta publicada' : status === 'PAUSED' ? 'Oferta pausada' : 'Oferta cerrada'
     const message = status === 'PUBLISHED' ? 'Ya está visible para los candidatos.' : status === 'PAUSED' ? 'Deoó de aparecer entre las ofertas disponibles.' : 'Ya no recibirá postulaciones.'
     notify(title, message)
-  } catch (e) { notify('No se pudo actualizar la vacante', e instanceof Error ? e.message : 'Inténtalo de nuevo.', 'error') }
+  } catch (e) { notify('No se pudo actualizar la oferta', e instanceof Error ? e.message : 'Inténtalo de nuevo.', 'error') }
   finally { savingId.value = '' }
 }
 
 async function removeJob(oob: CompanyJob) {
-  if (savingId.value || !await askConfirmation({ title: 'Eliminar vacante', message: `¿Eliminar “${oob.title}” de tus vacantes? Dejará de aparecer para los candidatos.`, confirmLabel: 'Eliminar', danger: true })) return
+  if (savingId.value || !await askConfirmation({ title: 'Eliminar oferta', message: `¿Eliminar “${oob.title}” de tus ofertas? Dejará de aparecer para los candidatos.`, confirmLabel: 'Eliminar', danger: true })) return
   savingId.value = oob.id
   error.value = ''
   try {
     await workspaceApi.removeCompanyJob(oob.id)
     statusFilter.value = 'ALL'
     await load()
-    notify('Vacante eliminada', 'Se quitó de tus vacantes.')
-  } catch (e) { notify('No se pudo eliminar la vacante', e instanceof Error ? e.message : 'Inténtalo de nuevo.', 'error') }
+    notify('Oferta eliminada', 'Se quitó de tus ofertas.')
+  } catch (e) { notify('No se pudo eliminar la oferta', e instanceof Error ? e.message : 'Inténtalo de nuevo.', 'error') }
   finally { savingId.value = '' }
 }
 
 async function archiveRemovedJob(oob: CompanyJob) {
-  if (savingId.value || oob.status !== 'REMOVED' || !await askConfirmation({ title: 'Archivar vacante retirada', message: `¿Quitar “${oob.title}” de tu lista? Las postulaciones y su historial se conservarán.`, confirmLabel: 'Archivar', danger: true })) return
+  if (savingId.value || oob.status !== 'REMOVED' || !await askConfirmation({ title: 'Archivar oferta retirada', message: `¿Quitar “${oob.title}” de tu lista? Las postulaciones y su historial se conservarán.`, confirmLabel: 'Archivar', danger: true })) return
   savingId.value = oob.id
   error.value = ''
   try {
     await workspaceApi.archiveCompanyJob(oob.id)
     oobs.value = oobs.value.filter(item => item.id !== oob.id)
-    notify('Vacante archivada', 'Se quitó de la lista; el historial de postulaciones se conserva.')
-  } catch (e) { notify('No se pudo archivar la vacante', e instanceof Error ? e.message : 'Inténtalo de nuevo.', 'error') }
+    notify('Oferta archivada', 'Se quitó de la lista; el historial de postulaciones se conserva.')
+  } catch (e) { notify('No se pudo archivar la oferta', e instanceof Error ? e.message : 'Inténtalo de nuevo.', 'error') }
   finally { savingId.value = '' }
 }
 
@@ -89,7 +89,7 @@ onMounted(load)
 onMounted(() => {
   const saved = route.query.saved
   if (saved === 'created' || saved === 'updated') {
-    notify(saved === 'created' ? 'Borrador de vacante creado' : 'Vacante actualizada', saved === 'created' ? 'Puedes editarla y publicarla cuando esté lista.' : 'Los cambios se guardaron correctamente.')
+    notify(saved === 'created' ? 'Borrador de oferta creado' : 'Oferta actualizada', saved === 'created' ? 'Puedes editarla y publicarla cuando esté lista.' : 'Los cambios se guardaron correctamente.')
     void router.replace({ query: { ...route.query, saved: undefined } })
   }
 })
@@ -97,19 +97,19 @@ watch(() => route.query.q, value => { search.value = typeof value === 'string' ?
 </script>
 
 <template>
-  <WorkspaceFrame eyebrow="Gestión de vacantes" title="Mis vacantes" subtitle="Crea y administra las ofertas de tu empresa." initials="JW">
-    <template #heading-action><RouterLink class="workspace__cta company-oobs__create" to="/company/jobs/new">Crear vacante <span aria-hidden="true">→</span></RouterLink></template>
-    <AppMessage v-if="!loading && !verified" variant="warning" title="Verifica tu empresa para publicar" message="Puedes preparar vacantes como borrador mientras se completa la verificación." />
-    <AppMessage v-if="error" variant="error" title="No se pudieron cargar tus vacantes" :message="error" />
-    <AppMessage v-if="loading" variant="loading" message="Cargando vacantes…" />
+  <WorkspaceFrame eyebrow="Gestión de ofertas" title="Mis ofertas" subtitle="Crea y administra las ofertas de tu empresa." initials="JW">
+    <template #heading-action><RouterLink class="workspace__cta company-oobs__create" to="/company/jobs/new">Crear oferta <span aria-hidden="true">→</span></RouterLink></template>
+    <AppMessage v-if="!loading && !verified" variant="warning" title="Verifica tu empresa para publicar" message="Puedes preparar ofertas como borrador mientras se completa la verificación." />
+    <AppMessage v-if="error" variant="error" title="No se pudieron cargar tus ofertas" :message="error" />
+    <AppMessage v-if="loading" variant="loading" message="Cargando ofertas…" />
     <section v-else class="workspace__card workspace__section company-oobs">
-      <AppEmptyState v-if="!oobs.length" title="Todavía no has creado vacantes" description="Publica una oferta y aquí podrás administrarla y ver a sus postulantes."><template #actions><RouterLink to="/company/jobs/new">Crear vacante</RouterLink></template></AppEmptyState>
+      <AppEmptyState v-if="!oobs.length" title="Todavía no has creado ofertas" description="Publica una oferta y aquí podrás administrarla y ver a sus postulantes."><template #actions><RouterLink to="/company/jobs/new">Crear oferta</RouterLink></template></AppEmptyState>
       <template v-else>
         <div class="company-oobs__overview">
-          <p><strong>{{ oobs.filter(oob => oob.status !== 'REMOVED').length }}</strong> {{ oobs.filter(oob => oob.status !== 'REMOVED').length === 1 ? 'vacante' : 'vacantes' }}</p>
+          <p><strong>{{ oobs.filter(oob => oob.status !== 'REMOVED').length }}</strong> {{ oobs.filter(oob => oob.status !== 'REMOVED').length === 1 ? 'oferta' : 'ofertas' }}</p>
           <span>{{ visibleJobs.length === oobs.filter(oob => oob.status !== 'REMOVED').length ? 'Tu listado de ofertas' : `${visibleJobs.length} resultados con estos filtros` }}</span>
         </div>
-        <div class="company-oobs__filters" role="search" aria-label="Filtrar vacantes">
+        <div class="company-oobs__filters" role="search" aria-label="Filtrar ofertas">
           <label class="company-oobs__search">
             <span>Buscar</span>
             <input v-model="search" type="search" placeholder="Buscar por título">
@@ -143,12 +143,12 @@ watch(() => route.query.q, value => { search.value = typeof value === 'string' ?
               <button v-if="['DRAFT', 'PAUSED'].includes(oob.status) && verified" type="button" :disabled="Boolean(savingId)" @click="changeStatus(oob, 'PUBLISHED')">{{ savingId === oob.id ? 'Publicando…' : 'Publicar' }}</button>
               <button v-if="oob.status === 'PUBLISHED'" type="button" :disabled="Boolean(savingId)" @click="changeStatus(oob, 'PAUSED')">Pausar</button>
               <button v-if="['DRAFT', 'PUBLISHED', 'PAUSED'].includes(oob.status)" type="button" :disabled="Boolean(savingId)" @click="changeStatus(oob, 'CLOSED')">Cerrar</button>
-              <button v-if="oob.status === 'CLOSED'" class="company-oobs__remove" type="button" :disabled="Boolean(savingId)" @click="removeJob(oob)">{{ savingId === oob.id ? 'Eliminando…' : 'Eliminar vacante' }}</button>
-              <button v-if="oob.status === 'REMOVED'" class="company-oobs__remove" type="button" :disabled="Boolean(savingId)" @click="archiveRemovedJob(oob)">{{ savingId === oob.id ? 'Quitando…' : 'Quitar de mis vacantes' }}</button>
+              <button v-if="oob.status === 'CLOSED'" class="company-oobs__remove" type="button" :disabled="Boolean(savingId)" @click="removeJob(oob)">{{ savingId === oob.id ? 'Eliminando…' : 'Eliminar oferta' }}</button>
+              <button v-if="oob.status === 'REMOVED'" class="company-oobs__remove" type="button" :disabled="Boolean(savingId)" @click="archiveRemovedJob(oob)">{{ savingId === oob.id ? 'Quitando…' : 'Quitar de mis ofertas' }}</button>
             </div>
           </article>
         </div>
-        <AppEmptyState v-else title="No hay vacantes que coincidan" description="Prueba con otro título o cambia el estado."><template #actions><button type="button" @click="search = ''; statusFilter = 'ALL'">Limpiar filtros</button></template></AppEmptyState>
+        <AppEmptyState v-else title="No hay ofertas que coincidan" description="Prueba con otro título o cambia el estado."><template #actions><button type="button" @click="search = ''; statusFilter = 'ALL'">Limpiar filtros</button></template></AppEmptyState>
       </template>
     </section>
     <AppConfirmDialog v-if="confirmation" :title="confirmation.title" :message="confirmation.message" :confirm-label="confirmation.confirmLabel" :danger="confirmation.danger" @confirm="finishConfirmation(true)" @cancel="finishConfirmation(false)" />
@@ -157,8 +157,8 @@ watch(() => route.query.q, value => { search.value = typeof value === 'string' ?
 
 <style scoped>
 .company-oobs__create{background:linear-gradient(120deg,var(--palette-violet),var(--primary))}
-.company-oobs__overview{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin:-.2rem 0 1rem;padding:.9rem 1rem;background:linear-gradient(100deg,color-mix(in srgb,var(--primary) 13%,var(--surface)),color-mix(in srgb,var(--palette-ice) 62%,var(--surface)));color:var(--muted-foreground)}
-.company-oobs__overview p{margin:0;font-size:.84rem}.company-oobs__overview strong{color:var(--primary);font-size:1.05rem}.company-oobs__overview>span{font-size:.74rem}
+.company-oobs__overview{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin:0 0 1rem;padding:0;background:transparent;color:var(--muted-foreground)}
+.company-oobs__overview p{margin:0;font-size:.84rem}.company-oobs__overview strong{color:var(--primary);font-size:1.15rem}.company-oobs__overview>span{font-size:.74rem}
 .company-oobs__filters{display:grid;grid-template-columns:minmax(13rem,1fr) minmax(11rem,.42fr);gap:.8rem 1rem;align-items:end;padding:0 0 1.1rem;border-bottom:1px solid var(--border)}
 .company-oobs__filters label{display:grid;gap:.35rem;min-width:0}.company-oobs__filters label>span{color:var(--muted-foreground);font-size:.68rem;font-weight:800;letter-spacing:.04em}
 .company-oobs__filters input,.company-oobs__filters select{width:100%;height:2.7rem;padding:0 .8rem;border:0;border-bottom:2px solid transparent;border-radius:0;background:color-mix(in srgb,var(--palette-ice) 52%,var(--surface));color:var(--foreground);font:inherit;font-size:.78rem;transition:background .16s,border-color .16s}
@@ -188,7 +188,7 @@ watch(() => route.query.q, value => { search.value = typeof value === 'string' ?
 .company-oobs__empty p,.company-oobs__no-results p{margin:.4rem 0;color:var(--muted-foreground);font-size:.8rem}
 .company-oobs__empty a,.company-oobs__no-results button{display:inline-block;margin-top:.55rem;padding:0;border:0;background:none;color:var(--primary);font:inherit;font-size:.78rem;font-weight:800;cursor:pointer}
 @media(max-width:700px){
-  .company-oobs__overview{align-items:flex-start;flex-direction:column;gap:.2rem;padding:.8rem}
+  .company-oobs__overview{align-items:flex-start;flex-direction:column;gap:.25rem}
   .company-oobs__filters{grid-template-columns:minmax(0,1fr);gap:.7rem}
   .company-oobs__row{align-items:stretch;flex-direction:column;gap:.8rem;padding:.9rem .65rem;margin-inline:-.65rem}
   .company-oobs__content{width:100%}

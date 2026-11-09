@@ -42,9 +42,9 @@ const tabs: { value: Extract<AuthMode, 'login' | 'register'>; label: string }[] 
   display: flex;
   gap: 0.3rem;
   padding: 0.3rem;
-  border: 1px solid var(--border);
+  border: 1px solid color-mix(in srgb, var(--primary) 18%, var(--border));
   border-radius: 0.85rem;
-  background: var(--panel);
+  background: color-mix(in srgb, var(--secondary) 72%, var(--surface));
 }
 
 .auth-tab {
@@ -57,20 +57,22 @@ const tabs: { value: Extract<AuthMode, 'login' | 'register'>; label: string }[] 
   font-family: inherit;
   font-size: 0.92rem;
   font-weight: 600;
-  color: var(--muted-foreground);
+  color: var(--primary);
   cursor: pointer;
   transition: color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .auth-tab:hover {
-  color: var(--foreground);
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
 }
 
 .auth-tab--active {
-  color: var(--foreground);
-  background: var(--surface);
-  box-shadow: 0 1px 3px var(--shadow);
+  color: #fff;
+  background: var(--primary);
+  box-shadow: 0 3px 9px color-mix(in srgb, var(--primary) 22%, transparent);
 }
+
+.auth-tab--active:hover { background: color-mix(in srgb, var(--primary) 90%, #14302a); }
 
 .auth-tab:focus-visible {
   outline: 2px solid var(--primary);

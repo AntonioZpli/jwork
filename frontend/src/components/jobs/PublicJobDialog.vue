@@ -12,7 +12,7 @@ import { oobAreaStyle } from '@/utils/oobAreaStyle'
 import { vacancyInitials } from '@/utils/vacancyInitials'
 
 const props = defineProps<{ oobId: string | null }>()
-const emit = defineEmits<{ close: [navigating?: boolean] }>()
+const emit = defineEmits<{ close: [navigating?: boolean]; applied: [jobId: string] }>()
 const route = useRoute()
 const auth = useAuthStore()
 const { notify } = useToast()
@@ -38,11 +38,11 @@ const canWithdrawApplication = computed(() => Boolean(application.value && ['REC
 const loginRedirect = computed(() => oob.value ? `/jobs/${oob.value.id}` : route.fullPath)
 const compatibilityTone = computed(() => {
   const score = compatibility.value?.score
-  if (score === undefined) return { accent: '#93b8e5', track: '#e8f0fa' }
-  if (score >= 80) return { accent: '#83b992', track: '#e7f2e9' }
-  if (score >= 60) return { accent: '#83b4e8', track: '#e8f1fc' }
-  if (score >= 40) return { accent: '#e3bd72', track: '#f7f0e1' }
-  return { accent: '#d99191', track: '#f5e9e9' }
+  if (score === undefined) return { accent: '#2f5f52', track: '#e9f0ec' }
+  if (score >= 80) return { accent: '#19805a', track: '#e5f1eb' }
+  if (score >= 60) return { accent: '#3e7f69', track: '#e9f0ec' }
+  if (score >= 40) return { accent: '#d29a32', track: '#fbf2df' }
+  return { accent: '#b5483a', track: '#fbefeb' }
 })
 function normalizeCompatibility(payload: unknown) {
   if (!payload || typeof payload !== 'object') return null
@@ -77,7 +77,7 @@ function normalizeCompatibility(payload: unknown) {
   return { score: Math.max(0, Math.min(100, Math.round(score))), criteria }
 }
 const compatibilityLabel = computed(() => compatibility.value === null ? (isCandidate.value ? 'Calculando compatibilidad' : 'Inicia sesión para calcularla') : compatibility.value.score >= 80 ? 'Alta compatibilidad' : compatibility.value.score >= 60 ? 'Buena compatibilidad' : compatibility.value.score >= 40 ? 'Compatibilidad parcial' : 'Compatibilidad baja')
-const compatibilityDescription = computed(() => compatibility.value === null ? (isCandidate.value ? (stateError.value ? 'No pudimos calcularla en este momento.' : 'Comparando los datos de tu perfil con esta vacante.') : 'Inicia sesión como candidato para calcularla con tu perfil.') : compatibility.value.score >= 60 ? 'Tu perfil coincide con varios de los requisitos de esta oportunidad.' : 'Revisa las coincidencias con los requisitos de este puesto.')
+const compatibilityDescription = computed(() => compatibility.value === null ? (isCandidate.value ? (stateError.value ? 'No pudimos calcularla en este momento.' : 'Comparando los datos de tu perfil con esta oferta.') : 'Inicia sesión como candidato para calcularla con tu perfil.') : compatibility.value.score >= 60 ? 'Tu perfil coincide con varios de los requisitos de esta oportunidad.' : 'Revisa las coincidencias con los requisitos de este puesto.')
 function close() { emit('close', false) }
 useEscapeKey(() => { if (props.oobId) close() })
 
@@ -109,7 +109,7 @@ watch(() => props.oobId, async (id) => {
     oob.value = (await oobsApi.get(id)).oob
   } catch (cause) {
     if (sequence !== oobLoadSequence) return
-    error.value = cause instanceof Error ? cause.message : 'No se pudo cargar esta vacante.'
+    error.value = cause instanceof Error ? cause.message : 'No se pudo cargar esta oferta.'
   }
   if (sequence === oobLoadSequence && oob.value && auth.user?.role === 'CANDIDATE') {
     try {
@@ -160,6 +160,7 @@ async function apply() {
     const result = await oobsApi.apply(targetJobId)
     if (sequence !== actionSequence || props.oobId !== targetJobId) return
     application.value = result.application
+    emit('applied', targetJobId)
     notify('Postulación enviada', 'Tu candidatura ya está en manos de la empresa.')
   } catch (cause) {
     if (sequence !== actionSequence || props.oobId !== targetJobId) return
@@ -169,7 +170,7 @@ async function apply() {
 
 async function withdrawApplication() {
   if (busy.value || !application.value || !canWithdrawApplication.value) return
-  if (!window.confirm('¿Quieres retirar tu postulación a esta vacante?')) return
+  if (!window.confirm('¿Quieres retirar tu postulación a esta oferta?')) return
   const targetJobId = oob.value?.id
   const targetApplicationId = application.value.id
   const sequence = actionSequence
@@ -178,7 +179,7 @@ async function withdrawApplication() {
     const result = await oobsApi.withdraw(targetApplicationId)
     if (sequence !== actionSequence || props.oobId !== targetJobId) return
     application.value = { ...application.value!, status: result.application.status }
-    notify('Postulación retirada', 'Se quitó tu candidatura de esta vacante.')
+    notify('Postulación retirada', 'Se quitó tu candidatura de esta oferta.')
   } catch (cause) {
     if (sequence !== actionSequence || props.oobId !== targetJobId) return
     notify('No se pudo retirar la postulación', cause instanceof Error ? cause.message : 'Inténtalo de nuevo.', 'error')
@@ -191,11 +192,11 @@ async function toggleSaved() {
   const sequence = actionSequence
   busy.value = true
   try {
-    if (saved.value) { await oobsApi.unsave(targetJobId); if (sequence !== actionSequence || props.oobId !== targetJobId) return; saved.value = false; notify('Vacante quitada', 'Se eliminó de tus vacantes guardadas.') }
-    else { await oobsApi.save(targetJobId); if (sequence !== actionSequence || props.oobId !== targetJobId) return; saved.value = true; notify('Vacante guardada', 'Puedes encontrarla en tu lista de guardadas.') }
+    if (saved.value) { await oobsApi.unsave(targetJobId); if (sequence !== actionSequence || props.oobId !== targetJobId) return; saved.value = false; notify('Oferta quitada', 'Se eliminó de tus ofertas guardadas.') }
+    else { await oobsApi.save(targetJobId); if (sequence !== actionSequence || props.oobId !== targetJobId) return; saved.value = true; notify('Oferta guardada', 'Puedes encontrarla en tu lista de guardadas.') }
   } catch (cause) {
     if (sequence !== actionSequence || props.oobId !== targetJobId) return
-    notify('No se pudo actualizar la vacante guardada', cause instanceof Error ? cause.message : 'Inténtalo de nuevo.', 'error')
+    notify('No se pudo actualizar la oferta guardada', cause instanceof Error ? cause.message : 'Inténtalo de nuevo.', 'error')
   } finally { if (sequence === actionSequence) busy.value = false }
 }
 </script>
@@ -204,10 +205,10 @@ async function toggleSaved() {
   <Teleport to="body">
     <Transition name="public-oob-dialog">
       <div v-if="oobId" class="public-oob-overlay" @click.self="close">
-        <section ref="dialog" class="public-oob-dialog" role="dialog" aria-modal="true" :aria-label="oob ? `Vacante ${oob.title}` : 'Detalle de vacante'" @click="closeForInternalLink">
+        <section ref="dialog" class="public-oob-dialog" role="dialog" aria-modal="true" :aria-label="oob ? `Oferta ${oob.title}` : 'Detalle de oferta'" @click="closeForInternalLink">
           <header class="public-oob-dialog__top"><span>DETALLE DE OPORTUNIDAD</span><button ref="closeButton" type="button" aria-label="Cerrar detalle" @click="close"><X :size="22" :stroke-width="2.8" /></button></header>
-          <AppMessage v-if="loading" variant="loading" message="Cargando vacante…" />
-          <AppMessage v-else-if="error" variant="error" title="No se pudo cargar la vacante" :message="error" />
+          <AppMessage v-if="loading" variant="loading" message="Cargando oferta…" />
+          <AppMessage v-else-if="error" variant="error" title="No se pudo cargar la oferta" :message="error" />
           <template v-else-if="oob">
             <header class="public-oob-hero" :style="oobAreaStyle(oob.professionalArea.name, oob.id)">
               <div class="public-oob-hero__mark vacancy-mark" :style="oobAreaStyle(oob.professionalArea.name, oob.id)" aria-hidden="true">{{ vacancyInitials(oob.title) }}</div>
@@ -226,10 +227,10 @@ async function toggleSaved() {
                   <div><dt><BriefcaseBusiness :size="16" />Contrato</dt><dd>{{ oobLabels.contract[oob.contractType] ?? oob.contractType }}</dd></div>
                   <div><dt><Clock3 :size="16" />Jornada</dt><dd>{{ oobLabels.workday[oob.workday] ?? oob.workday }} · {{ oobLabels.schedule[oob.scheduleType] ?? oob.scheduleType }}<template v-if="oob.scheduleDescription"> · {{ oob.scheduleDescription }}</template></dd></div>
                   <div v-if="oob.experienceYearsMin !== null"><dt><UsersRound :size="16" />Experiencia</dt><dd>{{ oob.experienceYearsMin }} {{ oob.experienceYearsMin === 1 ? 'año' : 'años' }} mínimo</dd></div>
-                  <div><dt><UsersRound :size="16" />Vacantes</dt><dd>{{ oob.vacancies }}</dd></div>
+                  <div><dt><UsersRound :size="16" />Ofertas</dt><dd>{{ oob.vacancies }}</dd></div>
                   <div v-if="oob.expiresAt"><dt><CalendarDays :size="16" />Cierre</dt><dd>{{ new Date(oob.expiresAt).toLocaleDateString('es-NI') }}</dd></div>
                 </dl><p v-if="oob.publishedAt">Publicada el {{ new Date(oob.publishedAt).toLocaleDateString('es-NI') }}</p></section>
-                                                <section class="public-oob-apply" :style="{ '--compatibility-accent': compatibilityTone.accent, '--compatibility-track': compatibilityTone.track }" aria-label="Compatibilidad y acciones de vacante">
+                                                <section class="public-oob-apply" :style="{ '--compatibility-accent': compatibilityTone.accent, '--compatibility-track': compatibilityTone.track }" aria-label="Compatibilidad y acciones de oferta">
                   <span class="public-oob-apply__eyebrow">COMPATIBILIDAD CON TU PERFIL</span>
                   <div class="public-oob-apply__compatibility">
                     <div class="public-oob-apply__meter" :style="{ '--compatibility': `${compatibility?.score ?? 0}%` }" role="img" :aria-label="compatibility ? `Compatibilidad ${compatibility.score} por ciento` : 'Compatibilidad pendiente de iniciar sesión'"><span><strong>{{ compatibility ? `${compatibility.score}%` : '→' }}</strong><small>compatibilidad</small></span></div>
@@ -250,9 +251,9 @@ async function toggleSaved() {
                     <button v-if="isCandidate && application && canWithdrawApplication" class="public-oob-apply__primary" type="button" :disabled="busy" @click="withdrawApplication">{{ busy ? 'Retirando…' : 'Retirar postulación' }}<ArrowRight :size="16" /></button>
                     <button v-else-if="isCandidate && application" class="public-oob-apply__primary" type="button" disabled>Postulación {{ application.status === 'WITHDRAWN' ? 'retirada' : 'finalizada' }}</button>
                     <RouterLink v-else-if="isCandidate && canApply === false" class="public-oob-apply__primary" to="/candidate/profile" @click="closeForInternalLink">Completa tu perfil para postularte <ArrowRight :size="16" /></RouterLink>
-                    <button v-else-if="isCandidate" class="public-oob-apply__primary" type="button" :disabled="busy || canApply === null" @click="apply"><Send :size="16" />{{ busy ? 'Enviando…' : canApply === null ? 'Comprobando perfil…' : 'Postularme a esta vacante' }}<ArrowRight :size="16" /></button>
+                    <button v-else-if="isCandidate" class="public-oob-apply__primary" type="button" :disabled="busy || canApply === null" @click="apply"><Send :size="16" />{{ busy ? 'Enviando…' : canApply === null ? 'Comprobando perfil…' : 'Postularme a esta oferta' }}<ArrowRight :size="16" /></button>
                     <RouterLink v-else class="public-oob-apply__primary" :to="{ path: '/auth', query: { redirect: loginRedirect } }"><Send :size="16" />Inicia sesión para postularte<ArrowRight :size="16" /></RouterLink>
-                    <button v-if="isCandidate" class="public-oob-apply__save" type="button" :disabled="busy" :aria-pressed="saved" @click="toggleSaved"><Bookmark :size="16" />{{ saved ? 'Vacante guardada' : 'Guardar vacante' }}</button>
+                    <button v-if="isCandidate" class="public-oob-apply__save" type="button" :disabled="busy" :aria-pressed="saved" @click="toggleSaved"><Bookmark :size="16" />{{ saved ? 'Oferta guardada' : 'Guardar oferta' }}</button>
                     <RouterLink v-else class="public-oob-apply__save" :to="{ path: '/auth', query: { redirect: loginRedirect } }"><Bookmark :size="16" />Inicia sesión para guardar</RouterLink>
                   </div>
                   <p class="public-oob-apply__footnote">Si tu perfil está incompleto, podrás actualizarlo antes de postularte.</p>
@@ -274,17 +275,17 @@ async function toggleSaved() {
 .public-oob-dialog{display:flex;width:min(100%,1320px);max-height:min(94vh,1000px);flex-direction:column;overflow:auto;border:1px solid #d8e3f0;background:var(--surface);box-shadow:0 28px 90px rgb(4 15 30 / 35%)}
 .public-oob-dialog__top{position:sticky;z-index:2;top:0;display:flex;align-items:center;justify-content:space-between;min-height:3.2rem;padding:.55rem 1.2rem;border-bottom:1px solid var(--border);background:var(--surface)}
 .public-oob-dialog__top>span{color:var(--muted-foreground);font-size:.62rem;font-weight:850;letter-spacing:.14em}
-.public-oob-dialog__top button{display:grid;width:2.25rem;height:2.25rem;flex:none;place-items:center;margin-left:auto;border:1px solid #d7e0eb;background:#f7f9fc;color:#40536b;cursor:pointer}
-.public-oob-dialog__top button:hover{border-color:#aebfd2;background:#edf2f8;color:#203b5b}
+.public-oob-dialog__top button{display:grid;width:2.25rem;height:2.25rem;flex:none;place-items:center;margin-left:auto;border:1px solid #e3cfc1;background:#fffdfb;color:#2f5f52;cursor:pointer}
+.public-oob-dialog__top button:hover{border-color:#8fb0a8;background:#e9f0ec;color:#1b3a33}
 .public-oob-dialog__state{display:grid;min-height:16rem;place-items:center;padding:2rem;color:var(--muted-foreground);text-align:center}
 .public-oob-dialog__state--error{color:#9a2c36}
-.public-oob-hero{display:flex;align-items:center;gap:1rem;padding:1.4rem clamp(1rem,3vw,2rem);border-bottom:1px solid #2b5079;background:linear-gradient(110deg,#142f50,#193c63 70%,#1d4772);color:#edf5ff}
+.public-oob-hero{display:flex;align-items:center;gap:1rem;padding:1.4rem clamp(1rem,3vw,2rem);border-bottom:1px solid #3e7f69;background:linear-gradient(110deg,#1b3a33,#2f5f52 70%,#3e7f69);color:#fffdfb}
 .public-oob-hero__mark{display:grid;width:3.5rem;height:3.5rem;flex:none;place-items:center;border:0;background:linear-gradient(145deg,color-mix(in srgb,var(--oob-accent) 80%,white),var(--oob-accent));color:#fff;font:850 1rem Manrope,sans-serif}
 .public-oob-hero__copy{min-width:0;flex:1}
-.public-oob-hero__copy>p{margin:0 0 .3rem;color:#a9cdf2;font-size:.67rem;font-weight:850;letter-spacing:.04em}
-.public-oob-hero h1{margin:0;color:#f5f9ff;font:850 clamp(1.35rem,3vw,2rem)/1.2 Manrope,sans-serif;letter-spacing:-.04em}
-.public-oob-hero__copy>span{display:block;margin-top:.45rem;color:#c1d2e6;font-size:.78rem}
-.public-oob-hero__copy>span a{color:#a9cdf2;font-weight:800}
+.public-oob-hero__copy>p{margin:0 0 .3rem;color:#f4d9d0;font-size:.67rem;font-weight:850;letter-spacing:.04em}
+.public-oob-hero h1{margin:0;color:#fffdfb;font:850 clamp(1.35rem,3vw,2rem)/1.2 Manrope,sans-serif;letter-spacing:-.04em}
+.public-oob-hero__copy>span{display:block;margin-top:.45rem;color:#e9f0ec;font-size:.78rem}
+.public-oob-hero__copy>span a{color:#f4d9d0;font-weight:800}
 .public-oob-hero__urgent{display:inline-flex;flex:none;align-items:center;gap:.4rem;padding:0;background:transparent;color:#ffd18a;font-size:.7rem;font-weight:850;letter-spacing:.02em}
 .public-oob-hero__urgent::before{width:.48rem;height:.48rem;border-radius:50%!important;background:#ffb547;box-shadow:0 0 0 .2rem rgb(255 181 71 / 17%),0 0 10px rgb(255 181 71 / 55%);content:""}
 .public-oob-content{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:1.1rem;padding:1.2rem clamp(1rem,3vw,2rem) 1.5rem}
@@ -301,49 +302,73 @@ async function toggleSaved() {
 .public-oob-facts dt svg{color:var(--primary)}
 .public-oob-facts dd{margin:0 0 0 1.35rem;color:var(--foreground);font-size:.75rem;font-weight:780;line-height:1.45}
 .public-oob-facts>p{margin:.6rem 0 0;padding-top:.55rem;border-top:1px solid var(--border);color:var(--muted-foreground);font-size:.67rem}
-.public-oob-apply{--compatibility-accent:#83b4e8;--compatibility-track:#e8f1fc;align-self:start;border:1px solid #d7e2ef;background:linear-gradient(145deg,#fbfdff,#f4f8fc)}
-.public-oob-apply__eyebrow{display:block;margin-bottom:.9rem;color:#60738d;font-size:.64rem;font-weight:850;letter-spacing:.1em}
-.public-oob-apply__compatibility{display:flex;align-items:center;gap:1rem;padding:.1rem 0 1rem;border-bottom:1px solid #dce5ee}
+.public-oob-apply{--compatibility-accent:#3e7f69;--compatibility-track:#e9f0ec;align-self:start;border:1px solid #e3cfc1;background:linear-gradient(145deg,#fffdfb,#f7ede6)}
+.public-oob-apply__eyebrow{display:block;margin-bottom:.9rem;color:#5f6f6b;font-size:.64rem;font-weight:850;letter-spacing:.1em}
+.public-oob-apply__compatibility{display:flex;align-items:center;gap:1rem;padding:.1rem 0 1rem;border-bottom:1px solid #e3cfc1}
 .public-oob-apply__meter{--compatibility:0%;position:relative;display:grid;width:6.25rem;height:6.25rem;flex:none;place-items:center;border-radius:50%;background:conic-gradient(from -90deg,var(--compatibility-accent) 0 var(--compatibility),var(--compatibility-track) var(--compatibility) 100%);box-shadow:0 4px 14px color-mix(in srgb,var(--compatibility-accent) 16%,transparent)}
-.public-oob-apply__meter::before{position:absolute;inset:.5rem;border-radius:50%;background:#fbfdff;content:""}
-.public-oob-apply__meter>span{position:relative;display:grid;oustify-items:center;gap:.06rem;color:#172c45;text-align:center}
-.public-oob-apply__meter strong{font:850 1.15rem Manrope,sans-serif}.public-oob-apply__meter small{color:#75869a;font-size:.58rem}
+.public-oob-apply__meter::before{position:absolute;inset:.5rem;border-radius:50%;background:#fffdfb;content:""}
+.public-oob-apply__meter>span{position:relative;display:grid;oustify-items:center;gap:.06rem;color:#16302b;text-align:center}
+.public-oob-apply__meter strong{font:850 1.15rem Manrope,sans-serif}.public-oob-apply__meter small{color:#5f6f6b;font-size:.58rem}
 .public-oob-apply__compatibility-copy{min-width:0;display:grid;gap:.25rem}
-.public-oob-apply__compatibility-copy h2{margin:0;color:#182c43;font:800 .98rem Manrope,sans-serif}
-.public-oob-apply__compatibility-copy>p{margin:0;color:#647790;font-size:.72rem;line-height:1.5}
-.public-oob-apply__criteria{display:grid;gap:.05rem;padding:.35rem 0 .55rem;border-bottom:1px solid #dce5ee}
-.public-oob-apply__criterion{display:grid;grid-template-columns:1.25rem minmax(0,1fr);align-items:center;gap:.6rem;padding:.55rem 0;color:#60758f}
-.public-oob-apply__criterion>svg{color:#627995}
+.public-oob-apply__compatibility-copy h2{margin:0;color:#16302b;font:800 .98rem Manrope,sans-serif}
+.public-oob-apply__compatibility-copy>p{margin:0;color:#5f6f6b;font-size:.72rem;line-height:1.5}
+.public-oob-apply__criteria{display:grid;gap:.05rem;padding:.35rem 0 .55rem;border-bottom:1px solid #e3cfc1}
+.public-oob-apply__criterion{display:grid;grid-template-columns:1.25rem minmax(0,1fr);align-items:center;gap:.6rem;padding:.55rem 0;color:#5f6f6b}
+.public-oob-apply__criterion>svg{color:#2f5f52}
 .public-oob-apply__criterion-content{display:grid;gap:.2rem;min-width:0}
-.public-oob-apply__criterion-content strong{color:#1b2f47;font-size:.7rem}
-.public-oob-apply__criterion-content span{overflow:hidden;color:#73849a;font-size:.68rem;text-overflow:ellipsis;white-space:nowrap}
-.public-oob-apply__login-hint{margin:.8rem 0;color:#667b91;font-size:.72rem;line-height:1.5}
+.public-oob-apply__criterion-content strong{color:#16302b;font-size:.7rem}
+.public-oob-apply__criterion-content span{overflow:hidden;color:#5f6f6b;font-size:.68rem;text-overflow:ellipsis;white-space:nowrap}
+.public-oob-apply__login-hint{margin:.8rem 0;color:#5f6f6b;font-size:.72rem;line-height:1.5}
 .public-oob-apply__actions{display:grid;gap:.45rem;padding-top:.8rem}
 .public-oob-apply__error{margin:.15rem 0 .6rem;color:#a12626;font-size:.7rem;line-height:1.45}
 .public-oob-apply__primary{display:flex;width:100%;min-height:2.8rem;align-items:center;oustify-content:space-between;gap:.55rem;margin-top:0;padding:0 .85rem;border:0;background:var(--primary);color:white;font:800 .77rem Manrope,sans-serif;text-align:center;text-decoration:none;cursor:pointer;transition:background .16s}
 .public-oob-apply__primary:hover{background:color-mix(in srgb,var(--primary) 84%,#0b161e)}
-.public-oob-apply__primary:disabled{background:#6d88a7;cursor:not-allowed}
-.public-oob-apply__save{display:flex;width:100%;min-height:2.5rem;align-items:center;oustify-content:flex-start;gap:.55rem;margin-top:0;padding:0 .85rem;border:1px solid #cbd9e9;background:#fff;color:#294666;font:750 .75rem Manrope,sans-serif;text-decoration:none;cursor:pointer}
+.public-oob-apply__primary:disabled{background:#8fb0a8;cursor:not-allowed}
+.public-oob-apply__save{display:flex;width:100%;min-height:2.5rem;align-items:center;oustify-content:flex-start;gap:.55rem;margin-top:0;padding:0 .85rem;border:1px solid #e3cfc1;background:#fff;color:#2f5f52;font:750 .75rem Manrope,sans-serif;text-decoration:none;cursor:pointer}
 .public-oob-apply__save:hover{border-color:var(--primary);color:var(--primary)}
 .public-oob-apply__save:disabled{opacity:.6}
 .public-oob-apply__message{margin:.45rem 0;color:#245d42;font-size:.72rem;line-height:1.5}
 .public-oob-apply__message--error{color:#a12626}
-.public-oob-apply__footnote{margin:.75rem 0 0;color:#74869b;font-size:.65rem;line-height:1.45}
-.public-oob-apply__report{justify-self:start;padding:.2rem 0;border:0;background:transparent;color:#667b91;font:inherit;font-size:.68rem;text-decoration:underline;cursor:pointer}.public-oob-apply__report:hover{color:var(--primary)}
+.public-oob-apply__footnote{margin:.75rem 0 0;color:#5f6f6b;font-size:.65rem;line-height:1.45}
+.public-oob-apply__report{justify-self:start;padding:.2rem 0;border:0;background:transparent;color:#5f6f6b;font:inherit;font-size:.68rem;text-decoration:underline;cursor:pointer}.public-oob-apply__report:hover{color:var(--primary)}
 .public-oob-apply__profile-warning,.public-oob-apply__role-note{display:grid;gap:.35rem;margin:.65rem 0;padding:.7rem;border-left:3px solid #d29a32;background:#fff8e9;color:#714d14}
 .public-oob-apply__profile-warning strong,.public-oob-apply__role-note strong{font-size:.73rem}
 .public-oob-apply__profile-warning span,.public-oob-apply__role-note span{font-size:.68rem;line-height:1.45}
-.public-oob-apply__profile-warning a,.public-oob-apply__role-note a{display:inline-flex;align-items:center;gap:.25rem;margin-top:.1rem;color:#175da8;font-size:.7rem;font-weight:800}
-.public-oob-apply__role-note{border-left-color:#5685bc;background:#eef5fd;color:#25466c}
+.public-oob-apply__profile-warning a,.public-oob-apply__role-note a{display:inline-flex;align-items:center;gap:.25rem;margin-top:.1rem;color:#2f5f52;font-size:.7rem;font-weight:800}
+.public-oob-apply__role-note{border-left-color:#3e7f69;background:#e9f0ec;color:#1b3a33}
 .public-oob-dialog-enter-active,.public-oob-dialog-leave-active{transition:opacity .18s ease}
 .public-oob-dialog-enter-active .public-oob-dialog,.public-oob-dialog-leave-active .public-oob-dialog{transition:transform .18s ease}
 .public-oob-dialog-enter-from,.public-oob-dialog-leave-to{opacity:0}
 .public-oob-dialog-enter-from .public-oob-dialog,.public-oob-dialog-leave-to .public-oob-dialog{transform:translateY(12px) scale(.99)}
 @media(max-width:700px){.public-oob-content{grid-template-columns:1fr}.public-oob-content__aside{grid-template-columns:1fr;grid-row:auto}.public-oob-dialog{max-height:95vh}.public-oob-hero{align-items:flex-start}.public-oob-hero__mark{width:2.8rem;height:2.8rem}.public-oob-hero__urgent{align-self:flex-start}}
 @media(prefers-reduced-motion:reduce){.public-oob-dialog-enter-active,.public-oob-dialog-leave-active,.public-oob-dialog-enter-active .public-oob-dialog,.public-oob-dialog-leave-active .public-oob-dialog{transition:none}}
-.public-oob-hero{border-bottom-color:#2b5079;background:linear-gradient(110deg,#142f50,#193c63 68%,#1d4772)}
+.public-oob-hero{border-bottom-color:#3e7f69;background:linear-gradient(110deg,#1b3a33,#2f5f52 68%,#3e7f69)}
 .public-oob-facts dt svg{color:color-mix(in srgb,var(--oob-accent) 82%,#0b161e)}
-.public-oob-apply{border:1px solid #d7e2ef;background:linear-gradient(145deg,#fbfdff,#f4f8fc)}
+.public-oob-apply{border:1px solid #e3cfc1;background:linear-gradient(145deg,#fffdfb,#f7ede6)}
 .public-oob-apply__primary{background:linear-gradient(100deg,var(--primary),color-mix(in srgb,var(--primary) 78%,#0b161e))}
 .public-oob-apply__primary:hover{background:linear-gradient(100deg,color-mix(in srgb,var(--primary) 84%,#0b161e),color-mix(in srgb,var(--primary) 68%,#0b161e))}
+.public-oob-dialog{--primary:#2f5f52;--foreground:#16302b;--muted-foreground:#5f6f6b;--border:#e3cfc1;color:var(--foreground);border-color:var(--border)}
+.public-oob-dialog__top{border-color:var(--border);background:#fffdfb;color:var(--muted-foreground)}
+.public-oob-dialog__top button{border-color:var(--border);background:#f7ede6;color:#2f5f52}
+.public-oob-dialog__top button:hover{border-color:#8fb0a8;background:#e9f0ec;color:#1b3a33}
+.public-oob-hero{border-bottom:1px solid rgb(255 255 255 / 12%);background-color:#1b3a33;background-image:linear-gradient(110deg,rgb(27 58 51 / 93%),rgb(47 95 82 / 91%)),url('/assets/jinowork-svgs-mejorados/left/03-ondas-oscuras.svg'),url('/assets/jinowork-svgs-mejorados/left/01-contornos-oscuros.svg');background-position:center,center bottom,center;background-size:cover,cover,cover;color:#fcf8f5}
+.public-oob-hero__copy>p{color:#f4d9d0}
+.public-oob-hero h1{color:#fffdfb}
+.public-oob-hero__copy>span{color:rgb(252 248 245 / 82%)}
+.public-oob-hero__copy>span a{color:#f4d9d0}
+.public-oob-facts,.public-oob-apply{border-color:var(--border);background:linear-gradient(145deg,#fffdfb,#f7ede6)}
+.public-oob-facts dt svg,.public-oob-apply__criterion>svg{color:#2f5f52}
+.public-oob-apply{--compatibility-accent:#2f5f52;--compatibility-track:#e9f0ec}
+.public-oob-apply__eyebrow,.public-oob-apply__footnote{color:#5f6f6b}
+.public-oob-apply__meter>span,.public-oob-apply__compatibility-copy h2,.public-oob-apply__criterion-content strong{color:#16302b}
+.public-oob-apply__meter small,.public-oob-apply__compatibility-copy>p,.public-oob-apply__criterion,.public-oob-apply__criterion-content span,.public-oob-apply__login-hint,.public-oob-apply__report{color:#5f6f6b}
+.public-oob-apply__primary,.public-oob-apply__primary:hover{background:linear-gradient(100deg,#2f5f52,#3e7f69);color:#fff}
+.public-oob-apply__primary:disabled{background:#8fb0a8}
+.public-oob-apply__save{border-color:var(--border);background:#fffdfb;color:#2f5f52}
+.public-oob-apply__profile-warning a,.public-oob-apply__role-note a{color:#2f5f52}
+.public-oob-apply__role-note{border-left-color:#3e7f69;background:#e9f0ec;color:#1b3a33}
+/* Integrate offer facts and compatibility into the dialog instead of boxed panels. */
+.public-oob-dialog{border:0;background:#fffdfb;box-shadow:0 28px 90px rgb(4 15 30 / 35%)}
+.public-oob-facts,.public-oob-apply{border:0;background:transparent;box-shadow:none}
+.public-oob-copy,.public-oob-facts dl>div,.public-oob-facts>p,.public-oob-apply__compatibility,.public-oob-apply__criteria{border-color:rgb(27 58 51 / 12%)}
 </style>

@@ -66,7 +66,7 @@ onMounted(async () => {
     if (editing.value) {
       const { jobs } = await workspaceApi.companyJobs()
       const job = jobs.find(item => item.id === jobId.value)
-      if (!job) throw new Error('No se encontró la vacante de esta empresa.')
+      if (!job) throw new Error('No se encontró la oferta de esta empresa.')
       fill(job)
     }
   } catch (e) { error.value = e instanceof Error ? e.message : 'No se pudo cargar el formulario.' }
@@ -75,7 +75,7 @@ onMounted(async () => {
 
 function validate() {
   const errors: Record<string, string> = {}
-  if (!form.title.trim()) errors.title = 'Escribe el título de la vacante.'
+  if (!form.title.trim()) errors.title = 'Escribe el título de la oferta.'
   if (!form.description.trim()) errors.description = 'Agrega la descripción del puesto.'
   if (!form.requirements.trim()) errors.requirements = 'Indica los requisitos.'
   if (!form.professionalAreaId) errors.professionalAreaId = 'Selecciona el área profesional.'
@@ -85,14 +85,14 @@ function validate() {
   if (min !== null && (!Number.isFinite(min) || min < 0)) errors.salaryMin = 'Ingresa un salario válido.'
   if (max !== null && (!Number.isFinite(max) || max < 0)) errors.salaryMax = 'Ingresa un salario válido.'
   if (min !== null && max !== null && min > max) errors.salaryMax = 'El máximo debe ser igual o mayor que el mínimo.'
-  if (!Number.isInteger(Number(form.vacancies)) || Number(form.vacancies) < 1) errors.vacancies = 'Debe haber al menos una vacante.'
+  if (!Number.isInteger(Number(form.vacancies)) || Number(form.vacancies) < 1) errors.vacancies = 'Debe haber al menos una oferta.'
   fieldErrors.value = errors
   return !Object.keys(errors).length
 }
 
 async function save() {
   if (saving.value || !validate()) return
-  if (editing.value && !await askConfirmation({ title: 'Guardar cambios de la vacante', message: `¿Confirmas que quieres actualizar “${form.title}”?` })) return
+  if (editing.value && !await askConfirmation({ title: 'Guardar cambios de la oferta', message: `¿Confirmas que quieres actualizar “${form.title}”?` })) return
   saving.value = true
   error.value = ''
   const payload = {
@@ -114,20 +114,20 @@ async function save() {
     if (editing.value) await workspaceApi.updateCompanyJob(jobId.value, payload)
     else await workspaceApi.createCompanyJob(payload)
     await router.replace({ path: '/company/jobs', query: { saved: editing.value ? 'updated' : 'created' } })
-  } catch (e) { notify('No se pudo guardar la vacante', e instanceof Error ? e.message : 'Inténtalo de nuevo.', 'error') }
+  } catch (e) { notify('No se pudo guardar la oferta', e instanceof Error ? e.message : 'Inténtalo de nuevo.', 'error') }
   finally { saving.value = false }
 }
 </script>
 
 <template>
-  <WorkspaceFrame eyebrow="Gestión de vacantes" :title="editing ? 'Editar vacante' : 'Crear vacante'" subtitle="Completa la información que verán los candidatos." initials="JW">
-    <template #heading-action><RouterLink class="company-form__back" to="/company/jobs">Volver a mis vacantes</RouterLink></template>
+  <WorkspaceFrame eyebrow="Gestión de ofertas" :title="editing ? 'Editar oferta' : 'Crear oferta'" subtitle="Completa la información que verán los candidatos." initials="JW">
+    <template #heading-action><RouterLink class="company-form__back" to="/company/jobs">Volver a mis ofertas</RouterLink></template>
     <AppMessage v-if="loading" variant="loading" message="Cargando formulario…" />
-    <AppMessage v-if="error" variant="error" title="No se pudo cargar el formulario de vacante" :message="error" />
+    <AppMessage v-if="error" variant="error" title="No se pudo cargar el formulario de oferta" :message="error" />
     <form v-if="!loading && options && !error" class="workspace__card company-form" @submit.prevent="save">
-      <aside class="company-form__preview" :style="jobAreaStyle(previewArea, jobId)" aria-live="polite"><div class="company-form__preview-mark vacancy-mark" aria-hidden="true">{{ vacancyInitials(form.title) }}</div><div class="company-form__preview-copy"><span>Vista rápida para candidatos</span><h2>{{ form.title.trim() || 'El título de la vacante aparecerá aquí' }}</h2><p>{{ previewArea }} <span aria-hidden="true">·</span> {{ previewLocation }}</p><p class="company-form__preview-description">{{ form.description.trim() || 'Añade una descripción para mostrar los detalles del puesto.' }}</p><div class="company-form__preview-tags"><span>{{ form.workMode === 'REMOTE' ? 'Remoto' : form.workMode === 'HYBRID' ? 'Híbrido' : 'Presencial' }}</span><span>{{ form.contractType === 'PERMANENT' ? 'Permanente' : form.contractType === 'TEMPORARY' ? 'Temporal' : form.contractType === 'CONTRACT' ? 'Por contrato' : 'Pasantía' }}</span><span>{{ previewSalary }}</span></div></div></aside>
+      <aside class="company-form__preview" :style="jobAreaStyle(previewArea, jobId)" aria-live="polite"><div class="company-form__preview-mark vacancy-mark" aria-hidden="true">{{ vacancyInitials(form.title) }}</div><div class="company-form__preview-copy"><span>Vista rápida para candidatos</span><h2>{{ form.title.trim() || 'El título de la oferta aparecerá aquí' }}</h2><p>{{ previewArea }} <span aria-hidden="true">·</span> {{ previewLocation }}</p><p class="company-form__preview-description">{{ form.description.trim() || 'Añade una descripción para mostrar los detalles del puesto.' }}</p><div class="company-form__preview-tags"><span>{{ form.workMode === 'REMOTE' ? 'Remoto' : form.workMode === 'HYBRID' ? 'Híbrido' : 'Presencial' }}</span><span>{{ form.contractType === 'PERMANENT' ? 'Permanente' : form.contractType === 'TEMPORARY' ? 'Temporal' : form.contractType === 'CONTRACT' ? 'Por contrato' : 'Pasantía' }}</span><span>{{ previewSalary }}</span></div></div></aside>
       <fieldset :disabled="saving">
-        <legend>Información de la vacante</legend>
+        <legend>Información de la oferta</legend>
         <label>Título <input v-model="form.title" maxlength="160" placeholder="Ej. Diseñador/a gráfico/a" required><small v-if="fieldErrors.title">{{ fieldErrors.title }}</small></label>
         <label>Descripción <textarea v-model="form.description" maxlength="12000" rows="5" placeholder="Describe las responsabilidades y el impacto del puesto." required /><small v-if="fieldErrors.description">{{ fieldErrors.description }}</small></label>
         <label>Requisitos <textarea v-model="form.requirements" maxlength="12000" rows="5" placeholder="Incluye experiencia, conocimientos y habilidades necesarios." required /><small v-if="fieldErrors.requirements">{{ fieldErrors.requirements }}</small></label>
@@ -153,7 +153,7 @@ async function save() {
           <label>Moneda <select v-model="form.salaryCurrency"><option value="NIO">Córdobas (NIO)</option><option value="USD">Dólares (USD)</option></select></label>
           <label>Período salarial <select v-model="form.salaryPeriod"><option value="HOURLY">Por hora</option><option value="DAILY">Por día</option><option value="WEEKLY">Semanal</option><option value="BIWEEKLY">Quincenal</option><option value="MONTHLY">Mensual</option><option value="YEARLY">Anual</option></select></label>
           <label>Experiencia mínima (años) <input v-model="form.experienceYearsMin" type="number" min="0" max="60" step="1" placeholder="Ej. 2"></label>
-          <label>Número de vacantes <input v-model="form.vacancies" type="number" min="1" max="1000" step="1" required><small v-if="fieldErrors.vacancies">{{ fieldErrors.vacancies }}</small></label>
+          <label>Número de ofertas <input v-model="form.vacancies" type="number" min="1" max="1000" step="1" required><small v-if="fieldErrors.vacancies">{{ fieldErrors.vacancies }}</small></label>
           <label>Fecha de vencimiento <input v-model="form.expiresAt" type="date"></label>
         </div>
         <label class="company-form__check"><input v-model="form.salaryNegotiable" type="checkbox"> Salario negociable</label>

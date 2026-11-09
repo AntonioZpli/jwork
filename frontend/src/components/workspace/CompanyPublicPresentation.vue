@@ -58,16 +58,16 @@ const contracts: Record<string, string> = { PERMANENT: 'Permanente', TEMPORARY: 
         <p>{{ profile.description || 'La empresa todavía no ha añadido una presentación.' }}</p>
       </section>
       <section class="company-presentation__section company-presentation__vacancies">
-        <header><div><span class="company-presentation__kicker">Oportunidades</span><h2>Vacantes publicadas</h2></div><span class="company-presentation__count">{{ visibleJobs.length }}</span></header>
+        <header><div><span class="company-presentation__kicker">Oportunidades</span><h2>Ofertas publicadas</h2></div><span class="company-presentation__count">{{ visibleJobs.length }}</span></header>
         <div v-if="visibleJobs.length" class="company-presentation__oob-list">
           <article v-for="oob in visibleJobs" :key="oob.id" class="company-presentation__oob">
             <span class="company-presentation__oob-mark vacancy-mark" :style="oobAreaStyle(oob.professionalArea.name, oob.id)" aria-hidden="true">{{ vacancyInitials(oob.title) }}</span>
             <div><h3>{{ oob.title }}</h3><p>{{ oob.professionalArea.name }}</p><small>{{ workModes[oob.workMode] ?? oob.workMode }} · {{ contracts[oob.contractType] ?? oob.contractType }}</small></div>
-            <RouterLink v-if="editable" :to="`/company/jobs/${oob.id}/edit`" :aria-label="`Editar vacante ${oob.title}`"><ArrowUpRight :size="17" /></RouterLink>
-            <RouterLink v-else :to="`/jobs/${oob.id}`" :aria-label="`Ver vacante ${oob.title}`"><ArrowUpRight :size="17" /></RouterLink>
+            <RouterLink v-if="editable" :to="`/company/jobs/${oob.id}/edit`" :aria-label="`Editar oferta ${oob.title}`"><ArrowUpRight :size="17" /></RouterLink>
+            <RouterLink v-else :to="`/jobs/${oob.id}`" :aria-label="`Ver oferta ${oob.title}`"><ArrowUpRight :size="17" /></RouterLink>
           </article>
         </div>
-        <p v-else class="company-presentation__empty">Aún no hay vacantes publicadas.</p>
+        <p v-else class="company-presentation__empty">Aún no hay ofertas publicadas.</p>
       </section>
     </main>
 
@@ -85,7 +85,7 @@ const contracts: Record<string, string> = { PERMANENT: 'Permanente', TEMPORARY: 
         <p v-if="location"><MapPin :size="17" /><span><small>Ubicación</small><strong>{{ location }}</strong></span></p>
         <p><span class="company-presentation__fact-status" :class="{ 'is-verified': profile.verificationStatus === 'VERIFIED' }" /><span><small>Estado</small><strong>{{ verificationLabel }}</strong></span></p>
       </section>
-      <RouterLink v-if="editable" class="company-presentation__manage" to="/company/jobs">Gestionar mis vacantes <ArrowUpRight :size="16" /></RouterLink>
+      <RouterLink v-if="editable" class="company-presentation__manage" to="/company/jobs">Gestionar mis ofertas <ArrowUpRight :size="16" /></RouterLink>
     </aside>
   </div>
 </template>
@@ -131,4 +131,44 @@ const contracts: Record<string, string> = { PERMANENT: 'Permanente', TEMPORARY: 
 .company-presentation__manage{display:flex;align-items:center;oustify-content:space-between;gap:.5rem;padding:.7rem 0;color:var(--primary);font-size:.76rem;font-weight:800;text-decoration:none}
 @media(max-width:800px){.company-presentation__layout{grid-template-columns:minmax(0,1fr)}.company-presentation__aside{grid-template-columns:repeat(2,minmax(0,1fr));padding:1rem 0 0;border-top:1px solid var(--border);border-left:0}.company-presentation__manage{grid-column:1/-1}}
 @media(max-width:560px){.company-presentation__hero{align-items:flex-start;flex-wrap:wrap;padding:1rem}.company-presentation__mark{width:4.2rem;height:4.2rem}.company-presentation__verification{margin-left:5rem}.company-presentation__layout{padding:1rem}.company-presentation__aside{grid-template-columns:minmax(0,1fr)}}
+
+/* Presentación de empresa: bloques claros separados y un encabezado verde de marca. */
+.company-presentation__hero{position:relative;isolation:isolate;overflow:hidden;min-height:11rem;gap:1.35rem;padding:1.65rem 1.8rem;border:0;border-radius:1.15rem;background-color:#1b3a33;background-image:url('/assets/jinowork-svgs-mejorados/left/03-ondas-oscuras.svg'),url('/assets/jinowork-svgs-mejorados/left/01-contornos-oscuros.svg');background-position:center bottom,center;background-size:cover,cover;background-repeat:no-repeat;color:#fffdfb}
+.company-presentation__mark{width:5.5rem;height:5.5rem;border:1px solid rgb(255 255 255 / 22%);background:rgb(255 255 255 / 12%);box-shadow:0 8px 22px rgb(10 30 24 / 18%)}
+.company-presentation__mark img{object-fit:contain}
+.company-presentation__eyebrow{color:#f3a18a}
+.company-presentation__identity h2{color:#fffdfb}
+.company-presentation__identity p,.company-presentation__location{color:rgb(255 253 251 / 82%)}
+.company-presentation__verification{padding:.55rem .8rem;border:1px solid rgb(255 253 251 / 20%);border-radius:999px;background:rgb(255 253 251 / 9%);color:#fffdfb}
+.company-presentation__verification i,.company-presentation__fact-status{width:.55rem;height:.55rem;border-radius:50%;background:#efaa76}
+.company-presentation__verification.is-verified i,.company-presentation__fact-status.is-verified{background:#71d0a2}
+.company-presentation__layout{grid-template-columns:minmax(0,1.8fr) minmax(17rem,.85fr);gap:1rem;padding:1rem 0 0;background:transparent}
+.company-presentation__main{display:grid;align-content:start;gap:1rem}
+.company-presentation__section{padding:1.25rem 1.35rem;border:0;border-radius:1rem;background:#fffdfb;box-shadow:0 12px 30px rgb(48 42 33 / 5%)}
+.company-presentation__section h2,.company-presentation__aside-section h2{margin-bottom:.75rem;color:#1b3a33;font-size:1.05rem}
+.company-presentation__section>p{color:#526860;font-size:.88rem;line-height:1.75}
+.company-presentation__vacancies{padding-top:1.25rem}
+.company-presentation__vacancies>header{justify-content:space-between}
+.company-presentation__count{display:grid;min-width:2rem;height:2rem;place-items:center;border-radius:999px;background:#e7efe9;color:#245b4b}
+.company-presentation__oob{gap:.9rem;padding:.9rem 0;border-color:#eee2d9}
+.company-presentation__oob-mark{width:2.8rem;height:2.8rem;border-radius:.75rem;background:linear-gradient(145deg,#4a806e,#245b4b);box-shadow:0 5px 12px rgb(27 58 51 / 12%)}
+.company-presentation__oob h3{color:#1b3a33;font-size:.87rem}
+.company-presentation__oob p,.company-presentation__oob small{font-size:.75rem}
+.company-presentation__oob>a{width:2.2rem;height:2.2rem;border-radius:50%;background:#eaf1ec;color:#245b4b;transition:background .18s,color .18s,transform .18s}
+.company-presentation__oob>a:hover{transform:translate(2px,-2px);background:#245b4b;color:#fff}
+.company-presentation__aside{gap:.75rem;padding:0;border:0}
+.company-presentation__aside-section{padding:1.2rem 1.25rem;border:0;border-radius:1rem;background:#fffdfb;box-shadow:0 12px 30px rgb(48 42 33 / 5%)}
+.company-presentation__contact{gap:.75rem;padding:.7rem 0;color:#245b4b}
+.company-presentation__contact>svg,.company-presentation__facts p>svg{flex:none;color:#357462}
+.company-presentation__contact small,.company-presentation__facts small{font-size:.7rem}
+.company-presentation__contact strong,.company-presentation__facts strong{color:#1b3a33;font-size:.78rem}
+.company-presentation__facts p{margin:.85rem 0;color:#357462}
+.company-presentation__manage{justify-content:space-between;min-height:2.8rem;padding:.65rem .95rem;border-radius:.8rem;background:#e7efe9;color:#245b4b;transition:background .18s,color .18s}
+.company-presentation__manage:hover{background:#245b4b;color:#fff}
+@media(max-width:800px){.company-presentation__layout{padding-top:.85rem}.company-presentation__aside{gap:.75rem;padding:0;border:0}}
+@media(max-width:560px){.company-presentation__hero{gap:.9rem;padding:1.1rem;background-size:85% auto,cover}.company-presentation__mark{width:4.2rem;height:4.2rem}.company-presentation__verification{margin:0 0 0 5.1rem}.company-presentation__section,.company-presentation__aside-section{padding:1rem}.company-presentation__aside{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:900px){.company-presentation__layout{grid-template-columns:minmax(0,1fr)}.company-presentation__aside{grid-template-columns:repeat(2,minmax(0,1fr));gap:.85rem}.company-presentation__aside-section{min-width:0}.company-presentation__manage{grid-column:1/-1}}
+@media(max-width:700px){.company-presentation__hero{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:.85rem 1rem;padding:1.15rem}.company-presentation__mark{grid-column:1;grid-row:1/3;width:4.25rem;height:4.25rem}.company-presentation__identity{grid-column:2;grid-row:1;min-width:0}.company-presentation__identity h2{font-size:clamp(1.4rem,6vw,1.9rem);overflow-wrap:anywhere}.company-presentation__verification{grid-column:2;grid-row:2;justify-self:start;max-width:100%;margin:0}.company-presentation__layout{gap:.8rem}.company-presentation__section,.company-presentation__aside-section{padding:1.05rem}}
+@media(max-width:560px){.company-presentation__aside{grid-template-columns:minmax(0,1fr)}.company-presentation__manage{grid-column:auto}.company-presentation__hero{background-size:cover,cover}.company-presentation__section,.company-presentation__aside-section{padding:1rem}.company-presentation__oob{gap:.65rem}.company-presentation__oob>div{overflow-wrap:anywhere}.company-presentation__contact strong,.company-presentation__facts strong{overflow-wrap:anywhere}}
+@media(max-width:380px){.company-presentation__hero{grid-template-columns:3.25rem minmax(0,1fr);gap:.75rem;padding:.95rem}.company-presentation__mark{width:3.25rem;height:3.25rem}.company-presentation__identity h2{font-size:1.35rem}.company-presentation__verification{font-size:.64rem;padding:.45rem .65rem}.company-presentation__section,.company-presentation__aside-section{padding:.9rem}.company-presentation__oob-mark{width:2.45rem;height:2.45rem}.company-presentation__oob h3{font-size:.8rem}}
 </style>

@@ -2,6 +2,7 @@
 import { MapPin } from '@lucide/vue'
 import { RouterLink } from 'vue-router'
 import { HERO_IMAGE } from '@/config/assets'
+import WaveTransition from './WaveTransition.vue'
 </script>
 
 <template>
@@ -55,6 +56,15 @@ import { HERO_IMAGE } from '@/config/assets'
         </div>
       </div>
     </div>
+
+    <div class="hero__decoration" aria-hidden="true">
+      <span class="hero__topography" />
+      <span class="hero__rings" />
+      <span class="hero__connection" />
+      <span class="hero__dots" />
+    </div>
+
+    <WaveTransition class="hero__bottom-transition" fill-color="#F7EDE6" highlight-color="#16302B" />
   </section>
 </template>
 
@@ -62,7 +72,7 @@ import { HERO_IMAGE } from '@/config/assets'
 .hero {
   display: grid;
   grid-template-columns: 1fr 1.6fr;
-  align-items: center;
+  align-items: stretch;
   gap: 3rem;
   min-height: 560px;
   padding: 5rem 0 3rem;
@@ -193,8 +203,10 @@ import { HERO_IMAGE } from '@/config/assets'
   position: relative;
   display: flex;
   align-items: stretch;
+  min-height: 100%;
 }
 
+/* Ola inferior */
 .hero__visual-fade {
   position: absolute;
   left: 0;
@@ -211,7 +223,7 @@ import { HERO_IMAGE } from '@/config/assets'
   flex: 1;
   border-radius: 12px;
   overflow: hidden;
-  min-height: 400px;
+  min-height: 100%;
 }
 
 .hero__img {
@@ -224,6 +236,7 @@ import { HERO_IMAGE } from '@/config/assets'
 /* Floating tag */
 .hero__float-tag {
   position: absolute;
+  z-index: 6; /* por encima de la ola (z-index 4) */
   bottom: 1.5rem;
   left: 1.5rem;
   display: flex;
@@ -234,7 +247,6 @@ import { HERO_IMAGE } from '@/config/assets'
   border-radius: 6px;
   padding: 0.5rem 0.85rem;
   box-shadow: 0 4px 16px oklch(0 0 0 / 0.08);
-  z-index: 3;
 }
 
 .hero__float-line {
@@ -263,6 +275,9 @@ import { HERO_IMAGE } from '@/config/assets'
 }
 
 @media (max-width: 800px) {
+  .hero__rings,
+  .hero__connection { display:none; }
+
   .hero {
     grid-template-columns: 1fr;
     min-height: auto;
@@ -314,8 +329,8 @@ import { HERO_IMAGE } from '@/config/assets'
   margin-left: -50vw;
   display: flex;
   align-items: center;
-  min-height: clamp(620px, calc(100svh - 68px), 900px);
-  padding: clamp(3rem, 6vw, 4.5rem) 0;
+  min-height: clamp(620px, 100svh, 900px);
+  padding: calc(clamp(3rem, 6vw, 4.5rem) + 68px) 0 6rem;
 }
 
 .hero__copy {
@@ -325,6 +340,12 @@ import { HERO_IMAGE } from '@/config/assets'
   margin-inline: auto;
   padding-inline: clamp(24px, 4vw, 64px);
 }
+
+.hero__decoration { position:absolute;inset:0;z-index:2;overflow:hidden;pointer-events:none; }
+.hero__topography { position:absolute;inset:0;background:url('/assets/jinowork-assets/01-hero/hero-topo-dark.svg') left center/cover no-repeat;opacity:.72; }
+.hero__rings { position:absolute;left:-5rem;bottom:-15rem;width:min(42vw,560px);aspect-ratio:1;background:url('/assets/jinowork-assets/01-hero/hero-rings-accent.svg') center/contain no-repeat;opacity:.72; }
+.hero__connection { position:absolute;left:clamp(24px,6vw,96px);bottom:clamp(95px,11vw,150px);width:min(32vw,420px);height:180px;background:url('/assets/jinowork-assets/01-hero/hero-path-connection.svg') center/contain no-repeat;opacity:.76; }
+.hero__dots { position:absolute;top:0;right:0;width:min(28vw,360px);height:260px;background:url('/assets/jinowork-assets/shared/dots-dark.svg') right top/contain no-repeat;opacity:.68;mask-image:linear-gradient(to bottom left,#000,transparent 74%); }
 
 .hero__visual {
   position: absolute;
@@ -336,35 +357,42 @@ import { HERO_IMAGE } from '@/config/assets'
 .hero__visual-fade {
   inset: 0;
   width: auto;
-  background: linear-gradient(90deg, #071525 0%, rgb(7 21 37 / 94%) 25%, rgb(7 21 37 / 76%) 42%, rgb(7 21 37 / 18%) 78%, transparent 100%);
+  /* verde oscuro #16302B = rgb(22 48 43) */
+  background: linear-gradient(90deg, rgb(22 48 43 / 76%) 0%, rgb(22 48 43 / 62%) 24%, rgb(22 48 43 / 34%) 43%, rgb(22 48 43 / 8%) 68%, transparent 100%);
 }
 
 .hero__image-wrap { height: 100%; min-height: 0; border-radius: 0; }
 .hero__img { position: absolute; inset: 0; }
-.hero__float-tag { right: max(24px, calc((100vw - 1240px) / 2 + 24px)); left: auto; bottom: 2rem; }
+.hero__float-tag {
+  right: max(24px, calc((100vw - 1240px) / 2 + 24px));
+  left: auto;
+  bottom: calc(clamp(64px, 8vw, 110px) + 1rem); /* sube la etiqueta para que no la tape la ola */
+}
 .hero__title { max-width: 13ch; font-size: clamp(3.25rem, 5vw, 4.5rem); }
 .hero__lede { max-width: 440px; font-size: 1.2rem; }
 .hero__kicker { font-size: 0.86rem; }
 .hero__btn { padding: 0.95rem 1.55rem; font-size: 1rem; }
 .hero__location { font-size: 0.92rem; }
-.hero { --primary: #087ce2; background: #071525; }
-.hero__kicker { color: #35a9ff; }
+
+/* Paleta Jinowork: verde oscuro + terracota */
+.hero { --primary: #b5483a; background: #16302b; }
+.hero__kicker { color: #d8695a; }
 .hero__title { color: #fff; }
-.hero__title-accent { color: #178cff; }
+.hero__title-accent { color: #d8695a; }
 .hero__lede,
-.hero__location { color: rgb(237 245 255 / 82%); }
-.hero__btn--secondary { color: #fff; border-color: rgb(216 234 255 / 38%); }
+.hero__location { color: rgb(247 237 230 / 82%); }
+.hero__btn--secondary { color: #fff; border-color: rgb(247 237 230 / 38%); }
 .hero__btn--secondary:hover { background: rgb(255 255 255 / 10%); }
-.hero__float-tag { background: rgb(7 21 37 / 92%); border-color: #1769a8; }
+.hero__float-tag { background: rgb(22 48 43 / 92%); border-color: #35615a; }
 .hero__float-text { color: #fff; }
-.hero__float-line { background: #17a5ff; }
+.hero__float-line { background: #d8695a; }
 
 @media (max-width: 800px) {
-  .hero { min-height: clamp(620px, calc(100svh - 64px), 850px); padding: 3rem 0 2.5rem; }
+  .hero { min-height: clamp(620px, 100svh, 850px); padding: 5.5rem 0 4rem; }
   .hero__copy { align-self: flex-end; padding-inline: 20px; }
   .hero__title { font-size: clamp(2.3rem, 7vw, 3rem); }
   .hero__visual { display: flex; order: initial; width: 100%; max-height: none; opacity: 1; }
-  .hero__visual-fade { display: block; background: linear-gradient(180deg, rgb(7 21 37 / 8%) 0%, rgb(7 21 37 / 36%) 35%, #071525 78%); }
+  .hero__visual-fade { display: block; background: linear-gradient(180deg, rgb(22 48 43 / 8%) 0%, rgb(22 48 43 / 36%) 35%, #16302b 78%); }
   .hero__image-wrap { min-height: 100%; }
   .hero__img { object-position: 80% center; }
   .hero__float-tag { display: none; }

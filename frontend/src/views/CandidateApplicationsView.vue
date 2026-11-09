@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { ArrowRight, Building2, CalendarDays, Check, MapPin, Trash2 } from 'lucide-vue-next'
@@ -78,12 +78,12 @@ onMounted(load)
 
 <template>
   <WorkspaceFrame eyebrow="Mi actividad" title="Mis postulaciones" subtitle="Gestiona y da seguimiento a tus postulaciones." initials="JW">
-    <template #heading-action><RouterLink class="workspace__cta" to="/jobs">Explorar vacantes</RouterLink></template>
+    <template #heading-action><RouterLink class="workspace__cta" to="/jobs">Explorar ofertas</RouterLink></template>
     <AppMessage v-if="error" variant="error" title="No se pudieron cargar tus postulaciones" :message="error" />
     <AppMessage v-if="loading" variant="loading" message="Cargando postulaciones…" />
     <section v-else class="candidate-applications">
       <AppEmptyState v-if="!activeApplications.length" :title="withdrawnCount ? 'No tienes postulaciones activas' : 'Todavía no tienes postulaciones'" :description="withdrawnCount ? 'Las postulaciones que retiraste ya no aparecen aquí.' : 'Cuando te postules, podrás seguir aquí cada etapa del proceso.'">
-        <template #actions><RouterLink to="/jobs">Explorar vacantes</RouterLink></template>
+        <template #actions><RouterLink to="/jobs">Explorar ofertas</RouterLink></template>
       </AppEmptyState>
       <template v-else>
         <div class="candidate-applications__list">
@@ -106,7 +106,7 @@ onMounted(load)
               </li>
             </ol>
             <p v-if="application.status === 'REJECTED'" class="candidate-application__note">{{ application.statusHistory.at(-1)?.previousStatus === 'INTERVIEW' ? 'La empresa decidió no continuar después de la entrevista.' : 'La empresa rechazó tu candidatura después de revisarla.' }}</p>
-            <p v-else-if="application.status === 'SELECTED'" class="candidate-application__note">La empresa aceptó tu candidatura para esta vacante.</p>
+            <p v-else-if="application.status === 'SELECTED'" class="candidate-application__note">La empresa aceptó tu candidatura para esta oferta.</p>
             <footer class="candidate-application__footer">
               <span class="candidate-application__applied"><CalendarDays :size="20" aria-hidden="true" /><span>Postulado el<strong>{{ new Date(application.appliedAt).toLocaleDateString('es-NI', { day: 'numeric', month: 'short', year: 'numeric' }) }}</strong></span></span>
               <div class="candidate-application__actions">
@@ -124,51 +124,51 @@ onMounted(load)
 <style scoped>
 .candidate-applications{display:block}
 .candidate-applications__list{display:grid;gap:1.3rem}
-.candidate-application{position:relative;display:grid;gap:1.05rem;padding:1.05rem 1.1rem 1rem;border:1px solid #dfeaf6;border-radius:1rem;background:#f8fbff;box-shadow:0 8px 18px rgb(16 35 68 / 4%)}
+.candidate-application{position:relative;display:grid;gap:1.05rem;padding:1.05rem 1.1rem 1rem;border:1px solid #e3cfc1;border-radius:1rem;background:#fffdfb;box-shadow:0 8px 18px rgb(16 35 68 / 4%)}
 .candidate-application:hover{border-color:rgba(32,108,227,.25);box-shadow:0 12px 26px rgb(13 52 95 / 7%)}
 .candidate-application__header{display:flex;align-items:center;gap:1rem;min-width:0}
-.candidate-application__company-mark{display:grid;width:4rem;height:4rem;flex:none;place-items:center;border-radius:.9rem;background:linear-gradient(135deg,#0f74e6,#0a5fc0);color:#fff;font:800 1.2rem Manrope,sans-serif;letter-spacing:-.04em}
+.candidate-application__company-mark{display:grid;width:4rem;height:4rem;flex:none;place-items:center;border-radius:.9rem;background:linear-gradient(135deg,#3e7f69,#2f5f52);color:#fff;font:800 1.2rem Manrope,sans-serif;letter-spacing:-.04em}
 .candidate-application__identity{display:grid;gap:.35rem;min-width:0;flex:1}
 .candidate-application__title{display:block;overflow:hidden;color:var(--foreground);font:800 clamp(1.25rem,2vw,1.9rem)/1.15 Manrope,sans-serif;letter-spacing:-.05em;text-overflow:ellipsis;white-space:nowrap}
 .candidate-application__title:hover{color:var(--primary)}
 .candidate-application__company{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;color:var(--muted-foreground);font-size:.9rem}
 .candidate-application__company-name,.candidate-application__location{display:inline-flex;align-items:center;gap:.35rem}
-.candidate-application__location{color:#7a8ca3}
-.candidate-application__location:before{content:'·';margin-right:.15rem;color:#a4b4c6}
+.candidate-application__location{color:#5f6f6b}
+.candidate-application__location:before{content:'·';margin-right:.15rem;color:#8fb0a8}
 .candidate-application__process{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin:0;padding:1rem .5rem .45rem;border:0;border-radius:1rem;background:transparent;list-style:none}
-.candidate-application__process::before{position:absolute;left:12.5%;right:12.5%;top:2.35rem;height:4px;border-radius:999px;background:#1675d1;content:'';z-index:0}
-.candidate-application__process li{position:relative;z-index:1;display:grid;justify-items:center;gap:.55rem;padding:0 .35rem;color:#6d819c;text-align:center}
+.candidate-application__process::before{position:absolute;left:12.5%;right:12.5%;top:2.35rem;height:4px;border-radius:999px;background:#3e7f69;content:'';z-index:0}
+.candidate-application__process li{position:relative;z-index:1;display:grid;justify-items:center;gap:.55rem;padding:0 .35rem;color:#5f6f6b;text-align:center}
 .candidate-application__process li:before{display:none}
 .candidate-application__step-icon{position:relative;z-index:3;display:grid;place-items:center;width:2.7rem;height:2.7rem;background:transparent;color:#fff;font-size:.76rem;font-weight:800}
-.candidate-application__step-circle{position:relative;display:grid!important;place-items:center;width:2.35rem!important;height:2.35rem!important;min-width:2.35rem;border:3px solid #075bb8!important;border-radius:50%!important;background:#075bb8!important;color:#fff!important;box-shadow:0 0 0 4px #f8fbff!important;line-height:1}
+.candidate-application__step-circle{position:relative;display:grid!important;place-items:center;width:2.35rem!important;height:2.35rem!important;min-width:2.35rem;border:3px solid #2f5f52!important;border-radius:50%!important;background:#2f5f52!important;color:#fff!important;box-shadow:0 0 0 4px #fffdfb!important;line-height:1}
 .candidate-application__step-circle b,.candidate-application__step-circle svg{display:block;line-height:1}
 .candidate-application__step-circle b{transform:translateY(-1px)}
 .candidate-application__step-circle svg{display:block;width:1.3rem;height:1.3rem;stroke:#fff!important;fill:none;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 1px rgb(0 0 0 / 35%))}
-.candidate-application__process li.is-done,.candidate-application__process li.is-current{color:#0d6fd8}
-.candidate-application__process li.is-done .candidate-application__step-circle{border-color:#075bb8!important;background:#075bb8!important}
-.candidate-application__process li.is-current .candidate-application__step-circle{border-color:#1675d1!important;background:#1675d1!important}
+.candidate-application__process li.is-done,.candidate-application__process li.is-current{color:#2f5f52}
+.candidate-application__process li.is-done .candidate-application__step-circle{border-color:#2f5f52!important;background:#2f5f52!important}
+.candidate-application__process li.is-current .candidate-application__step-circle{border-color:#3e7f69!important;background:#3e7f69!important}
 .candidate-application__process small{display:grid;gap:.22rem;color:inherit;font-size:.74rem;line-height:1.25}
 .candidate-application__process small .candidate-application__step-name{font-weight:700}
-.candidate-application__process small em{font-style:normal;color:#697d9a}
-.candidate-application--selected .candidate-application__process::before{background:linear-gradient(90deg,#1675d1 0%,#1675d1 74%,#16804f 76%,#16804f 100%)}
-.candidate-application--selected .candidate-application__process li.is-done{color:#0d6fd8}
-.candidate-application--selected .candidate-application__process li.is-done .candidate-application__step-circle{border-color:#075bb8!important;background:#075bb8!important}
-.candidate-application--selected .candidate-application__process li.is-current{color:#16804f}
-.candidate-application--selected .candidate-application__process li.is-current .candidate-application__step-circle{border-color:#16804f!important;background:#16804f!important}
-.candidate-application--rejected .candidate-application__process::before{background:linear-gradient(90deg,#1675d1 0%,#1675d1 74%,#cf3345 76%,#cf3345 100%)}
-.candidate-application--rejected .candidate-application__process li.is-done{color:#0d6fd8}
-.candidate-application--rejected .candidate-application__process li.is-done .candidate-application__step-circle{border-color:#075bb8!important;background:#075bb8!important}
-.candidate-application--rejected .candidate-application__process li.is-current{color:#b42335}
-.candidate-application--rejected .candidate-application__process li.is-current .candidate-application__step-circle{border-color:#cf3345!important;background:#cf3345!important}
-.candidate-application__note{margin:-.1rem 0 0;color:#647995;font-size:.8rem;line-height:1.5}
-.candidate-application__footer{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-top:.7rem;border-top:1px solid #e3ecf8}
-.candidate-application__applied{display:inline-flex;align-items:center;gap:.45rem;color:#5f7186;font-size:.88rem}
+.candidate-application__process small em{font-style:normal;color:#5f6f6b}
+.candidate-application--selected .candidate-application__process::before{background:linear-gradient(90deg,#3e7f69 0%,#3e7f69 74%,#19805a 76%,#19805a 100%)}
+.candidate-application--selected .candidate-application__process li.is-done{color:#2f5f52}
+.candidate-application--selected .candidate-application__process li.is-done .candidate-application__step-circle{border-color:#2f5f52!important;background:#2f5f52!important}
+.candidate-application--selected .candidate-application__process li.is-current{color:#19805a}
+.candidate-application--selected .candidate-application__process li.is-current .candidate-application__step-circle{border-color:#19805a!important;background:#19805a!important}
+.candidate-application--rejected .candidate-application__process::before{background:linear-gradient(90deg,#3e7f69 0%,#3e7f69 74%,#b5483a 76%,#b5483a 100%)}
+.candidate-application--rejected .candidate-application__process li.is-done{color:#2f5f52}
+.candidate-application--rejected .candidate-application__process li.is-done .candidate-application__step-circle{border-color:#2f5f52!important;background:#2f5f52!important}
+.candidate-application--rejected .candidate-application__process li.is-current{color:#b5483a}
+.candidate-application--rejected .candidate-application__process li.is-current .candidate-application__step-circle{border-color:#b5483a!important;background:#b5483a!important}
+.candidate-application__note{margin:-.1rem 0 0;color:#5f6f6b;font-size:.8rem;line-height:1.5}
+.candidate-application__footer{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-top:.7rem;border-top:1px solid #e3cfc1}
+.candidate-application__applied{display:inline-flex;align-items:center;gap:.45rem;color:#5f6f6b;font-size:.88rem}
 .candidate-application__applied strong{margin-left:.25rem;color:var(--foreground);font-weight:800}
 .candidate-application__actions{display:flex;align-items:center;gap:1rem}
-.candidate-application__actions button{display:inline-flex;align-items:center;gap:.45rem;padding:0;border:0;background:transparent;color:#d93f4c;font:inherit;font-size:.85rem;font-weight:700;cursor:pointer}
+.candidate-application__actions button{display:inline-flex;align-items:center;gap:.45rem;padding:0;border:0;background:transparent;color:#b5483a;font:inherit;font-size:.85rem;font-weight:700;cursor:pointer}
 .candidate-application__actions button:disabled{opacity:.6;cursor:wait}
-.candidate-application__actions a{display:inline-flex;align-items:center;gap:.35rem;padding:.72rem 1.2rem;border:1px solid #1b7ae8;border-radius:.75rem;background:#fff;color:#0c6fd8;font-size:.9rem;font-weight:800;text-decoration:none;box-shadow:0 0 0 1px rgba(27,122,232,.12)}
-.candidate-application__actions a:hover{background:#f1f8ff}
+.candidate-application__actions a{display:inline-flex;align-items:center;gap:.35rem;padding:.72rem 1.2rem;border:1px solid #2f5f52;border-radius:.75rem;background:#fff;color:#2f5f52;font-size:.9rem;font-weight:800;text-decoration:none;box-shadow:0 0 0 1px rgb(47 95 82 / 12%)}
+.candidate-application__actions a:hover{background:#e9f0ec}
 @media(max-width:760px){.candidate-application__process{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:1rem}.candidate-application__footer{flex-direction:column;align-items:flex-start}.candidate-application__actions{width:100%;justify-content:space-between}.candidate-application__actions a{flex:1;justify-content:center}}
 @media(max-width:520px){
   .candidate-application{gap:.9rem;padding:.9rem}
@@ -180,13 +180,13 @@ onMounted(load)
   .candidate-application__company-name,.candidate-application__location{display:inline-flex;min-width:0;overflow-wrap:anywhere}
   .candidate-application__location:before{display:none}
   .candidate-application__process{grid-template-columns:minmax(0,1fr);gap:.1rem;padding:.2rem 0}
-  .candidate-application__process:before{top:1.65rem;right:auto;bottom:1.65rem;left:1.25rem;width:3px;height:auto;background:#1675d1}
+  .candidate-application__process:before{top:1.65rem;right:auto;bottom:1.65rem;left:1.25rem;width:3px;height:auto;background:#3e7f69}
   .candidate-application__process li{grid-template-columns:2.7rem minmax(0,1fr);align-items:start;justify-items:stretch;gap:.65rem;padding:.35rem 0;text-align:left}
   .candidate-application__step-icon{width:2.7rem;height:2.7rem}
   .candidate-application__process small{align-self:center;gap:.2rem;padding:.25rem 0;font-size:.8rem;line-height:1.4}
   .candidate-application__process small em{overflow-wrap:anywhere}
-  .candidate-application--selected .candidate-application__process:before{background:linear-gradient(180deg,#1675d1 0%,#1675d1 74%,#16804f 76%,#16804f 100%)}
-  .candidate-application--rejected .candidate-application__process:before{background:linear-gradient(180deg,#1675d1 0%,#1675d1 74%,#cf3345 76%,#cf3345 100%)}
+  .candidate-application--selected .candidate-application__process:before{background:linear-gradient(180deg,#3e7f69 0%,#3e7f69 74%,#19805a 76%,#19805a 100%)}
+  .candidate-application--rejected .candidate-application__process:before{background:linear-gradient(180deg,#3e7f69 0%,#3e7f69 74%,#b5483a 76%,#b5483a 100%)}
   .candidate-application__note{margin:0;font-size:.84rem}
   .candidate-application__footer{gap:.65rem;padding-top:.8rem}
   .candidate-application__applied{align-items:flex-start;font-size:.82rem}

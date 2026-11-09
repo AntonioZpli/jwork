@@ -2,22 +2,22 @@
 
 :root {
   color-scheme: light;
-  --palette-ink: #27005d;
-  --palette-violet: #9400ff;
-  --palette-blue: #aed2ff;
-  --palette-ice: #e4f1ff;
-  --palette-platinum: #51625c;
-  --background: #fff;
-  --surface: #fff;
-  --foreground: #17263a;
-  --primary: #1769c2;
-  --secondary: var(--palette-ice);
-  --muted-foreground: #52657b;
-  --border: #d6e5f6;
-  --panel: #f2f7fd;
+  --palette-ink: #1b3a33;
+  --palette-violet: #b5483a;
+  --palette-blue: #8fb0a8;
+  --palette-ice: #f4d9d0;
+  --palette-platinum: #5f6f6b;
+  --background: #fcf8f5;
+  --surface: #fffdfb;
+  --foreground: #16302b;
+  --primary: #2f5f52;
+  --secondary: #e9f0ec;
+  --muted-foreground: #5f6f6b;
+  --border: #e3cfc1;
+  --panel: #f7ede6;
   --surface-strong: var(--panel);
   --accent-strong: var(--secondary);
-  --shadow: rgb(23 66 117 / 8%);
+  --shadow: rgb(27 58 51 / 9%);
   --bg: var(--background);
   --surface-soft: var(--panel);
   --surface-elevated: var(--surface);
@@ -74,7 +74,7 @@ select {
   }
 }
 
-/* Las superficies tipo card usan esquinas rectas en toda la app. */
+/* Las superficies principales comparten un radio suave. */
 :where(
   .workspace__card,
   .workspace__stat,
@@ -93,13 +93,25 @@ select {
   .oob-detail,
   .oob-detail__summary,
   .oob-detail__apply-card,
+  .oob-card,
+  .job-search,
+  .public-oob-dialog,
+  .public-oob-hero,
+  .candidate-profile-hero,
+  .candidate-preview__identity,
+  .onboarding-workspace,
+  .onboarding-success,
+  .candidate-preview__section,
+  .candidate-preview__side-section,
+  .reset-card,
+  .security-alert-card,
   [class$="-card"],
   [class~="card"]
 ) {
-  border-radius: 0 !important;
+  border-radius: 1rem !important;
 }
 
-/* Mantén rectas las superficies, controles y navegación de los workspaces. */
+/* Un radio común mantiene consistentes los controles dentro de workspaces. */
 body:has(.workspace) :is(
   .workspace__card,
   .workspace__section,
@@ -141,7 +153,44 @@ body:has(.workspace) :is(
   [class$="-card"],
   [class~="card"]
 ) {
-  border-radius: 0 !important;
+  border-radius: .75rem !important;
+}
+
+button,
+input:not([type="checkbox"]):not([type="file"]),
+select,
+textarea {
+  border-radius: .75rem !important;
+}
+
+body:has(.workspace) :is(
+  .workspace__card,
+  .workspace__section,
+  .workspace__stat,
+  .workspace__notice,
+  .workspace__error,
+  .profile-section,
+  .company-profile,
+  .company-form,
+  .company-profile__group,
+  .candidate-application,
+  .saved-job,
+  .company-application,
+  .company-job-row,
+  .job-card,
+  .applicant-card,
+  .company-applicant-card,
+  .profile-content,
+  .profile-modal__panel,
+  .oob-detail,
+  .oob-detail__summary,
+  .oob-detail__apply-card,
+  .candidate-preview__section,
+  .candidate-preview__side-section,
+  [class$="-card"],
+  [class~="card"]
+) {
+  border-radius: 1rem !important;
 }
 
 body:has(.workspace) :is(
@@ -158,4 +207,45 @@ body:has(.workspace) :is(
   .profile-modal__avatar img
 ) {
   border-radius: 50% !important;
+}
+
+/* Mantén los avatares circulares aunque sus reglas responsive cambien solo el ancho. */
+:is(
+  .candidate-topbar__avatar,
+  .company-topbar__avatar,
+  .applicant-card__avatar,
+  .company-applicant-card__photo,
+  .profile-modal__avatar,
+  .candidate-profile-hero__initials
+) {
+  box-sizing: border-box !important;
+  height: auto !important;
+  aspect-ratio: 1 / 1 !important;
+  overflow: hidden;
+  border-radius: 50% !important;
+}
+
+:is(.profile-photo, .candidate-profile-hero__photo, .candidate-preview__photo) {
+  box-sizing: border-box !important;
+  height: auto !important;
+  aspect-ratio: 1 / 1 !important;
+  overflow: hidden;
+  border-radius: 50% !important;
+  object-fit: cover;
+}
+
+:is(
+  .candidate-topbar__avatar img,
+  .company-topbar__avatar img,
+  .applicant-card__avatar img,
+  .company-applicant-card__photo img,
+  .profile-modal__avatar img
+) {
+  display: block;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50% !important;
+  object-fit: cover;
+  object-position: center;
 }

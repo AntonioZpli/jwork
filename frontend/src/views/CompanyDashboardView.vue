@@ -32,15 +32,15 @@ onMounted(async () => {
 async function archiveJob(oobId: string) {
   if (archivingId.value) return
   const job = data.value?.recentJobs.find(item => item.id === oobId)
-  if (!job || !await askConfirmation({ title: 'Quitar vacante del panel', message: `¿Quitar “${job.title}” del resumen? Se conservará el historial de postulaciones.`, confirmLabel: 'Quitar', danger: true })) return
+  if (!job || !await askConfirmation({ title: 'Quitar oferta del panel', message: `¿Quitar “${job.title}” del resumen? Se conservará el historial de postulaciones.`, confirmLabel: 'Quitar', danger: true })) return
   archivingId.value = oobId
   error.value = ''
   try {
     await workspaceApi.archiveCompanyJob(oobId)
     data.value = await workspaceApi.companyDashboard()
-    notify('Vacante archivada', 'Se quitó del resumen y se conservó el historial de postulaciones.')
+    notify('Oferta archivada', 'Se quitó del resumen y se conservó el historial de postulaciones.')
   } catch (e) {
-    notify('No se pudo archivar la vacante', e instanceof Error ? e.message : 'Inténtalo de nuevo.', 'error')
+    notify('No se pudo archivar la oferta', e instanceof Error ? e.message : 'Inténtalo de nuevo.', 'error')
   } finally {
     archivingId.value = ''
   }
@@ -49,18 +49,18 @@ async function archiveJob(oobId: string) {
 
 <template>
   <WorkspaceFrame v-if="data" eyebrow="Espacio empresa" :title="data.company.name" :subtitle="[[data.company.municipality?.name, data.company.department?.name].filter(Boolean).join(', '), data.company.economicSector?.name, 'Administra tus ofertas y revisa las candidaturas recibidas.'].filter(Boolean).join(' · ')" :initials="data.company.name.slice(0, 2).toUpperCase()">
-    <template #heading-action><RouterLink class="workspace__cta company-dashboard__create" to="/company/jobs/new">Crear vacante <span aria-hidden="true">→</span></RouterLink></template>
+    <template #heading-action><RouterLink class="workspace__cta company-dashboard__create" to="/company/jobs/new">Crear oferta <span aria-hidden="true">→</span></RouterLink></template>
     <AppMessage v-if="error" variant="error" title="No se pudo cargar el panel de empresa" :message="error" />
-    <div class="company-dashboard__actions" aria-label="Acciones rápidas"><RouterLink to="/company/profile/edit">Editar perfil de empresa</RouterLink><RouterLink to="/company/jobs">Mis vacantes</RouterLink><RouterLink to="/company/jobs/new">Nueva vacante</RouterLink></div>
-    <section class="company-dashboard__verification" :class="`company-dashboard__verification--${data.company.verificationStatus.toLowerCase()}`"><span class="company-dashboard__verification-mark"><CheckCircle2 v-if="data.company.verificationStatus === 'VERIFIED'" :size="17" /><ShieldAlert v-else :size="17" /></span><div><strong>{{ verificationLabels[data.company.verificationStatus] ?? data.company.verificationStatus }}</strong><p>{{ data.company.verificationStatus === 'VERIFIED' ? 'Tu empresa puede publicar vacantes y recibir postulaciones.' : 'Puedes preparar vacantes como borrador. La publicación requiere verificación de Jinowork.' }}</p></div><RouterLink to="/company/profile">Ver perfil <span aria-hidden="true">→</span></RouterLink></section>
+    <div class="company-dashboard__actions" aria-label="Acciones rápidas"><RouterLink to="/company/profile/edit">Editar perfil de empresa</RouterLink><RouterLink to="/company/jobs">Mis ofertas</RouterLink><RouterLink to="/company/jobs/new">Nueva oferta</RouterLink></div>
+    <section class="company-dashboard__verification" :class="`company-dashboard__verification--${data.company.verificationStatus.toLowerCase()}`"><span class="company-dashboard__verification-mark"><CheckCircle2 v-if="data.company.verificationStatus === 'VERIFIED'" :size="17" /><ShieldAlert v-else :size="17" /></span><div><strong>{{ verificationLabels[data.company.verificationStatus] ?? data.company.verificationStatus }}</strong><p>{{ data.company.verificationStatus === 'VERIFIED' ? 'Tu empresa puede publicar ofertas y recibir postulaciones.' : 'Puedes preparar ofertas como borrador. La publicación requiere verificación de Jinowork.' }}</p></div><RouterLink to="/company/profile">Ver perfil <span aria-hidden="true">→</span></RouterLink></section>
     <section class="workspace__grid company-dashboard__stats" aria-label="Resumen de empresa">
-      <article class="workspace__card workspace__stat company-stat"><span class="company-stat__icon" aria-hidden="true"><BriefcaseBusiness :size="18" /></span><div class="workspace__stat-label">Vacantes publicadas</div><div class="workspace__stat-value">{{ data.stats.publishedJobs }}</div><RouterLink to="/company/jobs">Administrar vacantes <span aria-hidden="true">→</span></RouterLink></article>
-      <article class="workspace__card workspace__stat company-stat"><span class="company-stat__icon" aria-hidden="true"><Layers3 :size="18" /></span><div class="workspace__stat-label">Vacantes totales</div><div class="workspace__stat-value">{{ data.stats.totalJobs }}</div><RouterLink to="/company/jobs">Ver todos los estados <span aria-hidden="true">→</span></RouterLink></article>
+      <article class="workspace__card workspace__stat company-stat"><span class="company-stat__icon" aria-hidden="true"><BriefcaseBusiness :size="18" /></span><div class="workspace__stat-label">Ofertas publicadas</div><div class="workspace__stat-value">{{ data.stats.publishedJobs }}</div><RouterLink to="/company/jobs">Administrar ofertas <span aria-hidden="true">→</span></RouterLink></article>
+      <article class="workspace__card workspace__stat company-stat"><span class="company-stat__icon" aria-hidden="true"><Layers3 :size="18" /></span><div class="workspace__stat-label">Ofertas totales</div><div class="workspace__stat-value">{{ data.stats.totalJobs }}</div><RouterLink to="/company/jobs">Ver todos los estados <span aria-hidden="true">→</span></RouterLink></article>
       <article class="workspace__card workspace__stat company-stat company-stat--accent"><span class="company-stat__icon" aria-hidden="true"><Clock3 :size="18" /></span><div class="workspace__stat-label">Candidaturas por revisar</div><div class="workspace__stat-value">{{ data.stats.pendingApplications }}</div><RouterLink to="/company/applications">Revisar candidaturas <span aria-hidden="true">→</span></RouterLink></article>
     </section>
     <div v-if="!loading" class="company-dashboard__columns">
       <section class="workspace__card workspace__section company-dashboard__oobs">
-        <header class="company-dashboard__section-head"><div><span class="company-dashboard__kicker">Contratación</span><h2>Vacantes recientes</h2></div><RouterLink to="/company/jobs">Gestionar vacantes <span aria-hidden="true">→</span></RouterLink></header>
+        <header class="company-dashboard__section-head"><div><span class="company-dashboard__kicker">Contratación</span><h2>Ofertas recientes</h2></div><RouterLink to="/company/jobs">Gestionar ofertas <span aria-hidden="true">→</span></RouterLink></header>
         <div v-if="data.recentJobs.length" class="company-dashboard__oob-list">
           <article v-for="oob in data.recentJobs" :key="oob.id" class="company-dashboard__oob">
             <div class="company-dashboard__oob-heading">
@@ -72,13 +72,13 @@ async function archiveJob(oobId: string) {
             <div class="company-dashboard__oob-details"><span class="workspace__pill" :class="`company-dashboard__status--${oob.status.toLowerCase()}`">{{ statusLabels[oob.status] ?? oob.status }}</span></div>
           </article>
         </div>
-        <AppEmptyState v-else title="Todavía no hay vacantes" description="Cuando publiques una oferta, aquí podrás seguir su actividad y revisar a sus postulantes."><template #actions><RouterLink to="/company/jobs">Ir a gestión de vacantes</RouterLink></template></AppEmptyState>
+        <AppEmptyState v-else title="Todavía no hay ofertas" description="Cuando publiques una oferta, aquí podrás seguir su actividad y revisar a sus postulantes."><template #actions><RouterLink to="/company/jobs">Ir a gestión de ofertas</RouterLink></template></AppEmptyState>
       </section>
       <section class="workspace__card workspace__section company-dashboard__profile">
         <div class="company-dashboard__profile-mark" :style="profileAvatarStyle(data.company.name, data.company.economicSector?.name)"><img v-if="data.company.logoUrl" :src="companyLogoUrl(data.company.logoUrl)" alt=""><span v-else>{{ profileInitials(data.company.name) }}</span></div>
         <span class="company-dashboard__kicker">Tu empresa</span>
         <h2>Preséntate a los candidatos</h2>
-        <p>Mantén el perfil, la ubicación y el sector actualizados para generar más confianza en tus vacantes.</p>
+        <p>Mantén el perfil, la ubicación y el sector actualizados para generar más confianza en tus ofertas.</p>
         <div class="company-dashboard__profile-meta"><span>{{ verificationLabels[data.company.verificationStatus] }}</span><span>{{ data.company.economicSector?.name ?? 'Sector por completar' }}</span></div>
           <RouterLink to="/company/profile/edit" class="company-dashboard__profile-link">Editar perfil de empresa <span aria-hidden="true">→</span></RouterLink>
       </section>
@@ -134,12 +134,13 @@ async function archiveJob(oobId: string) {
 .company-dashboard__status--draft{background:#f4eedf;color:#95641a}
 .company-dashboard__status--paused{background:#e9eef4;color:#53657a}
 .company-dashboard__status--closed,.company-dashboard__status--removed{background:#f8e8e9;color:#a33f49}
-.company-dashboard__profile{position:relative;overflow:hidden;margin:0;background:linear-gradient(145deg,var(--palette-ink),var(--primary));color:#fff}
-.company-dashboard__profile:after{position:absolute;top:-3.5rem;right:-4rem;width:11rem;height:11rem;border:1px solid rgb(255 255 255 / 18%);border-radius:50%;box-shadow:0 0 0 18px rgb(255 255 255 / 5%),0 0 0 38px rgb(255 255 255 / 4%);content:""}
+.company-dashboard__profile{position:relative;isolation:isolate;overflow:hidden;margin:0;background:linear-gradient(125deg,#173b33,#2f5f52);color:#fff}
+.company-dashboard__profile:after{position:absolute;z-index:0;inset:0;pointer-events:none;background:url('/assets/jinowork-svgs-mejorados/left/01-contornos-oscuros.svg') right center/cover no-repeat;content:"";opacity:.32}
+.company-dashboard__profile>*{position:relative;z-index:1}
 .company-dashboard__profile-mark{display:grid;width:2.7rem;height:2.7rem;overflow:hidden;place-items:center;margin-bottom:1rem;background:linear-gradient(145deg,color-mix(in srgb,var(--oob-accent) 72%,white),var(--oob-accent));color:#fff;font-weight:850}.company-dashboard__profile-mark img{width:100%;height:100%;object-fit:cover}.company-dashboard__profile-mark span{display:grid;width:100%;height:100%;place-items:center}
-.company-dashboard__profile .company-dashboard__kicker,.company-dashboard__profile p{color:rgb(255 255 255 / 75%)}
-.company-dashboard__profile h2{max-width:16rem;margin:.35rem 0 .6rem;font:800 1.25rem Manrope,sans-serif}
-.company-dashboard__profile p{font-size:.8rem;line-height:1.55}
+.company-dashboard__profile .company-dashboard__kicker{color:#f4d9d0}
+.company-dashboard__profile h2{max-width:16rem;margin:.35rem 0 .6rem;color:#fff!important;font:800 1.25rem Manrope,sans-serif}
+.company-dashboard__profile p{color:rgb(255 255 255 / 91%);font-size:.8rem;line-height:1.55}
 .company-dashboard__profile-meta{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:.4rem;margin:1rem 0}
 .company-dashboard__profile-meta span{padding:.3rem .55rem;border:1px solid rgb(255 255 255 / 25%);border-radius:999px;font-size:.66rem}
 .company-dashboard__profile-link{position:relative;z-index:1;color:#fff;font-size:.8rem;font-weight:850}
@@ -169,4 +170,14 @@ async function archiveJob(oobId: string) {
   .company-dashboard__oob-open,.company-dashboard__oob-clean{grid-column:2;justify-self:start;white-space:normal}
 }
 .company-dashboard__profile-mark{aspect-ratio:1;border-radius:50%!important}
+.company-dashboard__verification{gap:1rem;margin-bottom:1.15rem;padding:.9rem 1rem;border:0;border-radius:1rem;background:#e9f0eb}
+.company-dashboard__verification-mark{width:2.35rem;height:2.35rem;background:#245b4b}
+.company-dashboard__verification>div{min-width:0}
+.company-dashboard__verification strong{color:#183c33;font-size:.86rem}
+.company-dashboard__verification p{color:#526b62;font-size:.78rem}
+.company-dashboard__verification>a{display:inline-flex;min-height:2.35rem;align-items:center;gap:.4rem;padding:0 .9rem;border-radius:999px;background:#fffdfb;color:#245b4b;font-size:.77rem;transition:background .18s,color .18s}
+.company-dashboard__verification>a:hover{background:#245b4b;color:#fff}
+.company-dashboard__verification--pending{background:#f4eee2}
+.company-dashboard__verification--rejected{background:#f5e9e6}
+@media(max-width:650px){.company-dashboard__verification{padding:.9rem}.company-dashboard__verification>a{grid-column:2;justify-self:start}}
 </style>

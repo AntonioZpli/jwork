@@ -131,7 +131,7 @@ export function useOnboardingWizard() {
   const successCopy = computed(() =>
     isCandidate.value
       ? 'Ya puedes explorar oportunidades y postularte con la información que acabas de completar.'
-      : 'Ya puedes publicar vacantes y empezar a recibir postulantes con la información que acabas de completar.',
+      : 'Ya puedes publicar ofertas y empezar a recibir postulantes con la información que acabas de completar.',
   )
   const successHighlights = computed(() =>
     isCandidate.value

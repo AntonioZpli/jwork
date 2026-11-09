@@ -101,7 +101,7 @@ async function signOut() {
     <div class="workspace__content">
       <header v-if="isCompany" class="company-topbar">
         <RouterLink class="company-topbar__brand" to="/company" aria-label="Jinowork, panel de empresa">jinowork</RouterLink>
-        <form class="company-topbar__search" role="search" @submit.prevent="searchCompanyJobs"><Search :size="18" aria-hidden="true" /><input v-model="companySearch" type="search" aria-label="Buscar en mis vacantes" placeholder="Buscar vacantes…"></form>
+        <form class="company-topbar__search" role="search" @submit.prevent="searchCompanyJobs"><Search :size="18" aria-hidden="true" /><input v-model="companySearch" type="search" aria-label="Buscar en mis ofertas" placeholder="Buscar ofertas…"></form>
         <Teleport to="body" :disabled="!isCompactViewport">
           <WorkspaceNavigation role="COMPANY" />
         </Teleport>
@@ -127,7 +127,7 @@ async function signOut() {
         </div>
       </header>
       <main class="workspace__main">
-        <div class="workspace__heading"><div><p class="workspace__eyebrow">{{ eyebrow }}</p><h1>{{ title }}</h1><p class="workspace__subtitle">{{ subtitle }}</p></div><slot name="heading-action" /></div>
+        <div class="workspace__heading"><div><p v-if="eyebrow" class="workspace__eyebrow">{{ eyebrow }}</p><h1>{{ title }}</h1><p v-if="subtitle" class="workspace__subtitle">{{ subtitle }}</p></div><slot name="heading-action" /></div>
         <slot />
       </main>
       <footer class="workspace__footer">Jinowork · Conectando talento con oportunidades</footer>

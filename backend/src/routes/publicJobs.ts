@@ -38,7 +38,7 @@ function publicJobSelect() {
     salaryCurrency: true, salaryPeriod: true, salaryNegotiable: true,
     experienceYearsMin: true, isUrgent: true, vacancies: true, publishedAt: true, expiresAt: true,
     company: { select: {
-      id: true, name: true, logoUrl: true, website: true, description: true,
+      id: true, name: true, logoUrl: true, website: true, description: true, verificationStatus: true,
       economicSector: { select: { name: true } },
       department: { select: { name: true } },
       municipality: { select: { name: true } },
